@@ -23,6 +23,8 @@ import {
   SettingsRounded,
 } from "@mui/icons-material";
 import { Typography } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const drawerWidth = 240;
 
@@ -32,10 +34,39 @@ interface Props {
 
 export const Sidebar = (props: Props) => {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleClickHome = () => {
+    navigate("/");
+  };
+
+  const handleClickDevices = () => {
+    navigate("/devices");
+  };
+
+  const handleClickSpaces = () => {
+    navigate("/spaces");
+  };
+
+  const handleClickHistory = () => {
+    navigate("/history");
+  };
+
+  const handleClickSettings = () => {
+    navigate("/settings");
+  };
+
+  const handleClickHelp = () => {
+    navigate("/help");
+  };
+
+  const handleClickLogout = () => {
+    alert("/logout");
   };
 
   const drawer = (
@@ -46,6 +77,8 @@ export const Sidebar = (props: Props) => {
           justifyContent: "center",
           alignItems: "center",
         }}
+        component={Link}
+        to="/"
       >
         <Box
           component="img"
@@ -67,7 +100,7 @@ export const Sidebar = (props: Props) => {
       <List>
         {/* On active change color  */}
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickHome}>
             <ListItemIcon>
               <HomeRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
@@ -76,8 +109,9 @@ export const Sidebar = (props: Props) => {
             </Typography>
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickDevices}>
             <ListItemIcon>
               <DeviceHubRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
@@ -86,8 +120,9 @@ export const Sidebar = (props: Props) => {
             </Typography>
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickSpaces}>
             <ListItemIcon>
               <ApartmentRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
@@ -96,8 +131,9 @@ export const Sidebar = (props: Props) => {
             </Typography>
           </ListItemButton>
         </ListItem>
+
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickHistory}>
             <ListItemIcon>
               <HistoryRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
@@ -117,7 +153,7 @@ export const Sidebar = (props: Props) => {
         }}
       >
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickSettings}>
             <ListItemIcon>
               <SettingsRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
@@ -128,7 +164,7 @@ export const Sidebar = (props: Props) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickHelp}>
             <ListItemIcon>
               <HelpOutlineRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
@@ -139,7 +175,7 @@ export const Sidebar = (props: Props) => {
         </ListItem>
 
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={handleClickLogout}>
             <ListItemIcon>
               <LogoutRounded htmlColor="#fff" fontSize="large" />
             </ListItemIcon>
