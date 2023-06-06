@@ -67,6 +67,7 @@ export const Sidebar = (props: Props) => {
 
   const handleClickLogout = () => {
     alert("/logout");
+    navigate("/login");
   };
 
   const drawer = (
