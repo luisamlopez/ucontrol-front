@@ -67,9 +67,10 @@ const Login = (): JSX.Element => {
           background: "white",
           borderRadius: "8px",
           width: {
-            xs: "95%",
+            xs: "80%",
             lg: "730px",
           },
+          padding: "2rem",
         }}
       >
         <Box
@@ -86,15 +87,21 @@ const Login = (): JSX.Element => {
           fontWeight={600}
           color="primary.main"
           fontSize={{ lg: "3rem", xs: "2rem" }}
+          textAlign={"center"}
         >
           Inicio de sesión
         </Typography>
 
-        <Typography color="primary.main" fontWeight={500} fontSize="1.5rem">
+        <Typography
+          color="primary.main"
+          fontWeight={500}
+          fontSize={{ lg: "1.5rem", xs: "1rem" }}
+          mb={2}
+          textAlign={"center"}
+        >
           Ingrese sus datos para continuar
         </Typography>
 
-        {/* Form with formik */}
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -125,10 +132,21 @@ const Login = (): JSX.Element => {
               >
                 Ingresar
               </LoadingButton>
+
               <Typography align="center">
-                ¿No tienes cuenta?
-                <Link to="/signup">
-                  <Typography fontWeight="600"> Regístrate aquí </Typography>
+                <Link to="/forgot-password" style={{ textDecoration: "none" }}>
+                  <Typography fontWeight="600" color="primary.main">
+                    Recupere su contraseña
+                  </Typography>
+                </Link>
+              </Typography>
+
+              <Typography align="center">
+                ¿No ha generado su clave de acceso?
+                <Link to="/signup" style={{ textDecoration: "none" }}>
+                  <Typography fontWeight="600" color="primary.main">
+                    Hágalo aquí
+                  </Typography>
                 </Link>
               </Typography>
             </Stack>

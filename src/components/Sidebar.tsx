@@ -72,6 +72,7 @@ export const Sidebar = (props: Props) => {
 
   const drawer = (
     <div>
+      {/* Desktop */}
       <Box
         sx={{
           display: "flex",
@@ -95,6 +96,8 @@ export const Sidebar = (props: Props) => {
               sm: "flex",
               xs: "none",
             },
+            alignItems: "center",
+            justifyContent: "center",
           }}
         />
       </Box>
@@ -204,7 +207,9 @@ export const Sidebar = (props: Props) => {
       >
         {/* On desktop hide toolbar */}
         <Toolbar
-          sx={{ display: { lg: "none", xl: "none", md: "none", sm: "none" } }}
+          sx={{
+            display: { lg: "none", xl: "none", md: "none", sm: "none" },
+          }}
         >
           <IconButton
             color="inherit"
@@ -215,18 +220,23 @@ export const Sidebar = (props: Props) => {
           >
             <MenuIcon />
           </IconButton>
+
           <Box
-            sx={{ display: { lg: "none", xl: "none", md: "none", sm: "none" } }}
+            sx={{
+              display: { lg: "none", xl: "none", md: "none", sm: "none" },
+            }}
           >
-            <Box
-              component="img"
-              src={logo}
-              alt="logo"
-              sx={{
-                width: { xs: 150 },
-                m: 0,
-              }}
-            />
+            <Link to="/">
+              <Box
+                component="img"
+                src={logo}
+                alt="logo"
+                sx={{
+                  width: { xs: 150 },
+                  m: 0,
+                }}
+              />
+            </Link>
           </Box>
         </Toolbar>
       </AppBar>
