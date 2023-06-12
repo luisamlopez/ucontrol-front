@@ -8,26 +8,26 @@ import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
 
-export interface Props {
+export interface RecoverValue {
+  recover: boolean;
   next: () => void;
 }
 
 interface FormValues {
-  email: string;
+  code: string;
 }
 
 const initialValues = {
-  email: "",
+  code: "",
 };
 
 const validationSchema = yup.object().shape({
-  email: yup
+  code: yup
     .string()
-    .required("Ingrese su correo, por favor")
-    .email("Ingrese un correo válido, por favor"),
+    .required("Ingrese el código recibido por correo, por favor"),
 });
 
-const EmailRegistration = ({ next }: Props): JSX.Element => {
+const CodeVerification = ({ recover, next }: RecoverValue): JSX.Element => {
   const { enqueueSnackbar } = useSnackbar();
 
   const onSubmit = async (
@@ -38,21 +38,20 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
       actions.setSubmitting(true);
       console.log(values);
 
-      enqueueSnackbar(
-        "Código de verificación enviado, revise su correo UCAB.",
-        { variant: "success" }
-      );
-
+      enqueueSnackbar("Código de verificación correcto.", {
+        variant: "success",
+      });
       next();
     } catch (error) {
       enqueueSnackbar(
-        "Hubo un error al enviar su código, por favor intente de nuevo o verifique que el correo sea el indicado.",
+        "Hubo un error al procesar su código, por favor intente de nuevo o verifique que el código sea el correcto.",
         { variant: "error" }
       );
     } finally {
       actions.setSubmitting(false);
     }
   };
+
   return (
     <Box
       sx={{
@@ -62,15 +61,27 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
         flexDirection: "column",
       }}
     >
-      <Typography
-        variant="h1"
-        fontWeight={600}
-        color="primary.main"
-        fontSize={{ lg: "3rem", xs: "2rem" }}
-        textAlign={"center"}
-      >
-        Generación de contraseña
-      </Typography>
+      {recover ? (
+        <Typography
+          variant="h1"
+          fontWeight={600}
+          color="primary.main"
+          fontSize={{ lg: "3rem", xs: "2rem" }}
+          textAlign={"center"}
+        >
+          Recuperación de contraseña
+        </Typography>
+      ) : (
+        <Typography
+          variant="h1"
+          fontWeight={600}
+          color="primary.main"
+          fontSize={{ lg: "3rem", xs: "2rem" }}
+          textAlign={"center"}
+        >
+          Generación de contraseña
+        </Typography>
+      )}
 
       <Typography
         color="primary.main"
@@ -79,8 +90,7 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
         mb={2}
         textAlign={"center"}
       >
-        Ingrese su correo UCAB para recibir el código de verificación y así
-        poder crear su nueva contraseña.
+        Ingrese el código de verificación recibido.
       </Typography>
 
       <Formik
@@ -92,8 +102,8 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
           <Stack component={Form} spacing={2}>
             <Field
               component={TextField}
-              name="email"
-              label="Correo UCAB"
+              name="code"
+              label="Código de verificación"
               required
             />
 
@@ -104,7 +114,7 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
               variant="contained"
               color="primary"
             >
-              Enviar código de acceso
+              Continuar
             </LoadingButton>
           </Stack>
         )}
@@ -113,4 +123,4 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
   );
 };
 
-export default EmailRegistration;
+export default CodeVerification;

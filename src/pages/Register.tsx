@@ -9,13 +9,34 @@ import { LoadingButton } from "@mui/lab";
 import PasswordField from "../components/PasswordField";
 import EmailRegistration from "../components/EmailRegistration";
 import { useState } from "react";
+import CodeVerification from "../components/CodeVerification";
+import PasswordCreation from "../components/PasswordCreation";
 
-const Register = (): JSX.Element => {
+function Register(): JSX.Element {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   // Registration steps (components) control
-  const [sentEmail, setSentEmail] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  function nextStep() {
+    setCurrentStep(currentStep + 1);
+  }
+  let currentComponent;
+
+  switch (currentStep) {
+    case 1:
+      currentComponent = <EmailRegistration next={nextStep} />;
+      break;
+    case 2:
+      currentComponent = <CodeVerification recover={false} next={nextStep} />;
+      break;
+    case 3:
+      currentComponent = <PasswordCreation recover={false} next={nextStep} />;
+      break;
+    default:
+      currentComponent = <EmailRegistration next={nextStep} />;
+  }
 
   return (
     <Box
@@ -51,12 +72,19 @@ const Register = (): JSX.Element => {
             m: 0,
           }}
         />
-        {/* Step 1 */}
-        <EmailRegistration />
-        {/* Step 2 */}
+        {currentComponent}
+
+        <Typography align="center" mt={2}>
+          ¿Ya tiene su contraseña de acceso?
+          <Link to="/login" style={{ textDecoration: "none" }}>
+            <Typography fontWeight="600" color="primary.main">
+              Inicie sesión
+            </Typography>
+          </Link>
+        </Typography>
       </Box>
     </Box>
   );
-};
+}
 
 export default Register;

@@ -23,7 +23,7 @@ import {
   SettingsRounded,
 } from "@mui/icons-material";
 import { Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
 import { useState } from "react";
 
 const drawerWidth = 240;
@@ -32,42 +32,68 @@ interface Props {
   window?: () => Window;
 }
 
+interface Option {
+  name: string;
+  icon: JSX.Element;
+  link: string;
+}
+
 export const Sidebar = (props: Props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [activeOption, setActiveOption] = useState("");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleClickHome = () => {
-    navigate("/");
-  };
+  //Array of options for sidebar
+  const options: Option[] = [
+    {
+      name: "Inicio",
+      icon: <HomeRounded />,
+      link: "/",
+    },
+    {
+      name: "Administrar dispositivos",
+      icon: <DeviceHubRounded />,
+      link: "/devices",
+    },
+    {
+      name: "Administrar espacios",
+      icon: <ApartmentRounded />,
+      link: "/spaces",
+    },
+    {
+      name: "Historial",
+      icon: <HistoryRounded />,
+      link: "/history",
+    },
+  ];
 
-  const handleClickDevices = () => {
-    navigate("/devices");
-  };
+  const userOptions = [
+    {
+      name: "Configuración",
+      icon: <SettingsRounded />,
+      link: "/settings",
+    },
+    {
+      name: "Ayuda",
+      icon: <HelpOutlineRounded />,
+      link: "/help",
+    },
+    {
+      name: "Cerrar sesión",
+      icon: <LogoutRounded />,
+      link: "/logout",
+    },
+  ];
 
-  const handleClickSpaces = () => {
-    navigate("/spaces");
-  };
-
-  const handleClickHistory = () => {
-    navigate("/history");
-  };
-
-  const handleClickSettings = () => {
-    navigate("/settings");
-  };
-
-  const handleClickHelp = () => {
-    navigate("/help");
-  };
-
-  const handleClickLogout = () => {
-    alert("/logout");
-    navigate("/login");
+  const handleOptionClick = (link: string) => {
+    setActiveOption(link);
+    navigate(link);
   };
 
   const drawer = (
@@ -102,50 +128,44 @@ export const Sidebar = (props: Props) => {
         />
       </Box>
       <List>
-        {/* On active change color  */}
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickHome}>
-            <ListItemIcon>
-              <HomeRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Inicio
-            </Typography>
+        {options.map((option, index) => (
+          <ListItemButton key={index}>
+            <Link
+              to={option.link}
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <IconButton
+                size="large"
+                sx={{
+                  color:
+                    option.link === location.pathname ||
+                    option.link === activeOption
+                      ? "secondary.main"
+                      : "#fff",
+                }}
+              >
+                {option.icon}
+              </IconButton>
+              <Typography
+                variant="h6"
+                color={
+                  option.link === location.pathname ||
+                  option.link === activeOption
+                    ? "secondary.main"
+                    : "#fff"
+                }
+                fontWeight={400}
+              >
+                {option.name}
+              </Typography>
+            </Link>
           </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickDevices}>
-            <ListItemIcon>
-              <DeviceHubRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Administrar dispositivos
-            </Typography>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickSpaces}>
-            <ListItemIcon>
-              <ApartmentRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Administrar espacios
-            </Typography>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickHistory}>
-            <ListItemIcon>
-              <HistoryRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Historial
-            </Typography>
-          </ListItemButton>
-        </ListItem>
+        ))}
       </List>
 
       {/* Bottom of sidebar */}
@@ -156,38 +176,44 @@ export const Sidebar = (props: Props) => {
           width: "100%",
         }}
       >
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickSettings}>
-            <ListItemIcon>
-              <SettingsRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Configuración
-            </Typography>
+        {userOptions.map((option, index) => (
+          <ListItemButton key={index}>
+            <Link
+              to={option.link}
+              style={{
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <IconButton
+                size="large"
+                sx={{
+                  color:
+                    option.link === location.pathname ||
+                    option.link === activeOption
+                      ? "secondary.main"
+                      : "#fff",
+                }}
+              >
+                {option.icon}
+              </IconButton>
+              <Typography
+                variant="h6"
+                color={
+                  option.link === location.pathname ||
+                  option.link === activeOption
+                    ? "secondary.main"
+                    : "#fff"
+                }
+                fontWeight={400}
+              >
+                {option.name}
+              </Typography>
+            </Link>
           </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickHelp}>
-            <ListItemIcon>
-              <HelpOutlineRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Ayuda
-            </Typography>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemButton onClick={handleClickLogout}>
-            <ListItemIcon>
-              <LogoutRounded htmlColor="#fff" fontSize="large" />
-            </ListItemIcon>
-            <Typography variant="h6" color="#fff">
-              Cerrar sesión
-            </Typography>
-          </ListItemButton>
-        </ListItem>
+        ))}
       </List>
     </div>
   );

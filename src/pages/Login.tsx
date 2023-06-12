@@ -21,9 +21,12 @@ const initialValues = {
 const validationSchema = yup.object().shape({
   email: yup
     .string()
-    .required("Ingresa tu correo, por favor")
-    .email("Ingresa un correo válido, por favor"),
-  password: yup.string().required("Ingresa tu contraseña, por favor"),
+    .required("Ingrese su correo, por favor")
+    .email("Ingrese un correo válido, por favor"),
+  password: yup
+    .string()
+    .required("Ingrese su contraseña, por favor")
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
 const Login = (): JSX.Element => {

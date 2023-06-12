@@ -7,28 +7,39 @@ import { useSnackbar } from "notistack";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
+import PasswordField from "./PasswordField";
 
-export interface Props {
+export interface RecoverValue {
+  recover: boolean;
   next: () => void;
 }
 
 interface FormValues {
-  email: string;
+  password: string;
+  passwordRepeat: string;
 }
 
 const initialValues = {
-  email: "",
+  password: "",
+  passwordRepeat: "",
 };
 
 const validationSchema = yup.object().shape({
-  email: yup
+  password: yup
     .string()
-    .required("Ingrese su correo, por favor")
-    .email("Ingrese un correo válido, por favor"),
+    .required("Ingrese su contraseña, por favor")
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
+  passwordRepeat: yup
+    .string()
+    .required("Ingrese su contraseña, por favor")
+    .test("passwordRepeated", "Las contraseñas no coinciden", function (value) {
+      return value === this.parent.password;
+    }),
 });
 
-const EmailRegistration = ({ next }: Props): JSX.Element => {
+const PasswordCreation = ({ recover, next }: RecoverValue): JSX.Element => {
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const onSubmit = async (
     values: FormValues,
@@ -39,20 +50,22 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
       console.log(values);
 
       enqueueSnackbar(
-        "Código de verificación enviado, revise su correo UCAB.",
-        { variant: "success" }
+        "Contraseña creada exitosamente, ya puede ingresar sesión.",
+        {
+          variant: "success",
+        }
       );
-
-      next();
+      navigate("/login");
     } catch (error) {
       enqueueSnackbar(
-        "Hubo un error al enviar su código, por favor intente de nuevo o verifique que el correo sea el indicado.",
+        "Hubo un error al procesar su contraseña, por favor intente de nuevo.",
         { variant: "error" }
       );
     } finally {
       actions.setSubmitting(false);
     }
   };
+
   return (
     <Box
       sx={{
@@ -62,15 +75,27 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
         flexDirection: "column",
       }}
     >
-      <Typography
-        variant="h1"
-        fontWeight={600}
-        color="primary.main"
-        fontSize={{ lg: "3rem", xs: "2rem" }}
-        textAlign={"center"}
-      >
-        Generación de contraseña
-      </Typography>
+      {recover ? (
+        <Typography
+          variant="h1"
+          fontWeight={600}
+          color="primary.main"
+          fontSize={{ lg: "3rem", xs: "2rem" }}
+          textAlign={"center"}
+        >
+          Recuperación de contraseña
+        </Typography>
+      ) : (
+        <Typography
+          variant="h1"
+          fontWeight={600}
+          color="primary.main"
+          fontSize={{ lg: "3rem", xs: "2rem" }}
+          textAlign={"center"}
+        >
+          Generación de contraseña
+        </Typography>
+      )}
 
       <Typography
         color="primary.main"
@@ -79,8 +104,7 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
         mb={2}
         textAlign={"center"}
       >
-        Ingrese su correo UCAB para recibir el código de verificación y así
-        poder crear su nueva contraseña.
+        Ingrese su contraseña.
       </Typography>
 
       <Formik
@@ -91,9 +115,16 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
         {({ isSubmitting }) => (
           <Stack component={Form} spacing={2}>
             <Field
-              component={TextField}
-              name="email"
-              label="Correo UCAB"
+              component={PasswordField}
+              name="password"
+              label="Contraseña"
+              required
+            />
+
+            <Field
+              component={PasswordField}
+              name="passwordRepeat"
+              label="Repetir contraseña"
               required
             />
 
@@ -104,7 +135,7 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
               variant="contained"
               color="primary"
             >
-              Enviar código de acceso
+              Continuar
             </LoadingButton>
           </Stack>
         )}
@@ -113,4 +144,4 @@ const EmailRegistration = ({ next }: Props): JSX.Element => {
   );
 };
 
-export default EmailRegistration;
+export default PasswordCreation;
