@@ -8,7 +8,7 @@ export interface Space {
   createdBy: string;
   createdOn: string;
   devices?: Device[];
-  history: {
+  history?: {
     name: string;
     description: string;
     route?: string;

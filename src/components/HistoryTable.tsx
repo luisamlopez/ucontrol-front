@@ -150,37 +150,42 @@ function SpaceDetails(object: Space) {
               <Typography variant="h6" gutterBottom component="div">
                 Historial de cambios
               </Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Fecha del cambio</TableCell>
-                    <TableCell>Responsable del cambio</TableCell>
-                    <TableCell>Nombre del espacio</TableCell>
-                    <TableCell>Descripción</TableCell>
-                    <TableCell>Ruta</TableCell>
-                    <TableCell>Dispositivos!!!</TableCell>
-                  </TableRow>
-                </TableHead>
 
-                <TableBody>
-                  {object.history?.map((history) => (
-                    <TableRow key={object.id}>
-                      <TableCell component="th" scope="row">
-                        {history.updatedOn}
-                      </TableCell>
-                      <TableCell>{history.updatedBy}</TableCell>
-                      <TableCell>{history.name}</TableCell>
-                      <TableCell>{history.description}</TableCell>
-                      <TableCell>{history.route}</TableCell>
-                      <TableCell>
-                        {object.devices
-                          ?.map((device) => `${device.name}`)
-                          .join(", ")}
-                      </TableCell>
+              {object.history && object.history.length > 0 ? (
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Fecha del cambio</TableCell>
+                      <TableCell>Responsable del cambio</TableCell>
+                      <TableCell>Nombre del espacio</TableCell>
+                      <TableCell>Descripción</TableCell>
+                      <TableCell>Ruta</TableCell>
+                      <TableCell>Dispositivos!!!</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+
+                  <TableBody>
+                    {object.history?.map((history) => (
+                      <TableRow key={object.id}>
+                        <TableCell component="th" scope="row">
+                          {history.updatedOn}
+                        </TableCell>
+                        <TableCell>{history.updatedBy}</TableCell>
+                        <TableCell>{history.name}</TableCell>
+                        <TableCell>{history.description}</TableCell>
+                        <TableCell>{history.route}</TableCell>
+                        <TableCell>
+                          {object.devices
+                            ?.map((device) => `${device.name}`)
+                            .join(", ")}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography>No hay historial de cambios</Typography>
+              )}
             </Box>
           </Collapse>
         </TableCell>

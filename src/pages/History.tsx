@@ -4,114 +4,146 @@ import { Device } from "../api/Devices";
 import { useEffect, useState } from "react";
 import HistoryTable from "../components/HistoryTable";
 import HistoryAccordion from "../components/HistoryAccordion";
+import { Space } from "../api/Space";
 
 const History = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
+
+    const fetchData = async () => {
+      try {
+        const dataDevices: Device[] = [
+          {
+            id: "1",
+            name: "Device 1",
+            description: "Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            history: [
+              {
+                name: "Device 1",
+                description: "Description 1",
+                topic: "Topic 1",
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+                updatedBy: "User 1.23",
+                updatedOn: "2021-10-01",
+              },
+              {
+                name: "Device 1.1",
+                description: "Description 1.1",
+                topic: "Topic 1.1",
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+                updatedBy: "User 1.5",
+                updatedOn: "2021-10-01",
+              },
+            ],
+            currentTopic: "Topic 1",
+            metricsAndUnits: [
+              {
+                metric: "Metric 1",
+                unit: "Unit 1",
+              },
+              {
+                metric: "Metric 2",
+                unit: "Unit 2",
+              },
+            ],
+          },
+          {
+            id: "2",
+            name: "Device 2",
+            description: "Description 2",
+            createdOn: "2021-10-01",
+            createdBy: "User 2",
+            currentTopic: "Topic 2",
+            metricsAndUnits: [
+              {
+                metric: "Metric 1",
+                unit: "Unit 1",
+              },
+              {
+                metric: "Metric 2",
+                unit: "Unit 2",
+              },
+            ],
+          },
+          {
+            id: "3",
+            name: "Device 3",
+            description: "Description 3",
+            createdOn: "2021-10-01",
+            createdBy: "User 3",
+            currentTopic: "Topic 3",
+            metricsAndUnits: [
+              {
+                metric: "Metric 1",
+                unit: "Unit 1",
+              },
+              {
+                metric: "Metric 2",
+                unit: "Unit 2",
+              },
+            ],
+          },
+        ];
+
+        const dataSpaces: Space[] = [
+          {
+            id: "1",
+            name: "Space 1",
+            description: "Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            route: "/space/1",
+          },
+        ];
+
+        setDevices(dataDevices);
+        setSpaces(dataSpaces);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+        setDevices([]);
+        setSpaces([]);
+      }
+    }, 5000);
+
+    fetchData();
+
     return () => {
-      const fetchData = () => {
-        setTimeout(() => {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          const data: Device[] = [
-            {
-              id: "1",
-              name: "Device 1",
-              description: "Description 1",
-              createdOn: "2021-10-01",
-              createdBy: "User 1",
-              history: [
-                {
-                  name: "Device 1",
-                  description: "Description 1",
-                  topic: "Topic 1",
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                  updatedBy: "User 1.23",
-                  updatedOn: "2021-10-01",
-                },
-                {
-                  name: "Device 1.1",
-                  description: "Description 1.1",
-                  topic: "Topic 1.1",
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                  updatedBy: "User 1.5",
-                  updatedOn: "2021-10-01",
-                },
-              ],
-              currentTopic: "Topic 1",
-              metricsAndUnits: [
-                {
-                  metric: "Metric 1",
-                  unit: "Unit 1",
-                },
-                {
-                  metric: "Metric 2",
-                  unit: "Unit 2",
-                },
-              ],
-            },
-            {
-              id: "2",
-              name: "Device 2",
-              description: "Description 2",
-              createdOn: "2021-10-01",
-              createdBy: "User 2",
-              currentTopic: "Topic 2",
-              metricsAndUnits: [
-                {
-                  metric: "Metric 1",
-                  unit: "Unit 1",
-                },
-                {
-                  metric: "Metric 2",
-                  unit: "Unit 2",
-                },
-              ],
-            },
-            {
-              id: "3",
-              name: "Device 3",
-              description: "Description 3",
-              createdOn: "2021-10-01",
-              createdBy: "User 3",
-              currentTopic: "Topic 3",
-              metricsAndUnits: [
-                {
-                  metric: "Metric 1",
-                  unit: "Unit 1",
-                },
-                {
-                  metric: "Metric 2",
-                  unit: "Unit 2",
-                },
-              ],
-            },
-          ];
-          setDevices(data);
-        }, 5000);
-      };
-      fetchData();
+      clearTimeout(timeoutId);
       window.removeEventListener("resize", handleResize);
     };
   }, []);
@@ -136,9 +168,45 @@ const History = (): JSX.Element => {
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
           >
-            Historial
+            Historial de dispositivos
           </Typography>
-          {devices.length === 0 ? (
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : devices.length === 0 ? (
+            <Typography>
+              Error: no se pudieron cargar los dispositivos
+            </Typography>
+          ) : (
+            /* If it's a phone */
+            <>
+              {windowWidth < 600 && <HistoryAccordion devices={devices} />}
+              {windowWidth >= 600 && windowWidth < 960 && (
+                <HistoryAccordion devices={devices} />
+              )}
+              {windowWidth >= 960 && <HistoryTable devices={devices} />}
+            </>
+          )}
+
+          <Typography
+            color="primary"
+            textAlign="left"
+            fontSize={{ xs: 24, sm: 48, lg: 48 }}
+            fontWeight={600}
+            p={0}
+            mt={{ xs: 6, sm: 0, lg: 0 }}
+            mb={2}
+          >
+            Historial de espacios
+          </Typography>
+          {loading ? (
             <Typography
               color={"primary"}
               textAlign="left"
@@ -154,15 +222,11 @@ const History = (): JSX.Element => {
                 <CircularProgress />
               </Box>
             </Typography>
+          ) : spaces.length === 0 ? (
+            <Typography>Error: no se pudieron cargar los espacios</Typography>
           ) : (
             /* If it's a phone */
-            <>
-              {windowWidth < 600 && <HistoryAccordion devices={devices} />}
-              {windowWidth >= 600 && windowWidth < 960 && (
-                <HistoryAccordion devices={devices} />
-              )}
-              {windowWidth >= 960 && <HistoryTable devices={devices} />}
-            </>
+            <>{windowWidth >= 960 && <HistoryTable spaces={spaces} />}</>
           )}
         </Box>
       </Container>
