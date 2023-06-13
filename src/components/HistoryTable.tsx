@@ -137,13 +137,13 @@ function SpaceDetails(object: Space) {
             : object.createdOn}
         </TableCell>
         <TableCell align="center">
-          {object.history?.length === 0
-            ? object.history[object.history?.length].updatedBy
+          {object.history && object.history.length > 0
+            ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
         </TableCell>
 
         <TableCell align="center">
-          {object.route ? object.route : "N/A"}
+          {object.currentRoute ? object.currentRoute : "N/A"}
         </TableCell>
       </TableRow>
 

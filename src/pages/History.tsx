@@ -116,7 +116,7 @@ const History = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            route: "/space/1",
+            currentRoute: "/space/1",
           },
           {
             id: "2",
@@ -124,7 +124,7 @@ const History = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            route: "/space/1",
+            currentRoute: "/space/1",
             history: [
               {
                 name: "cambio 1",
