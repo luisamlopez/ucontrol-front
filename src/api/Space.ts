@@ -1,4 +1,4 @@
-import { Device } from "./Devices";
+import { Device } from "./Device";
 
 export interface Space {
   id: string;

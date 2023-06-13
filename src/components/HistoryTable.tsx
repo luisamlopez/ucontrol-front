@@ -11,7 +11,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Device } from "../api/Devices";
+import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Fragment, useState } from "react";
 import {
@@ -43,7 +43,7 @@ function DeviceDetails(object: Device) {
             {open ? <KeyboardArrowUpRounded /> : <KeyboardArrowDownRounded />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row" align="center">
           {object.name}
         </TableCell>
         <TableCell align="center">
@@ -56,6 +56,7 @@ function DeviceDetails(object: Device) {
             ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
         </TableCell>
+        <TableCell align="center">{object.currentTopic}</TableCell>
       </TableRow>
 
       {/* Details on collapse */}
@@ -139,6 +140,10 @@ function SpaceDetails(object: Space) {
           {object.history?.length === 0
             ? object.history[object.history?.length].updatedBy
             : object.createdBy}
+        </TableCell>
+
+        <TableCell align="center">
+          {object.route ? object.route : "N/A"}
         </TableCell>
       </TableRow>
 
@@ -236,6 +241,17 @@ const HistoryTable = ({ devices, spaces }: HistoryProps): JSX.Element => {
               }}
             >
               Responsable del cambio
+            </TableCell>
+
+            <TableCell
+              align="center"
+              sx={{
+                color: "primary.main",
+                fontWeight: "bold",
+                fontSize: "1rem",
+              }}
+            >
+              {devices ? "Tópico/Espacio" : "Ruta"}
             </TableCell>
           </TableRow>
         </TableHead>

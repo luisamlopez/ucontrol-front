@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
-import { Device } from "../api/Devices";
+import { Device } from "../api/Device";
 import { useEffect, useState } from "react";
 import HistoryTable from "../components/HistoryTable";
 import HistoryAccordion from "../components/HistoryAccordion";
@@ -121,6 +121,24 @@ const History = (): JSX.Element => {
             createdBy: "User 1",
             route: "/space/1",
           },
+          {
+            id: "2",
+            name: "Space 2",
+            description: "Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            route: "/space/1",
+            history: [
+              {
+                name: "cambio 1",
+                description: "descipcion 2",
+                updatedBy: "userr",
+                updatedOn: "565",
+                route: "ruta",
+              },
+            ],
+            devices: dataDevices,
+          },
         ];
 
         setDevices(dataDevices);
@@ -226,7 +244,13 @@ const History = (): JSX.Element => {
             <Typography>Error: no se pudieron cargar los espacios</Typography>
           ) : (
             /* If it's a phone */
-            <>{windowWidth >= 960 && <HistoryTable spaces={spaces} />}</>
+            <>
+              {windowWidth < 600 && <HistoryAccordion spaces={spaces} />}
+              {windowWidth >= 600 && windowWidth < 960 && (
+                <HistoryAccordion spaces={spaces} />
+              )}
+              {windowWidth >= 960 && <HistoryTable spaces={spaces} />}
+            </>
           )}
         </Box>
       </Container>
