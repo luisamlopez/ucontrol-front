@@ -12,13 +12,11 @@ const History = (): JSX.Element => {
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
   useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-
     const fetchData = async () => {
-      try {
+      setTimeout(() => {
         const dataDevices: Device[] = [
           {
             id: "1",
@@ -111,7 +109,6 @@ const History = (): JSX.Element => {
             ],
           },
         ];
-
         const dataSpaces: Space[] = [
           {
             id: "1",
@@ -140,30 +137,22 @@ const History = (): JSX.Element => {
             devices: dataDevices,
           },
         ];
-
         setDevices(dataDevices);
         setSpaces(dataSpaces);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
+        setDataLoaded(true);
+      }, 5000);
     };
 
-    const timeoutId = setTimeout(() => {
-      if (loading) {
-        setLoading(false);
-        setDevices([]);
-        setSpaces([]);
-      }
-    }, 5000);
-
-    fetchData();
-
-    return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener("resize", handleResize);
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    try {
+      fetchData();
+    } catch (error) {
+      alert(error);
+    } finally {
+      //  window.removeEventListener("resize", handleResize);
+      setLoading(false);
+    }
   }, []);
 
   return (
@@ -198,12 +187,21 @@ const History = (): JSX.Element => {
             >
               <CircularProgress />
             </Box>
+          ) : !dataLoaded ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
           ) : devices.length === 0 ? (
             <Typography>
               Error: no se pudieron cargar los dispositivos
             </Typography>
           ) : (
-            /* If it's a phone */
             <>
               {windowWidth < 600 && <HistoryAccordion devices={devices} />}
               {windowWidth >= 600 && windowWidth < 960 && (
@@ -225,25 +223,28 @@ const History = (): JSX.Element => {
             Historial de espacios
           </Typography>
           {loading ? (
-            <Typography
-              color={"primary"}
-              textAlign="left"
-              fontSize={{ xs: 24, sm: 48, lg: 48 }}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            </Typography>
+              <CircularProgress />
+            </Box>
+          ) : !dataLoaded ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
           ) : spaces.length === 0 ? (
             <Typography>Error: no se pudieron cargar los espacios</Typography>
           ) : (
-            /* If it's a phone */
             <>
               {windowWidth < 600 && <HistoryAccordion spaces={spaces} />}
               {windowWidth >= 600 && windowWidth < 960 && (
