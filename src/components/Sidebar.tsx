@@ -54,7 +54,7 @@ export const Sidebar = (props: Props) => {
     {
       name: "Inicio",
       icon: <HomeRounded />,
-      link: "/",
+      link: "/dashboard",
     },
     {
       name: "Administrar dispositivos",
@@ -87,14 +87,9 @@ export const Sidebar = (props: Props) => {
     {
       name: "Cerrar sesión",
       icon: <LogoutRounded />,
-      link: "/logout",
+      link: "/login",
     },
   ];
-
-  const handleOptionClick = (link: string) => {
-    setActiveOption(link);
-    navigate(link);
-  };
 
   const drawer = (
     <div>
@@ -104,9 +99,11 @@ export const Sidebar = (props: Props) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          m: 0,
+          p: 0,
         }}
         component={Link}
-        to="/"
+        to="/dashboard"
       >
         <Box
           component="img"
@@ -143,7 +140,7 @@ export const Sidebar = (props: Props) => {
                 size="large"
                 sx={{
                   color:
-                    option.link === location.pathname ||
+                    option.link.includes(location.pathname) ||
                     option.link === activeOption
                       ? "secondary.main"
                       : "#fff",
@@ -154,7 +151,7 @@ export const Sidebar = (props: Props) => {
               <Typography
                 variant="h6"
                 color={
-                  option.link === location.pathname ||
+                  option.link.includes(location.pathname) ||
                   option.link === activeOption
                     ? "secondary.main"
                     : "#fff"
@@ -191,7 +188,7 @@ export const Sidebar = (props: Props) => {
                 size="large"
                 sx={{
                   color:
-                    option.link === location.pathname ||
+                    option.link.includes(location.pathname) ||
                     option.link === activeOption
                       ? "secondary.main"
                       : "#fff",
@@ -202,7 +199,7 @@ export const Sidebar = (props: Props) => {
               <Typography
                 variant="h6"
                 color={
-                  option.link === location.pathname ||
+                  option.link.includes(location.pathname) ||
                   option.link === activeOption
                     ? "secondary.main"
                     : "#fff"
@@ -252,7 +249,7 @@ export const Sidebar = (props: Props) => {
               display: { lg: "none", xl: "none", md: "none", sm: "none" },
             }}
           >
-            <Link to="/">
+            <Link to="/dashboard">
               <Box
                 component="img"
                 src={logo}

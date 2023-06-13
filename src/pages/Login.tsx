@@ -41,7 +41,7 @@ const Login = (): JSX.Element => {
       actions.setSubmitting(true);
       console.log(values);
       enqueueSnackbar("Inicio de sesión exitoso", { variant: "success" });
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       enqueueSnackbar(
         "Hubo un error al iniciar sesión, por favor intente de nuevo.",
