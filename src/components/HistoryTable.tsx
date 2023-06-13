@@ -29,7 +29,11 @@ function DeviceDetails(object: Device) {
 
   return (
     <Fragment>
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+      <TableRow
+        sx={{
+          "& > *": { borderBottom: "unset" },
+        }}
+      >
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -42,14 +46,14 @@ function DeviceDetails(object: Device) {
         <TableCell component="th" scope="row">
           {object.name}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {object.history?.length === 0
             ? object.history[object.history?.length].updatedOn
             : object.createdOn}
         </TableCell>
-        <TableCell align="right">
-          {object.history?.length === 0
-            ? object.history[object.history?.length].updatedBy
+        <TableCell align="center">
+          {object.history && object.history.length > 0
+            ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
         </TableCell>
       </TableRow>
@@ -62,37 +66,43 @@ function DeviceDetails(object: Device) {
               <Typography variant="h6" gutterBottom component="div">
                 Historial de cambios
               </Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Fecha del cambio</TableCell>
-                    <TableCell>Responsable del cambio</TableCell>
-                    <TableCell>Nombre del dispositivo</TableCell>
-                    <TableCell>Descripción</TableCell>
-                    <TableCell>Tópico/Espacio</TableCell>
-                    <TableCell>Unidades y métricas</TableCell>
-                  </TableRow>
-                </TableHead>
+              {/* If there's no history, don't show the table */}
 
-                <TableBody>
-                  {object.history?.map((history) => (
-                    <TableRow key={object.id}>
-                      <TableCell component="th" scope="row">
-                        {history.updatedOn}
-                      </TableCell>
-                      <TableCell>{history.updatedBy}</TableCell>
-                      <TableCell>{history.name}</TableCell>
-                      <TableCell>{history.description}</TableCell>
-                      <TableCell>{history.topic}</TableCell>
-                      <TableCell>
-                        {history.metricsAndUnits
-                          ?.map((obj) => `${obj.metric} - ${obj.unit}`)
-                          .join(",")}
-                      </TableCell>
+              {object.history && object.history.length > 0 ? (
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Fecha del cambio</TableCell>
+                      <TableCell>Responsable del cambio</TableCell>
+                      <TableCell>Nombre del dispositivo</TableCell>
+                      <TableCell>Descripción</TableCell>
+                      <TableCell>Tópico/Espacio</TableCell>
+                      <TableCell>Unidades y métricas</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+
+                  <TableBody>
+                    {object.history?.map((history) => (
+                      <TableRow key={object.id}>
+                        <TableCell component="th" scope="row" align="center">
+                          {history.updatedOn}
+                        </TableCell>
+                        <TableCell>{history.updatedBy}</TableCell>
+                        <TableCell>{history.name}</TableCell>
+                        <TableCell>{history.description}</TableCell>
+                        <TableCell>{history.topic}</TableCell>
+                        <TableCell>
+                          {history.metricsAndUnits
+                            ?.map((obj) => `${obj.metric} - ${obj.unit}`)
+                            .join(", ")}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <Typography>No hay historial de cambios</Typography>
+              )}
             </Box>
           </Collapse>
         </TableCell>
@@ -116,15 +126,15 @@ function SpaceDetails(object: Space) {
             {open ? <KeyboardArrowUpRounded /> : <KeyboardArrowDownRounded />}
           </IconButton>
         </TableCell>
-        <TableCell component="th" scope="row">
+        <TableCell component="th" scope="row" align="center">
           {object.name}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {object.history?.length === 0
             ? object.history[object.history?.length].updatedOn
             : object.createdOn}
         </TableCell>
-        <TableCell align="right">
+        <TableCell align="center">
           {object.history?.length === 0
             ? object.history[object.history?.length].updatedBy
             : object.createdBy}
@@ -164,7 +174,7 @@ function SpaceDetails(object: Space) {
                       <TableCell>
                         {object.devices
                           ?.map((device) => `${device.name}`)
-                          .join(",")}
+                          .join(", ")}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -181,16 +191,46 @@ function SpaceDetails(object: Space) {
 const HistoryTable = ({ devices, spaces }: HistoryProps): JSX.Element => {
   return (
     <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
+      <Table>
         <TableHead>
-          <TableRow>
+          <TableRow
+            sx={{
+              backgroundColor: "#f5f5f5",
+            }}
+          >
             <TableCell />
-            <TableCell>
+            {/* Blank space */}
+            <TableCell
+              align="center"
+              sx={{
+                color: "primary.main",
+                fontWeight: "bold",
+                fontSize: "1rem",
+              }}
+            >
               {/* If it's a device or a space */}
               {devices ? "Nombre del dispositivo" : "Nombre del espacio"}
             </TableCell>
-            <TableCell align="right">Fecha del cambio</TableCell>
-            <TableCell align="right">Responsable del cambio</TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                color: "primary.main",
+                fontWeight: "bold",
+                fontSize: "1rem",
+              }}
+            >
+              Fecha del cambio
+            </TableCell>
+            <TableCell
+              align="center"
+              sx={{
+                color: "primary.main",
+                fontWeight: "bold",
+                fontSize: "1rem",
+              }}
+            >
+              Responsable del cambio
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
