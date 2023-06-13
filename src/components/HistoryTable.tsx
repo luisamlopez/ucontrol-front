@@ -111,6 +111,7 @@ function DeviceDetails(object: Device) {
   );
 }
 
+//TODO: Fix the history table
 function SpaceDetails(object: Space) {
   const [open, setOpen] = useState(false);
 
