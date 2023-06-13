@@ -134,68 +134,7 @@ const Home = (): JSX.Element => {
           route: "ruta",
         },
       ],
-      devices: [
-        {
-          id: "1",
-          name: "Device 1",
-          description: "Description 1",
-          createdOn: "2021-10-01",
-          createdBy: "User 1",
-          history: [
-            {
-              name: "Device 1",
-              description: "Description 1",
-              topic: "Topic 1",
-              metricsAndUnits: [
-                {
-                  metric: "Metric 1",
-                  unit: "Unit 1",
-                  value: "10",
-                },
-                {
-                  metric: "Metric 2",
-                  unit: "Unit 2",
-                  value: "10",
-                },
-              ],
-              updatedBy: "User 1.23",
-              updatedOn: "2021-10-01",
-            },
-            {
-              name: "Device 1.1",
-              description: "Description 1.1",
-              topic: "Topic 1.1",
-              metricsAndUnits: [
-                {
-                  metric: "Metric 1",
-                  unit: "Unit 1",
-                  value: "20",
-                },
-                {
-                  metric: "Metric 2",
-                  unit: "Unit 2",
-                  value: "20",
-                },
-              ],
-              updatedBy: "User 1.5",
-              updatedOn: "2021-10-01",
-            },
-          ],
-          currentTopic: "Topic 1",
-          metricsAndUnits: [
-            {
-              metric: "Metric 1",
-              unit: "Unit 1",
-              value: "10",
-            },
-            {
-              metric: "Metric 2",
-              unit: "Unit 2",
-              value: "10",
-            },
-          ],
-        },
-      ],
+      devices: dataDevices,
     },
   ];
 
