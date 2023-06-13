@@ -33,10 +33,12 @@ const History = (): JSX.Element => {
                   {
                     metric: "Metric 1",
                     unit: "Unit 1",
+                    value: "10",
                   },
                   {
                     metric: "Metric 2",
                     unit: "Unit 2",
+                    value: "10",
                   },
                 ],
                 updatedBy: "User 1.23",
@@ -50,10 +52,12 @@ const History = (): JSX.Element => {
                   {
                     metric: "Metric 1",
                     unit: "Unit 1",
+                    value: "20",
                   },
                   {
                     metric: "Metric 2",
                     unit: "Unit 2",
+                    value: "20",
                   },
                 ],
                 updatedBy: "User 1.5",
@@ -65,10 +69,12 @@ const History = (): JSX.Element => {
               {
                 metric: "Metric 1",
                 unit: "Unit 1",
+                value: "10",
               },
               {
                 metric: "Metric 2",
                 unit: "Unit 2",
+                value: "10",
               },
             ],
           },
@@ -83,10 +89,12 @@ const History = (): JSX.Element => {
               {
                 metric: "Metric 1",
                 unit: "Unit 1",
+                value: "10",
               },
               {
                 metric: "Metric 2",
                 unit: "Unit 2",
+                value: "10",
               },
             ],
           },
@@ -101,10 +109,12 @@ const History = (): JSX.Element => {
               {
                 metric: "Metric 1",
                 unit: "Unit 1",
+                value: "10",
               },
               {
                 metric: "Metric 2",
                 unit: "Unit 2",
+                value: "10",
               },
             ],
           },

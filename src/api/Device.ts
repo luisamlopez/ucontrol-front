@@ -1,6 +1,7 @@
 export interface MetricAndUnit {
   metric: string;
   unit: string;
+  value: string;
 }
 
 export interface Device {
