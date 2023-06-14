@@ -1,142 +1,169 @@
-import { Box, Container, Typography } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
 import DashboardAccordion from "../components/DashboardAccordion";
 import { Device } from "../api/Device";
 import { Space } from "../api/Space";
+import { useEffect, useState } from "react";
 
 const Home = (): JSX.Element => {
-  const dataDevices: Device[] = [
-    {
-      id: "1",
-      name: "Device 1",
-      description: "Description 1",
-      createdOn: "2021-10-01",
-      createdBy: "User 1",
-      history: [
-        {
-          name: "Device 1",
-          description: "Description 1",
-          topic: "Topic 1",
-          metricsAndUnits: [
-            {
-              metric: "Metric 1",
-              unit: "Unit 1",
-              value: "10",
-            },
-            {
-              metric: "Metric 2",
-              unit: "Unit 2",
-              value: "10",
-            },
-          ],
-          updatedBy: "User 1.23",
-          updatedOn: "2021-10-01",
-        },
-        {
-          name: "Device 1.1",
-          description: "Description 1.1",
-          topic: "Topic 1.1",
-          metricsAndUnits: [
-            {
-              metric: "Metric 1",
-              unit: "Unit 1",
-              value: "20",
-            },
-            {
-              metric: "Metric 2",
-              unit: "Unit 2",
-              value: "20",
-            },
-          ],
-          updatedBy: "User 1.5",
-          updatedOn: "2021-10-01",
-        },
-      ],
-      currentTopic: "Topic 1",
-      metricsAndUnits: [
-        {
-          metric: "Metric 1",
-          unit: "Unit 1",
-          value: "10",
-        },
-        {
-          metric: "Metric 2",
-          unit: "Unit 2",
-          value: "10",
-        },
-      ],
-    },
-    {
-      id: "2",
-      name: "Device 2",
-      description: "Description 2",
-      createdOn: "2021-10-01",
-      createdBy: "User 2",
-      currentTopic: "Topic 2",
-      metricsAndUnits: [
-        {
-          metric: "Metric 1",
-          unit: "Unit 1",
-          value: "10",
-        },
-        {
-          metric: "Metric 2",
-          unit: "Unit 2",
-          value: "10",
-        },
-      ],
-    },
-    {
-      id: "3",
-      name: "Device 3",
-      description: "Description 3",
-      createdOn: "2021-10-01",
-      createdBy: "User 3",
-      currentTopic: "Topic 3",
-      metricsAndUnits: [
-        {
-          metric: "Metric 1",
-          unit: "Unit 1",
-          value: "10",
-        },
-        {
-          metric: "Metric 2",
-          unit: "Unit 2",
-          value: "10",
-        },
-      ],
-    },
-  ];
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
-  const dataSpaces: Space[] = [
-    {
-      id: "1",
-      name: "Space 1",
-      description: "Description 1",
-      createdOn: "2021-10-01",
-      createdBy: "User 1",
-      currentRoute: "/space/1",
-    },
+  const [loading, setLoading] = useState<boolean>(true);
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-    {
-      id: "2",
-      name: "Space 2",
-      description: "Description 1",
-      createdOn: "2021-10-01",
-      createdBy: "User 1",
-      currentRoute: "/space/1",
-      history: [
-        {
-          name: "cambio 1",
-          description: "descipcion 2",
-          updatedBy: "userr",
-          updatedOn: "565",
-          route: "ruta",
-        },
-      ],
-      devices: dataDevices,
-    },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      setTimeout(() => {
+        const dataDevices: Device[] = [
+          {
+            id: "1",
+            name: "Device 1",
+            description: "Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            history: [
+              {
+                name: "Device 1",
+                description: "Description 1",
+                topic: "Topic 1",
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                    value: "10",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                    value: "10",
+                  },
+                ],
+                updatedBy: "User 1.23",
+                updatedOn: "2021-10-01",
+              },
+              {
+                name: "Device 1.1",
+                description: "Description 1.1",
+                topic: "Topic 1.1",
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                    value: "20",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                    value: "20",
+                  },
+                ],
+                updatedBy: "User 1.5",
+                updatedOn: "2021-10-01",
+              },
+            ],
+            currentTopic: "Topic 1",
+            metricsAndUnits: [
+              {
+                metric: "Metric 1",
+                unit: "Unit 1",
+                value: "10",
+              },
+              {
+                metric: "Metric 2",
+                unit: "Unit 2",
+                value: "10",
+              },
+            ],
+          },
+          {
+            id: "2",
+            name: "Device 2",
+            description: "Description 2",
+            createdOn: "2021-10-01",
+            createdBy: "User 2",
+            currentTopic: "Topic 2",
+            metricsAndUnits: [
+              {
+                metric: "Metric 1",
+                unit: "Unit 1",
+                value: "10",
+              },
+              {
+                metric: "Metric 2",
+                unit: "Unit 2",
+                value: "10",
+              },
+            ],
+          },
+          {
+            id: "3",
+            name: "Device 3",
+            description: "Description 3",
+            createdOn: "2021-10-01",
+            createdBy: "User 3",
+            currentTopic: "Topic 3",
+            metricsAndUnits: [
+              {
+                metric: "Metric 1",
+                unit: "Unit 1",
+                value: "10",
+              },
+              {
+                metric: "Metric 2",
+                unit: "Unit 2",
+                value: "10",
+              },
+            ],
+          },
+        ];
+
+        const dataSpaces: Space[] = [
+          {
+            id: "1",
+            name: "Space 1",
+            description: "Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            currentRoute: "/space/1",
+          },
+
+          {
+            id: "2",
+            name: "Space 2",
+            description: "Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            currentRoute: "/space/1",
+            history: [
+              {
+                name: "cambio 1",
+                description: "descipcion 2",
+                updatedBy: "userr",
+                updatedOn: "565",
+                route: "ruta",
+              },
+            ],
+            devices: dataDevices,
+          },
+        ];
+        setDevices(dataDevices);
+        setSpaces(dataSpaces);
+        setDataLoaded(true);
+      }, 5000);
+    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    try {
+      fetchData();
+    } catch (error) {
+      alert(error);
+    } finally {
+      //  window.removeEventListener("resize", handleResize);
+      setLoading(false);
+    }
+  }, []);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
@@ -161,7 +188,41 @@ const Home = (): JSX.Element => {
             Dashboard
           </Typography>
 
-          <DashboardAccordion spaces={dataSpaces} />
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : !dataLoaded ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          ) : spaces.length === 0 ? (
+            <Typography
+              color="primary"
+              textAlign="left"
+              fontSize={{ xs: 16, sm: 24, lg: 24 }}
+              fontWeight={600}
+              p={0}
+              mt={{ xs: 6, sm: 0, lg: 0 }}
+              mb={2}
+            >
+              No hay ningún espacio cargado. Por favor, cree uno.
+            </Typography>
+          ) : (
+            <DashboardAccordion spaces={spaces} />
+          )}
         </Box>
       </Container>
     </Box>
