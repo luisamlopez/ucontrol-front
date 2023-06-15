@@ -3,6 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  Button,
   Typography,
 } from "@mui/material";
 import { Device, MetricAndUnit } from "../api/Device";
@@ -178,6 +179,9 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
             backgroundColor: "#ECEEEF",
             borderRadius: "8px",
             marginBottom: "10px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2",
           }}
           key={i}
         >
@@ -195,20 +199,41 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: {
-                    lg: "row",
-                    md: "row",
-                    xs: "column",
-                    sm: "column",
-                  },
+                  flexDirection: "column",
                   width: "100%",
                   borderRadius: "4px",
                   p: 1,
                   justifyContent: "space-between",
+                  alignItems: "left",
                 }}
               >
-                <DevicesDetails devices={space.devices} />
-                <Summary devices={space.devices} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: {
+                      lg: "row",
+                      md: "row",
+                      xs: "column",
+                      sm: "column",
+                    },
+                    width: "100%",
+                    borderRadius: "4px",
+                    p: 1,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <DevicesDetails devices={space.devices} />
+                  <Summary devices={space.devices} />
+                </Box>
+
+                <Button
+                  variant="text"
+                  sx={{
+                    alignSelf: "end",
+                  }}
+                >
+                  Ver espacio
+                </Button>
               </Box>
             ) : (
               <Typography> No hay dispositivos en este espacio</Typography>
