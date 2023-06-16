@@ -1,17 +1,21 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import History from "./pages/History";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import SpaceDeviceDetails from "./components/SpaceDeviceDetails";
 
 const App = (): JSX.Element => {
   return (
     <>
       <Routes>
         <Route path="/dashboard" element={<Home />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Register />} />
         <Route path="/history" element={<History />} />
+        <Route path="/spaceID/:spaceID" element={<SpaceDeviceDetails />} />
         {/* <Route path="/devices" element={<Devices />} />
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/settings" element={<Settings />} />

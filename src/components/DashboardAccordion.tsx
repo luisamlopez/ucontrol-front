@@ -14,6 +14,7 @@ import {
   KeyboardArrowDownRounded,
   WarningRounded,
 } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 export interface AccordionProps {
   spaces: Space[];
@@ -232,7 +233,15 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
                     alignSelf: "end",
                   }}
                 >
-                  Ver espacio
+                  <Link
+                    to={`/spaceID/${space.id}`}
+                    style={{
+                      textDecoration: "none",
+                      color: "#042F3E",
+                    }}
+                  >
+                    Ver espacio
+                  </Link>
                 </Button>
               </Box>
             ) : (
