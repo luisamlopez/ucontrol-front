@@ -19,6 +19,7 @@ import { useParams } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import DevicesDetailsText from "./DeviceDetailsText";
+import BarChart from "./Charts/BarChart";
 
 const options = ["Descargar CSV", "Descargar PDF"];
 
@@ -66,7 +67,7 @@ function Details(props: { device: Device }): JSX.Element {
   );
 }
 
-function Graph(props: { device: Device }): JSX.Element {
+function Graph(this: any, props: { device: Device }): JSX.Element {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -117,7 +118,7 @@ function Graph(props: { device: Device }): JSX.Element {
         borderRadius: "4px",
       }}
     >
-      <ButtonGroup
+      {/* <ButtonGroup
         variant="contained"
         ref={anchorRef}
         aria-label="split button"
@@ -132,7 +133,9 @@ function Graph(props: { device: Device }): JSX.Element {
           aria-expanded={open ? "true" : undefined}
           aria-label="select merge strategy"
           aria-haspopup="menu"
-          onClick={handleToggle}
+          onClick={() => {
+            setOpen((prevOpen) => !prevOpen);
+          }}
         >
           <KeyboardArrowDownRounded />
         </Button>
@@ -173,7 +176,8 @@ function Graph(props: { device: Device }): JSX.Element {
             </Paper>
           </Grow>
         )}
-      </Popper>
+      </Popper> */}
+      <BarChart />
     </Box>
   );
 }
@@ -348,7 +352,7 @@ const SpaceDeviceDetails = (): JSX.Element => {
         setDevices(dataDevices);
 
         setDataLoaded(true);
-      }, 5000);
+      }, 1000);
     };
 
     try {
