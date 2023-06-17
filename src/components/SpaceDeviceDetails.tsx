@@ -90,14 +90,9 @@ function Graph(props: { device: Device }): JSX.Element {
   props.device.metricsAndUnits.forEach((metric) => {
     chartData.data.push({
       argument: metric.metric,
-      value: Number(metric.value),
+      value: metric.value,
     });
   });
-
-  const chartComponents = [
-    <BarChart data={chartData.data} id={chartData.id} />,
-    <PieChart data={chartData.data} id={chartData.id} />,
-  ];
 
   return (
     <Box
@@ -119,7 +114,9 @@ function Graph(props: { device: Device }): JSX.Element {
     >
       {/* Mostrar un carusel con los gráficos */}
       {/* ToDo: ver como cambiar esto para que se renderice todo bien */}
-      <Carousel children={chartComponents} />
+      {/* <Carousel children={chartComponents} /> */}
+      <PieChart data={chartData.data} id={chartData.id} />
+      <BarChart data={chartData.data} id={chartData.id} />
     </Box>
   );
 }
@@ -201,21 +198,23 @@ const SpaceDeviceDetails = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
+            dataVisualizationType: ["pie", "bar"],
             history: [
               {
                 name: "Device 1",
                 description: "Description 1",
                 topic: "Topic 1",
+                dataVisualizationType: ["pie", "line"],
                 metricsAndUnits: [
                   {
                     metric: "Metric 1",
                     unit: "Unit 1",
-                    value: "10",
+                    value: 10,
                   },
                   {
                     metric: "Metric 2",
                     unit: "Unit 2",
-                    value: "10",
+                    value: 10,
                   },
                 ],
                 updatedBy: "User 1.23",
@@ -225,16 +224,17 @@ const SpaceDeviceDetails = (): JSX.Element => {
                 name: "Device 1.1",
                 description: "Description 1.1",
                 topic: "Topic 1.1",
+                dataVisualizationType: ["pie", "gauge"],
                 metricsAndUnits: [
                   {
                     metric: "Metric 1",
                     unit: "Unit 1",
-                    value: "20",
+                    value: 20,
                   },
                   {
                     metric: "Metric 2",
                     unit: "Unit 2",
-                    value: "20",
+                    value: 20,
                   },
                 ],
                 updatedBy: "User 1.5",
@@ -246,12 +246,12 @@ const SpaceDeviceDetails = (): JSX.Element => {
               {
                 metric: "Metric 1",
                 unit: "Unit 1",
-                value: "10",
+                value: 12,
               },
               {
                 metric: "Metric 2",
                 unit: "Unit 2",
-                value: "10",
+                value: 15,
               },
             ],
           },
@@ -262,16 +262,17 @@ const SpaceDeviceDetails = (): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 2",
             currentTopic: "Topic 2",
+            dataVisualizationType: ["pie", "bar"],
             metricsAndUnits: [
               {
                 metric: "Metric 1",
                 unit: "Unit 1",
-                value: "10",
+                value: 12,
               },
               {
                 metric: "Metric 2",
                 unit: "Unit 2",
-                value: "10",
+                value: 15,
               },
             ],
           },
@@ -282,16 +283,17 @@ const SpaceDeviceDetails = (): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 3",
             currentTopic: "Topic 3",
+            dataVisualizationType: ["pie"],
             metricsAndUnits: [
               {
                 metric: "Metric 1",
                 unit: "Unit 1",
-                value: "10",
+                value: 12,
               },
               {
                 metric: "Metric 2",
                 unit: "Unit 2",
-                value: "10",
+                value: 15,
               },
             ],
           },

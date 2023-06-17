@@ -17,8 +17,10 @@ import {
   Chart,
   PieSeries,
   Legend,
+  Tooltip,
 } from "@devexpress/dx-react-chart-material-ui";
 import { ChartData } from "../../api/ChartData";
+import { EventTracker } from "@devexpress/dx-react-chart";
 
 /**
  * Opciones del menú desplegable. Cuando se seleccione una opción, aparecerá un modal para elegir el rango de datos a descargar.
@@ -144,6 +146,8 @@ const PieChart = ({ id, data }: ChartData): JSX.Element => {
         <Chart data={data} height={250}>
           <Legend />
           <PieSeries valueField="value" argumentField="argument" />
+          <EventTracker />
+          <Tooltip />
         </Chart>
       </Paper>
     </Box>

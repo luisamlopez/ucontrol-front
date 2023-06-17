@@ -1,8 +1,10 @@
 export interface MetricAndUnit {
   metric: string;
   unit: string;
-  value: string;
+  value: number;
 }
+
+type DataVisualizationType = "line" | "bar" | "pie" | "area" | "gauge";
 
 export interface Device {
   id: string;
@@ -11,6 +13,7 @@ export interface Device {
   currentTopic: string;
   createdBy: string;
   createdOn: string;
+  dataVisualizationType: DataVisualizationType[];
   metricsAndUnits: MetricAndUnit[];
   history?: {
     name: string;
@@ -19,5 +22,6 @@ export interface Device {
     updatedBy: string;
     updatedOn: string;
     metricsAndUnits: MetricAndUnit[];
+    dataVisualizationType: DataVisualizationType[];
   }[];
 }
