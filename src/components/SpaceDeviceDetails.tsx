@@ -22,9 +22,7 @@ import DevicesDetailsText from "./DeviceDetailsText";
 import BarChart from "./Charts/BarChart";
 import PieChart from "./Charts/PieChart";
 import { ChartData } from "../api/ChartData";
-import Carousel from "./Carousel";
-
-const options = ["Descargar CSV", "Descargar PDF"];
+import ChartCarousel from "./ChartCarousel";
 
 /**
  *
@@ -114,9 +112,10 @@ function Graph(props: { device: Device }): JSX.Element {
     >
       {/* Mostrar un carusel con los gráficos */}
       {/* ToDo: ver como cambiar esto para que se renderice todo bien */}
-      {/* <Carousel children={chartComponents} /> */}
-      <PieChart data={chartData.data} id={chartData.id} />
-      <BarChart data={chartData.data} id={chartData.id} />
+      {/* <ChartCarousel children={chartComponents} /> */}
+      {/* <PieChart data={chartData.data} id={chartData.id} />
+      <BarChart data={chartData.data} id={chartData.id} /> */}
+      <ChartCarousel device={props.device} />
     </Box>
   );
 }
