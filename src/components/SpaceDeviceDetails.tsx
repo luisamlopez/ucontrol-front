@@ -30,6 +30,8 @@ import ChartCarousel from "./ChartCarousel";
  * @returns  un componente con los detalles del dispositivo
  */
 function Details(props: { device: Device }): JSX.Element {
+  const types = props.device.dataVisualizationType;
+
   return (
     <Box
       sx={{
@@ -48,7 +50,7 @@ function Details(props: { device: Device }): JSX.Element {
       }}
     >
       <Typography fontWeight={"bold"} textAlign={"left"} color={"primary.main"}>
-        Detalles del dispositivo
+        Detalles del dispositivo {types.flatMap((type) => type)}
       </Typography>
 
       <DevicesDetailsText
@@ -110,11 +112,6 @@ function Graph(props: { device: Device }): JSX.Element {
         borderRadius: "4px",
       }}
     >
-      {/* Mostrar un carusel con los gráficos */}
-      {/* ToDo: ver como cambiar esto para que se renderice todo bien */}
-      {/* <ChartCarousel children={chartComponents} /> */}
-      {/* <PieChart data={chartData.data} id={chartData.id} />
-      <BarChart data={chartData.data} id={chartData.id} /> */}
       <ChartCarousel device={props.device} />
     </Box>
   );
@@ -177,215 +174,25 @@ function DeviceDetails(props: { device: Device }): JSX.Element {
   );
 }
 
-const SpaceDeviceDetails = (): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+interface Props {
+  devices: Device[];
+}
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-
-  const { spaceID } = useParams<{ spaceID: string }>();
-
-  useEffect(() => {
-    /* Buscar en la base de datos con el id del parametro del URL los dispositivos */
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: "2021-10-01",
-            createdBy: "User 1",
-            dataVisualizationType: ["pie", "bar"],
-            history: [
-              {
-                name: "Device 1",
-                description: "Description 1",
-                topic: "Topic 1",
-                dataVisualizationType: ["pie", "line"],
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                    value: 10,
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                    value: 10,
-                  },
-                ],
-                updatedBy: "User 1.23",
-                updatedOn: "2021-10-01",
-              },
-              {
-                name: "Device 1.1",
-                description: "Description 1.1",
-                topic: "Topic 1.1",
-                dataVisualizationType: ["pie", "gauge"],
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                    value: 20,
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                    value: 20,
-                  },
-                ],
-                updatedBy: "User 1.5",
-                updatedOn: "2021-10-01",
-              },
-            ],
-            currentTopic: "Topic 1",
-            metricsAndUnits: [
-              {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: 12,
-              },
-              {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: 15,
-              },
-            ],
-          },
-          {
-            id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: "2021-10-01",
-            createdBy: "User 2",
-            currentTopic: "Topic 2",
-            dataVisualizationType: ["pie", "bar"],
-            metricsAndUnits: [
-              {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: 12,
-              },
-              {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: 15,
-              },
-            ],
-          },
-          {
-            id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: "2021-10-01",
-            createdBy: "User 3",
-            currentTopic: "Topic 3",
-            dataVisualizationType: ["pie"],
-            metricsAndUnits: [
-              {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: 12,
-              },
-              {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: 15,
-              },
-            ],
-          },
-        ];
-
-        setDevices(dataDevices);
-
-        setDataLoaded(true);
-      }, 1000);
-    };
-
-    try {
-      fetchData();
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
   return (
-    <Box display="flex" alignItems="center" justifyContent="left">
-      <Sidebar />
-      <Container sx={{ m: 0, p: 0, width: "100%" }}>
-        <Box
-          display={"flex"}
-          flexDirection="column"
-          sx={{
-            p: 2,
-          }}
-        >
-          <Typography
-            color="primary"
-            textAlign="left"
-            fontSize={{ xs: 24, sm: 48, lg: 48 }}
-            fontWeight={600}
-            p={0}
-            mt={{ xs: 6, sm: 0, lg: 0 }}
-            mb={2}
-          >
-            Dispositivos del espacio {spaceID} (buscar en BD)
-          </Typography>
-
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : devices.length === 0 ? (
-            <Typography
-              color="primary"
-              textAlign="left"
-              fontSize={{ xs: 16, sm: 24, lg: 24 }}
-              fontWeight={600}
-              p={0}
-              mt={{ xs: 6, sm: 0, lg: 0 }}
-              mb={2}
-            >
-              Error: no se pudieron cargar los dispositivos.
-            </Typography>
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                mb: 5,
-              }}
-            >
-              {devices.map((device, index) => (
-                <DeviceDetails device={device} key={index} />
-              ))}
-            </Box>
-          )}
-        </Box>
-      </Container>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        mb: 5,
+      }}
+    >
+      {devices.map((device, index) => (
+        <DeviceDetails device={device} key={index} />
+      ))}
     </Box>
   );
 };

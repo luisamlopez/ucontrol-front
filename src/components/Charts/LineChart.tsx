@@ -15,7 +15,7 @@ import {
   ArgumentAxis,
   ValueAxis,
   Chart,
-  BarSeries,
+  LineSeries,
   ZoomAndPan,
   Tooltip,
 } from "@devexpress/dx-react-chart-material-ui";
@@ -25,7 +25,7 @@ import { EventTracker } from "@devexpress/dx-react-chart";
 
 const options = ["Descargar CSV", "Descargar PDF"];
 
-const BarChart = ({ id, data }: ChartData): JSX.Element => {
+const LineChart = ({ id, data }: ChartData): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -143,7 +143,7 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
         <Chart data={data} height={250}>
           <ArgumentAxis />
           <ValueAxis />
-          <BarSeries valueField="value" argumentField="argument" />
+          <LineSeries valueField="value" argumentField="argument" />
           <EventTracker />
           <Tooltip />
           <ZoomAndPan interactionWithValues={"both"} />
@@ -153,4 +153,4 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
   );
 };
 
-export default BarChart;
+export default LineChart;

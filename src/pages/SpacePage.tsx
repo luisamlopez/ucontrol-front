@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
+import { useParams } from "react-router-dom";
+import SpaceDeviceDetails from "../components/SpaceDeviceDetails";
 
 const SpacePage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -10,6 +12,8 @@ const SpacePage = (): JSX.Element => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+
+  const { spaceID } = useParams<{ spaceID: string }>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +89,7 @@ const SpacePage = (): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 2",
             currentTopic: "Topic 2",
-            dataVisualizationType: ["pie", "bar"],
+            dataVisualizationType: ["bar", "line"],
             metricsAndUnits: [
               {
                 metric: "Metric 1",
@@ -184,7 +188,7 @@ const SpacePage = (): JSX.Element => {
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
           >
-            Espacio
+            Dispositivos del espacio {spaceID} (buscar en BD)
           </Typography>
           {loading ? (
             <Box
@@ -211,7 +215,7 @@ const SpacePage = (): JSX.Element => {
               Error: no se pudieron cargar los dispositivos.
             </Typography>
           ) : (
-            <></>
+            <SpaceDeviceDetails devices={devices} />
           )}
         </Box>
       </Container>
@@ -219,4 +223,4 @@ const SpacePage = (): JSX.Element => {
   );
 };
 
-export default SpacePage();
+export default SpacePage;

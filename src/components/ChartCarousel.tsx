@@ -8,6 +8,7 @@ import { Device } from "../api/Device";
 import { ChartData } from "../api/ChartData";
 import BarChart from "./Charts/BarChart";
 import PieChart from "./Charts/PieChart";
+import LineChart from "./Charts/LineChart";
 
 type ChartCarouselProps = {
   device: Device;
@@ -72,8 +73,7 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
               <PieChart id={device.id} data={chartData.data} />
             )}
             {type === "line" && (
-              // <LineChart id={device.id} data={chartData.data} />
-              <Box>LineChart</Box>
+              <LineChart id={device.id} data={chartData.data} />
             )}
             {type === "area" && (
               // <AreaChart id={device.id} data={chartData.data} />
