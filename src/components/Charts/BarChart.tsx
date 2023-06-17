@@ -17,17 +17,11 @@ import {
   Chart,
   BarSeries,
 } from "@devexpress/dx-react-chart-material-ui";
+import { ChartData } from "../../api/ChartData";
 
 const options = ["Descargar CSV", "Descargar PDF"];
-const data = [
-  { argument: "Monday", value: 30 },
-  { argument: "Tuesday", value: 20 },
-  { argument: "Wednesday", value: 10 },
-  { argument: "Thursday", value: 50 },
-  { argument: "Friday", value: 60 },
-];
 
-const BarChart = (): JSX.Element => {
+const BarChart = ({ id, data }: ChartData): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);

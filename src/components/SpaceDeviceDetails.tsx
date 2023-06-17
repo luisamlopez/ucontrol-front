@@ -21,9 +21,16 @@ import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import DevicesDetailsText from "./DeviceDetailsText";
 import BarChart from "./Charts/BarChart";
 import PieChart from "./Charts/PieChart";
+import { ChartData } from "../api/ChartData";
+import Carousel from "./Carousel";
 
 const options = ["Descargar CSV", "Descargar PDF"];
 
+/**
+ *
+ * @param props recibe un dispositivo
+ * @returns  un componente con los detalles del dispositivo
+ */
 function Details(props: { device: Device }): JSX.Element {
   return (
     <Box
@@ -68,7 +75,30 @@ function Details(props: { device: Device }): JSX.Element {
   );
 }
 
-function Graph(this: any, props: { device: Device }): JSX.Element {
+/**
+ *
+ * @param props recibe un dispositivo para mostrar su grafica
+ * @returns  un componente que muestra la grafica de un dispositivo
+ */
+
+function Graph(props: { device: Device }): JSX.Element {
+  let chartData: ChartData = {
+    id: props.device.id,
+    data: [],
+  };
+
+  props.device.metricsAndUnits.forEach((metric) => {
+    chartData.data.push({
+      argument: metric.metric,
+      value: Number(metric.value),
+    });
+  });
+
+  const chartComponents = [
+    <BarChart data={chartData.data} id={chartData.id} />,
+    <PieChart data={chartData.data} id={chartData.id} />,
+  ];
+
   return (
     <Box
       sx={{
@@ -87,11 +117,18 @@ function Graph(this: any, props: { device: Device }): JSX.Element {
         borderRadius: "4px",
       }}
     >
-      <PieChart />
+      {/* Mostrar un carusel con los gráficos */}
+      {/* ToDo: ver como cambiar esto para que se renderice todo bien */}
+      <Carousel children={chartComponents} />
     </Box>
   );
 }
 
+/**
+ *
+ * @param props recibe un dispositivo para mostrar sus detalles
+ * @returns  un componente que muestra los detalles de un dispositivo: nombre, descripcion, fecha de creacion, topico y instrucciones con su grupo de gráficos
+ */
 function DeviceDetails(props: { device: Device }): JSX.Element {
   return (
     <Box
@@ -154,6 +191,7 @@ const SpaceDeviceDetails = (): JSX.Element => {
   const { spaceID } = useParams<{ spaceID: string }>();
 
   useEffect(() => {
+    /* Buscar en la base de datos con el id del parametro del URL los dispositivos */
     const fetchData = async () => {
       setTimeout(() => {
         const dataDevices: Device[] = [
