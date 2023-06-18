@@ -92,11 +92,6 @@ function DeviceDetails(object: Device) {
                         <TableCell>{history.name}</TableCell>
                         <TableCell>{history.description}</TableCell>
                         <TableCell>{history.topic}</TableCell>
-                        <TableCell>
-                          {history.metricsAndUnits
-                            ?.map((obj) => `${obj.metric} - ${obj.unit}`)
-                            .join(", ")}
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

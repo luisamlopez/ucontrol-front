@@ -6,7 +6,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { Device, MetricAndUnit } from "../api/Device";
+import { Device, DeviceValues, MetricAndUnit } from "../api/Device";
 import { Space } from "../api/Space";
 import { useState } from "react";
 import {
@@ -78,10 +78,10 @@ function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
 function Summary({ devices }: { devices: Device[] }): JSX.Element {
   //Get array of the units of each device and another of the values of each device
 
-  let values: MetricAndUnit[] = [];
+  let values: DeviceValues[] = [];
 
   devices.map((device) => {
-    for (let metric of device.metricsAndUnits) {
+    for (let metric of device.values) {
       values.push(metric);
     }
   });
@@ -125,10 +125,13 @@ function Summary({ devices }: { devices: Device[] }): JSX.Element {
       >
         <Box>
           <ul>
-            {values.map((value) => (
+            {devices.map((device) => (
               <li>
                 <Typography textAlign={"left"}>
-                  {value.metric} actual: {value.value} {value.unit}
+                  {device.name}:&nbsp;
+                  {device.values[device.values.length - 1].value}&nbsp; tomada
+                  el&nbsp;
+                  {device.values[device.values.length - 1].timestamp}
                 </Typography>
               </li>
             ))}

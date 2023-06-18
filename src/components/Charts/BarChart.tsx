@@ -10,28 +10,30 @@ import {
   Paper,
   Popper,
 } from "@mui/material";
+
 import { useState, useRef } from "react";
+
+import { ChartDataProps } from "../../api/ChartData";
 import {
   ArgumentAxis,
-  ValueAxis,
-  Chart,
   BarSeries,
-  ZoomAndPan,
+  Chart,
   Tooltip,
+  ValueAxis,
+  ZoomAndPan,
 } from "@devexpress/dx-react-chart-material-ui";
-
-import { ChartData } from "../../api/ChartData";
 import { EventTracker } from "@devexpress/dx-react-chart";
 
-const options = ["Descargar CSV", "Descargar PDF"];
+const downloadOptions = ["Descargar CSV", "Descargar PDF"];
 
-const BarChart = ({ id, data }: ChartData): JSX.Element => {
+const BarChart = ({ id, values }: ChartDataProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
   const [boxMarginBottom, setBoxMarginBottom] = useState(0);
+
   const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]} id: ${id}}`);
+    console.info(`You clicked ${downloadOptions[selectedIndex]}`);
   };
 
   const handleMenuItemClick = (
@@ -41,7 +43,7 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
     setSelectedIndex(index);
     setOpen(false);
     setBoxMarginBottom(0);
-    alert("Descargando " + options[index]);
+    alert("Descargando " + downloadOptions[index]);
   };
 
   const handleToggle = () => {
@@ -59,6 +61,18 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
 
     setOpen(false);
   };
+
+  let finalData: { tiempo: string; valor: number }[] = [];
+
+  values.forEach((item, i) => {
+    finalData[i] = {
+      tiempo: item.timestamp,
+      valor: item.value as number,
+    };
+  });
+
+  console.log(finalData);
+
   return (
     <Box
       sx={{
@@ -82,7 +96,7 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
           mb: 2,
         }}
       >
-        <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+        <Button onClick={handleClick}>{downloadOptions[selectedIndex]}</Button>
         <Button
           size="small"
           aria-controls={open ? "split-button-menu" : undefined}
@@ -118,7 +132,7 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
-                  {options.map((option, index) => (
+                  {downloadOptions.map((option, index) => (
                     <MenuItem
                       key={option}
                       disabled={index === 2}
@@ -134,16 +148,17 @@ const BarChart = ({ id, data }: ChartData): JSX.Element => {
           </Grow>
         )}
       </Popper>
+
       <Paper
         sx={{
           mb: 2,
           zIndex: 0,
         }}
       >
-        <Chart data={data} height={250}>
+        <Chart data={finalData} height={250}>
           <ArgumentAxis />
           <ValueAxis />
-          <BarSeries valueField="value" argumentField="argument" />
+          <BarSeries valueField="valor" argumentField="tiempo" />
           <EventTracker />
           <Tooltip />
           <ZoomAndPan interactionWithValues={"both"} />

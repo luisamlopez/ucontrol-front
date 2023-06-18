@@ -11,21 +11,21 @@ import {
   Popper,
 } from "@mui/material";
 import { useState, useRef } from "react";
+
+import { ChartDataProps } from "../../api/ChartData";
+import { EventTracker } from "@devexpress/dx-react-chart";
 import {
   ArgumentAxis,
-  ValueAxis,
   Chart,
   LineSeries,
-  ZoomAndPan,
   Tooltip,
+  ValueAxis,
+  ZoomAndPan,
 } from "@devexpress/dx-react-chart-material-ui";
-
-import { ChartData } from "../../api/ChartData";
-import { EventTracker } from "@devexpress/dx-react-chart";
 
 const options = ["Descargar CSV", "Descargar PDF"];
 
-const LineChart = ({ id, data }: ChartData): JSX.Element => {
+const LineChart = ({ id, values }: ChartDataProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -59,6 +59,16 @@ const LineChart = ({ id, data }: ChartData): JSX.Element => {
 
     setOpen(false);
   };
+
+  let finalData: { tiempo: string; valor: number }[] = [];
+
+  values.forEach((item, i) => {
+    finalData[i] = {
+      tiempo: item.timestamp,
+      valor: item.value as number,
+    };
+  });
+
   return (
     <Box
       sx={{
@@ -140,10 +150,10 @@ const LineChart = ({ id, data }: ChartData): JSX.Element => {
           zIndex: 0,
         }}
       >
-        <Chart data={data} height={250}>
+        <Chart data={finalData} height={250}>
           <ArgumentAxis />
           <ValueAxis />
-          <LineSeries valueField="value" argumentField="argument" />
+          <LineSeries valueField="valor" argumentField="tiempo" />
           <EventTracker />
           <Tooltip />
           <ZoomAndPan interactionWithValues={"both"} />

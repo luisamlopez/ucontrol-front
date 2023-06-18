@@ -1,28 +1,7 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  CircularProgress,
-  ClickAwayListener,
-  Container,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-  Typography,
-} from "@mui/material";
-import { useState, useEffect, useRef } from "react";
+import { Box, Typography } from "@mui/material";
 import { Device } from "../api/Device";
-import { Space } from "../api/Space";
-import { useParams } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import DevicesDetailsText from "./DeviceDetailsText";
-import BarChart from "./Charts/BarChart";
-import PieChart from "./Charts/PieChart";
-import { ChartData } from "../api/ChartData";
-import ChartCarousel from "./ChartCarousel";
+import ChartCarousel from "./Charts/ChartCarousel";
 
 /**
  *
@@ -50,7 +29,7 @@ function Details(props: { device: Device }): JSX.Element {
       }}
     >
       <Typography fontWeight={"bold"} textAlign={"left"} color={"primary.main"}>
-        Detalles del dispositivo {types.flatMap((type) => type)}
+        Detalles del dispositivo
       </Typography>
 
       <DevicesDetailsText
@@ -67,9 +46,7 @@ function Details(props: { device: Device }): JSX.Element {
 
       <DevicesDetailsText
         title={"Instrucciones: "}
-        value={
-          "props.device.instructions Pasadas las 6 pm enviar notificaciones si se detectan movimientos."
-        }
+        value={"props.device.instructions"}
       />
     </Box>
   );
@@ -82,17 +59,17 @@ function Details(props: { device: Device }): JSX.Element {
  */
 
 function Graph(props: { device: Device }): JSX.Element {
-  let chartData: ChartData = {
-    id: props.device.id,
-    data: [],
-  };
+  // let chartData: ChartDataProps = {
+  //   id: props.device.id,
+  //   data: [],
+  // };
 
-  props.device.metricsAndUnits.forEach((metric) => {
-    chartData.data.push({
-      argument: metric.metric,
-      value: metric.value,
-    });
-  });
+  // props.device.metricsAndUnits.forEach((metric) => {
+  //   chartData.data.push({
+  //     argument: metric.metric,
+  //     value: metric.value,
+  //   });
+  // });
 
   return (
     <Box

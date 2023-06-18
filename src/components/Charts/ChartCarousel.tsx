@@ -4,11 +4,11 @@ import {
   KeyboardArrowRightRounded as NavigateNext,
 } from "@mui/icons-material";
 import { useState, useEffect } from "react";
-import { Device } from "../api/Device";
-import { ChartData } from "../api/ChartData";
-import BarChart from "./Charts/BarChart";
-import PieChart from "./Charts/PieChart";
-import LineChart from "./Charts/LineChart";
+import { Device } from "../../api/Device";
+import { ChartDataProps } from "../../api/ChartData";
+import BarChart from "./BarChart";
+import PieChart from "./PieChart";
+import LineChart from "./LineChart";
 
 type ChartCarouselProps = {
   device: Device;
@@ -20,18 +20,6 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
   const [activeIndex, setActiveIndex] = useState(0);
 
   const types = device.dataVisualizationType;
-
-  let chartData: ChartData = {
-    id: device.id,
-    data: [],
-  };
-
-  device.metricsAndUnits.forEach((metric) => {
-    chartData.data.push({
-      argument: metric.metric,
-      value: metric.value,
-    });
-  });
 
   const handlePrevClick = () => {
     setActiveIndex((prevIndex) =>
@@ -67,20 +55,16 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
             }}
           >
             {type === "bar" && (
-              <BarChart id={device.id} data={chartData.data} />
+              <BarChart id={device.id} values={device.values} />
             )}
             {type === "pie" && (
-              <PieChart id={device.id} data={chartData.data} />
+              <PieChart id={device.id} values={device.values} />
             )}
             {type === "line" && (
-              <LineChart id={device.id} data={chartData.data} />
-            )}
-            {type === "area" && (
-              // <AreaChart id={device.id} data={chartData.data} />
-              <Box>AreaChart</Box>
+              <LineChart id={device.id} values={device.values} />
             )}
             {type === "gauge" && (
-              // <Gauge id={device.id} data={chartData.data} />
+              // <Gauge id={device.id} values={device.values} />
               <Box>Gauge</Box>
             )}
           </Box>

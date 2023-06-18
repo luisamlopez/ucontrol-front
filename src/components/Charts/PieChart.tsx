@@ -11,23 +11,21 @@ import {
   Popper,
 } from "@mui/material";
 import { useState, useRef } from "react";
+import { ChartDataProps } from "../../api/ChartData";
+import { EventTracker } from "@devexpress/dx-react-chart";
 import {
-  ArgumentAxis,
-  ValueAxis,
   Chart,
-  PieSeries,
   Legend,
+  PieSeries,
   Tooltip,
 } from "@devexpress/dx-react-chart-material-ui";
-import { ChartData } from "../../api/ChartData";
-import { EventTracker } from "@devexpress/dx-react-chart";
 
 /**
  * Opciones del menú desplegable. Cuando se seleccione una opción, aparecerá un modal para elegir el rango de datos a descargar.
  */
 const options = ["Descargar CSV", "Descargar PDF"];
 
-const PieChart = ({ id, data }: ChartData): JSX.Element => {
+const PieChart = ({ id, values }: ChartDataProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -61,6 +59,16 @@ const PieChart = ({ id, data }: ChartData): JSX.Element => {
 
     setOpen(false);
   };
+
+  let finalData: { tiempo: string; valor: number }[] = [];
+
+  values.forEach((item, i) => {
+    finalData[i] = {
+      tiempo: item.timestamp,
+      valor: item.value as number,
+    };
+  });
+
   return (
     <Box
       sx={{
@@ -143,9 +151,9 @@ const PieChart = ({ id, data }: ChartData): JSX.Element => {
           zIndex: 0,
         }}
       >
-        <Chart data={data} height={250}>
+        <Chart data={finalData} height={250}>
           <Legend />
-          <PieSeries valueField="value" argumentField="argument" />
+          <PieSeries valueField="valor" argumentField="tiempo" />
           <EventTracker />
           <Tooltip />
         </Chart>

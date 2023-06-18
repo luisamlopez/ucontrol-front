@@ -1,10 +1,15 @@
 export interface MetricAndUnit {
   metric: string;
   unit: string;
-  value: number;
 }
 
-type DataVisualizationType = "line" | "bar" | "pie" | "area" | "gauge";
+type DataVisualizationType = "line" | "bar" | "pie" | "gauge";
+
+export interface DeviceValues {
+  timestamp: string;
+  value: number | string | boolean;
+  metricsAndUnits: MetricAndUnit[];
+}
 
 export interface Device {
   id: string;
@@ -13,15 +18,15 @@ export interface Device {
   currentTopic: string;
   createdBy: string;
   createdOn: string;
+  values: DeviceValues[];
   dataVisualizationType: DataVisualizationType[];
-  metricsAndUnits: MetricAndUnit[];
   history?: {
     name: string;
     description: string;
     topic: string;
     updatedBy: string;
     updatedOn: string;
-    metricsAndUnits: MetricAndUnit[];
     dataVisualizationType: DataVisualizationType[];
+    values: DeviceValues[];
   }[];
 }
