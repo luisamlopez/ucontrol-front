@@ -126,17 +126,6 @@ function DeviceDetails(device: Device) {
                   </Typography>
                   <Typography>{history.topic}</Typography>
                 </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Unidades y métricas:
-                  </Typography>
-                  <Typography mb={2}>
-                    {history.metricsAndUnits
-                      ?.map((obj) => `${obj.metric} - ${obj.unit}`)
-                      .join(", ")}
-                  </Typography>
-                </Box>
               </Box>
             ))}
           </Box>

@@ -3,14 +3,17 @@ import { useState, useEffect } from "react";
 import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
+import { useParams } from "react-router-dom";
+import SpaceDeviceDetails from "../components/SpaceDeviceDetails";
 
 const SpacePage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [spaces, setSpaces] = useState<Space[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+
+  const { spaceID } = useParams<{ spaceID: string }>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,23 +25,58 @@ const SpacePage = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
+            dataVisualizationType: ["pie", "bar"],
             history: [
               {
                 name: "Device 1",
                 description: "Description 1",
                 topic: "Topic 1",
-                metricsAndUnits: [
+                dataVisualizationType: ["pie", "line"],
+                values: [
                   {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                    value: "10",
+                    timestamp: "2021-10-01",
+                    value: 10,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
                   },
                   {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                    value: "10",
+                    timestamp: "2021-10-02",
+                    value: 20,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-03",
+                    value: 30,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
                   },
                 ],
+
                 updatedBy: "User 1.23",
                 updatedOn: "2021-10-01",
               },
@@ -46,16 +84,49 @@ const SpacePage = (): JSX.Element => {
                 name: "Device 1.1",
                 description: "Description 1.1",
                 topic: "Topic 1.1",
-                metricsAndUnits: [
+                dataVisualizationType: ["pie", "gauge"],
+                values: [
                   {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                    value: "20",
+                    timestamp: "2021-10-01",
+                    value: 10,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
                   },
                   {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                    value: "20",
+                    timestamp: "2021-10-02",
+                    value: 20,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-03",
+                    value: 30,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
                   },
                 ],
                 updatedBy: "User 1.5",
@@ -63,16 +134,49 @@ const SpacePage = (): JSX.Element => {
               },
             ],
             currentTopic: "Topic 1",
-            metricsAndUnits: [
+
+            values: [
               {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: "10",
+                timestamp: "2021-10-01",
+                value: 10,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
               },
               {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: "10",
+                timestamp: "2021-10-02",
+                value: 20,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-03",
+                value: 30,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
               },
             ],
           },
@@ -83,16 +187,73 @@ const SpacePage = (): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 2",
             currentTopic: "Topic 2",
-            metricsAndUnits: [
+            dataVisualizationType: ["bar", "line"],
+            values: [
               {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: "10",
+                timestamp: "2021-10-01",
+                value: 10,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
               },
               {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: "10",
+                timestamp: "2021-10-02",
+                value: 20,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                  {
+                    metric: "Metric 3",
+                    unit: "Unit 3",
+                  },
+                  {
+                    metric: "Metric 4",
+                    unit: "Unit 4",
+                  },
+                  {
+                    metric: "Metric 5",
+                    unit: "Unit 5",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-03",
+                value: 30,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                  {
+                    metric: "Metric 3",
+                    unit: "Unit 3",
+                  },
+                  {
+                    metric: "Metric 4",
+                    unit: "Unit 4",
+                  },
+                  {
+                    metric: "Metric 5",
+                    unit: "Unit 5",
+                  },
+                ],
               },
             ],
           },
@@ -103,16 +264,49 @@ const SpacePage = (): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 3",
             currentTopic: "Topic 3",
-            metricsAndUnits: [
+            dataVisualizationType: ["pie"],
+            values: [
               {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: "10",
+                timestamp: "2021-10-01",
+                value: 10,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
               },
               {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: "10",
+                timestamp: "2021-10-02",
+                value: 20,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-03",
+                value: 30,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
               },
             ],
           },
@@ -148,7 +342,7 @@ const SpacePage = (): JSX.Element => {
         setDevices(dataDevices);
         setSpaces(dataSpaces);
         setDataLoaded(true);
-      }, 5000);
+      }, 2000);
     };
 
     try {
@@ -180,7 +374,7 @@ const SpacePage = (): JSX.Element => {
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
           >
-            Espacio
+            Dispositivos del espacio {spaceID} (buscar en BD)
           </Typography>
           {loading ? (
             <Box
@@ -207,7 +401,7 @@ const SpacePage = (): JSX.Element => {
               Error: no se pudieron cargar los dispositivos.
             </Typography>
           ) : (
-            <></>
+            <SpaceDeviceDetails devices={devices} />
           )}
         </Box>
       </Container>
@@ -215,4 +409,4 @@ const SpacePage = (): JSX.Element => {
   );
 };
 
-export default SpacePage();
+export default SpacePage;

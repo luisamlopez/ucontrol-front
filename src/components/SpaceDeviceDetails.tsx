@@ -1,27 +1,13 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  CircularProgress,
-  ClickAwayListener,
-  Container,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-  Typography,
-} from "@mui/material";
-import { useState, useEffect, useRef } from "react";
+import { Box, Typography } from "@mui/material";
 import { Device } from "../api/Device";
-import { Space } from "../api/Space";
-import { useParams } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import DevicesDetailsText from "./DeviceDetailsText";
+import ChartCarousel from "./Charts/ChartCarousel";
 
-const options = ["Descargar CSV", "Descargar PDF"];
-
+/**
+ *
+ * @param props recibe un dispositivo
+ * @returns  un componente con los detalles del dispositivo
+ */
 function Details(props: { device: Device }): JSX.Element {
   return (
     <Box
@@ -58,46 +44,30 @@ function Details(props: { device: Device }): JSX.Element {
 
       <DevicesDetailsText
         title={"Instrucciones: "}
-        value={
-          "props.device.instructions Pasadas las 6 pm enviar notificaciones si se detectan movimientos."
-        }
+        value={"props.device.instructions"}
       />
     </Box>
   );
 }
 
+/**
+ *
+ * @param props recibe un dispositivo para mostrar su grafica
+ * @returns  un componente que muestra la grafica de un dispositivo
+ */
+
 function Graph(props: { device: Device }): JSX.Element {
-  const [open, setOpen] = useState(false);
-  const anchorRef = useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(1);
+  // let chartData: ChartDataProps = {
+  //   id: props.device.id,
+  //   data: [],
+  // };
 
-  const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`);
-  };
-
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    index: number
-  ) => {
-    setSelectedIndex(index);
-    setOpen(false);
-    alert("Descargando " + options[index]);
-  };
-
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
-      return;
-    }
-
-    setOpen(false);
-  };
+  // props.device.metricsAndUnits.forEach((metric) => {
+  //   chartData.data.push({
+  //     argument: metric.metric,
+  //     value: metric.value,
+  //   });
+  // });
 
   return (
     <Box
@@ -117,67 +87,16 @@ function Graph(props: { device: Device }): JSX.Element {
         borderRadius: "4px",
       }}
     >
-      <ButtonGroup
-        variant="contained"
-        ref={anchorRef}
-        aria-label="split button"
-        sx={{
-          alignSelf: "flex-end",
-        }}
-      >
-        <Button onClick={handleClick}>{options[selectedIndex]}</Button>
-        <Button
-          size="small"
-          aria-controls={open ? "split-button-menu" : undefined}
-          aria-expanded={open ? "true" : undefined}
-          aria-label="select merge strategy"
-          aria-haspopup="menu"
-          onClick={handleToggle}
-        >
-          <KeyboardArrowDownRounded />
-        </Button>
-      </ButtonGroup>
-      <Popper
-        sx={{
-          zIndex: 1,
-        }}
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-      >
-        {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin:
-                placement === "bottom" ? "center top" : "center bottom",
-            }}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClose}>
-                <MenuList id="split-button-menu" autoFocusItem>
-                  {options.map((option, index) => (
-                    <MenuItem
-                      key={option}
-                      disabled={index === 2}
-                      selected={index === selectedIndex}
-                      onClick={(event) => handleMenuItemClick(event, index)}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
+      <ChartCarousel device={props.device} />
     </Box>
   );
 }
 
+/**
+ *
+ * @param props recibe un dispositivo para mostrar sus detalles
+ * @returns  un componente que muestra los detalles de un dispositivo: nombre, descripcion, fecha de creacion, topico y instrucciones con su grupo de gráficos
+ */
 function DeviceDetails(props: { device: Device }): JSX.Element {
   return (
     <Box
@@ -230,209 +149,25 @@ function DeviceDetails(props: { device: Device }): JSX.Element {
   );
 }
 
-const SpaceDeviceDetails = (): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+interface Props {
+  devices: Device[];
+}
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-
-  const { spaceID } = useParams<{ spaceID: string }>();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: "2021-10-01",
-            createdBy: "User 1",
-            history: [
-              {
-                name: "Device 1",
-                description: "Description 1",
-                topic: "Topic 1",
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                    value: "10",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                    value: "10",
-                  },
-                ],
-                updatedBy: "User 1.23",
-                updatedOn: "2021-10-01",
-              },
-              {
-                name: "Device 1.1",
-                description: "Description 1.1",
-                topic: "Topic 1.1",
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                    value: "20",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                    value: "20",
-                  },
-                ],
-                updatedBy: "User 1.5",
-                updatedOn: "2021-10-01",
-              },
-            ],
-            currentTopic: "Topic 1",
-            metricsAndUnits: [
-              {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: "10",
-              },
-              {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: "10",
-              },
-            ],
-          },
-          {
-            id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: "2021-10-01",
-            createdBy: "User 2",
-            currentTopic: "Topic 2",
-            metricsAndUnits: [
-              {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: "10",
-              },
-              {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: "10",
-              },
-            ],
-          },
-          {
-            id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: "2021-10-01",
-            createdBy: "User 3",
-            currentTopic: "Topic 3",
-            metricsAndUnits: [
-              {
-                metric: "Metric 1",
-                unit: "Unit 1",
-                value: "10",
-              },
-              {
-                metric: "Metric 2",
-                unit: "Unit 2",
-                value: "10",
-              },
-            ],
-          },
-        ];
-
-        setDevices(dataDevices);
-
-        setDataLoaded(true);
-      }, 5000);
-    };
-
-    try {
-      fetchData();
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
   return (
-    <Box display="flex" alignItems="center" justifyContent="left">
-      <Sidebar />
-      <Container sx={{ m: 0, p: 0, width: "100%" }}>
-        <Box
-          display={"flex"}
-          flexDirection="column"
-          sx={{
-            p: 2,
-          }}
-        >
-          <Typography
-            color="primary"
-            textAlign="left"
-            fontSize={{ xs: 24, sm: 48, lg: 48 }}
-            fontWeight={600}
-            p={0}
-            mt={{ xs: 6, sm: 0, lg: 0 }}
-            mb={2}
-          >
-            Dispositivos del espacio {spaceID} (buscar en BD)
-          </Typography>
-
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : devices.length === 0 ? (
-            <Typography
-              color="primary"
-              textAlign="left"
-              fontSize={{ xs: 16, sm: 24, lg: 24 }}
-              fontWeight={600}
-              p={0}
-              mt={{ xs: 6, sm: 0, lg: 0 }}
-              mb={2}
-            >
-              Error: no se pudieron cargar los dispositivos.
-            </Typography>
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "100%",
-                mb: 5,
-              }}
-            >
-              {devices.map((device, index) => (
-                <DeviceDetails device={device} key={index} />
-              ))}
-            </Box>
-          )}
-        </Box>
-      </Container>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        mb: 5,
+      }}
+    >
+      {devices.map((device, index) => (
+        <DeviceDetails device={device} key={index} />
+      ))}
     </Box>
   );
 };
