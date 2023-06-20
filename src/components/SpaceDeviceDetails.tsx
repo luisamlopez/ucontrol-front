@@ -9,8 +9,6 @@ import ChartCarousel from "./Charts/ChartCarousel";
  * @returns  un componente con los detalles del dispositivo
  */
 function Details(props: { device: Device }): JSX.Element {
-  const types = props.device.dataVisualizationType;
-
   return (
     <Box
       sx={{

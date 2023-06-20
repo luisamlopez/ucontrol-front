@@ -4,9 +4,8 @@ import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 
-const SpacePage = (): JSX.Element => {
+const DevicesPage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [spaces, setSpaces] = useState<Space[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,9 +15,8 @@ const SpacePage = (): JSX.Element => {
     const fetchData = async () => {
       setTimeout(() => {
         const dataDevices: Device[] = [];
-        const dataSpaces: Space[] = [];
+
         setDevices(dataDevices);
-        setSpaces(dataSpaces);
         setDataLoaded(true);
       }, 5000);
     };
@@ -52,7 +50,7 @@ const SpacePage = (): JSX.Element => {
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
           >
-            Espacio
+            Administrador de dispositivos
           </Typography>
           {loading ? (
             <Box
@@ -79,9 +77,7 @@ const SpacePage = (): JSX.Element => {
               Error: no se pudieron cargar los dispositivos.
             </Typography>
           ) : (
-            <>
-            contenido, tarjetas etc
-            </>
+            <>contenido, tarjetas etc</>
           )}
         </Box>
       </Container>
@@ -89,4 +85,4 @@ const SpacePage = (): JSX.Element => {
   );
 };
 
-export default SpacePage;
+export default DevicesPage;

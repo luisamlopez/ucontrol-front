@@ -8,7 +8,7 @@ type DataVisualizationType = "line" | "bar" | "pie" | "gauge";
 export interface DeviceValues {
   timestamp: string;
   value: number | string | boolean;
-  metricsAndUnits: MetricAndUnit[];
+  metricsAndUnits?: MetricAndUnit[];
 }
 
 export interface Device {

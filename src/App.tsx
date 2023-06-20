@@ -4,6 +4,7 @@ import History from "./pages/History";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SpacePage from "./pages/SpacePage";
+import DevicesPage from "./pages/DevicesPage";
 
 const App = (): JSX.Element => {
   return (
@@ -16,8 +17,8 @@ const App = (): JSX.Element => {
         <Route path="/signup" element={<Register />} />
         <Route path="/history" element={<History />} />
         <Route path="/spaceID/:spaceID" element={<SpacePage />} />
-        {/* <Route path="/devices" element={<Devices />} />
-        <Route path="/spaces" element={<Spaces />} />
+        <Route path="/devices" element={<DevicesPage />} />
+        {/*<Route path="/spaces" element={<Spaces />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/help" element={<Help />} />
         */}
