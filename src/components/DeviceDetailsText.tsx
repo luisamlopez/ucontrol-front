@@ -21,7 +21,7 @@ const DevicesDetailsText = ({
       }}
     >
       <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
-        {title} &nbsp;
+        {title}:&nbsp;
       </Typography>
       <Typography textAlign={"left"} color={"black"}>
         {value}

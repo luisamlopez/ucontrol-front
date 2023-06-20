@@ -11,8 +11,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { Device } from "../api/Device";
-import { Space } from "../api/Space";
+import { Device } from "../../api/Device";
+import { Space } from "../../api/Space";
 import { Fragment, useState } from "react";
 import {
   KeyboardArrowDownRounded,

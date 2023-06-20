@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
+import CardsContainer from "../components/CardsContainer";
+import DeviceCard from "../components/DevicesPage/DeviceCard";
 
 const DevicesPage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -14,11 +16,304 @@ const DevicesPage = (): JSX.Element => {
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
-        const dataDevices: Device[] = [];
+        const dataDevices: Device[] = [
+          {
+            id: "1",
+            name: "Device 1",
+            description:
+              "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
+            createdOn: "2021-10-01",
+            createdBy: "User 1",
+            dataVisualizationType: ["pie", "bar"],
+            history: [
+              {
+                name: "Device 1",
+                description: "Description 1",
+                topic: "Topic 1",
+                dataVisualizationType: ["pie", "line"],
+                values: [
+                  {
+                    timestamp: "2021-10-01",
+                    value: 10,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-02",
+                    value: 20,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-03",
+                    value: 30,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                ],
 
+                updatedBy: "User 1.23",
+                updatedOn: "2021-10-01",
+              },
+              {
+                name: "Device 1.1",
+                description: "Description 1.1",
+                topic: "Topic 1.1",
+                dataVisualizationType: ["pie", "gauge"],
+                values: [
+                  {
+                    timestamp: "2021-10-01",
+                    value: 10,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-02",
+                    value: 20,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-03",
+                    value: 30,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                ],
+                updatedBy: "User 1.5",
+                updatedOn: "2021-10-01",
+              },
+            ],
+            currentTopic: "Topic 1",
+
+            values: [
+              {
+                timestamp: "2021-10-01",
+                value: 10,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-02",
+                value: 20,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-03",
+                value: 30,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "2",
+            name: "Device 2",
+            description:
+              "Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2",
+            createdOn: "2021-10-01",
+            createdBy: "User 2",
+            currentTopic: "Topic 2",
+            dataVisualizationType: ["bar", "line"],
+            values: [
+              {
+                timestamp: "2021-10-01",
+                value: 10,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-02",
+                value: 20,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                  {
+                    metric: "Metric 3",
+                    unit: "Unit 3",
+                  },
+                  {
+                    metric: "Metric 4",
+                    unit: "Unit 4",
+                  },
+                  {
+                    metric: "Metric 5",
+                    unit: "Unit 5",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-03",
+                value: 30,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                  {
+                    metric: "Metric 3",
+                    unit: "Unit 3",
+                  },
+                  {
+                    metric: "Metric 4",
+                    unit: "Unit 4",
+                  },
+                  {
+                    metric: "Metric 5",
+                    unit: "Unit 5",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "3",
+            name: "Device 3",
+            description: "Description 3",
+            createdOn: "2021-10-01",
+            createdBy: "User 3",
+            currentTopic: "Topic 3",
+            dataVisualizationType: ["pie"],
+            values: [
+              {
+                timestamp: "2021-10-01",
+                value: 10,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-02",
+                value: 20,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+              {
+                timestamp: "2021-10-03",
+                value: 30,
+                metricsAndUnits: [
+                  {
+                    metric: "Metric 1",
+                    unit: "Unit 1",
+                  },
+                  {
+                    metric: "Metric 2",
+                    unit: "Unit 2",
+                  },
+                ],
+              },
+            ],
+          },
+        ];
         setDevices(dataDevices);
         setDataLoaded(true);
-      }, 5000);
+      }, 2000);
     };
 
     try {
@@ -77,7 +372,11 @@ const DevicesPage = (): JSX.Element => {
               Error: no se pudieron cargar los dispositivos.
             </Typography>
           ) : (
-            <>contenido, tarjetas etc</>
+            <CardsContainer>
+              {devices.map((device) => (
+                <DeviceCard key={device.id} {...device} />
+              ))}
+            </CardsContainer>
           )}
         </Box>
       </Container>

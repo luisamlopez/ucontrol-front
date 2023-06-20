@@ -2,8 +2,8 @@ import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
 import { Device } from "../api/Device";
 import { useEffect, useState } from "react";
-import HistoryTable from "../components/HistoryTable";
-import HistoryAccordion from "../components/HistoryAccordion";
+import HistoryTable from "../components/HistoryPage/HistoryTable";
+import HistoryAccordion from "../components/HistoryPage/HistoryAccordion";
 import { Space } from "../api/Space";
 
 const History = (): JSX.Element => {

@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
-import DashboardAccordion from "../components/DashboardAccordion";
+import DashboardAccordion from "../components/Dashboard/DashboardAccordion";
 import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { useEffect, useState } from "react";

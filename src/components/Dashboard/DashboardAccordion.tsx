@@ -6,8 +6,8 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { Device, DeviceValues, MetricAndUnit } from "../api/Device";
-import { Space } from "../api/Space";
+import { Device, DeviceValues, MetricAndUnit } from "../../api/Device";
+import { Space } from "../../api/Space";
 import { useState } from "react";
 import {
   EmojiObjectsRounded,
