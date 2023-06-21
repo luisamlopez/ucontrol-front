@@ -9,6 +9,7 @@ interface Props {
 interface AuthContextValue {
 	user: User | null;
 	login: (userBody: Log) => void;
+	logout: () => void;
 }
 
 const useUser = () => {
@@ -18,29 +19,34 @@ const useUser = () => {
 const AuthContext = createContext<AuthContextValue>({
 	user: {} as User,
 	login: () => {},
+	logout: () => {},
 });
 
 const AuthContextProvider = ({ children }: Props): JSX.Element => {
 	const [user, setUser] = useState<User | null>(() => {
 		let userData = localStorage.getItem("userData");
+
 		if (userData) {
 			return JSON.parse(userData);
 		}
 		return null;
 	});
 
-	const navigate = useNavigate();
-
 	const login = async (userBody: Log) => {
-		const userApi = await signIn(userBody);
-		console.log(userApi);
-		localStorage.setItem("userData", userApi);
-		setUser(userApi);
-		navigate("/");
+		//TODO revisar respuesta a errores
+		const data = await signIn(userBody);
+
+		localStorage.setItem("userData", data);
+		setUser(user);
+	};
+
+	const logout = () => {
+		localStorage.removeItem("userData");
+		setUser(null);
 	};
 
 	return (
-		<AuthContext.Provider value={{ user, login }}>
+		<AuthContext.Provider value={{ user, login, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);
