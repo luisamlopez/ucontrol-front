@@ -49,6 +49,9 @@ export const Sidebar = (props: Props) => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleLogout = () => {
+    alert("hola");
+  };
   //Array of options for sidebar
   const options: Option[] = [
     {
@@ -83,11 +86,6 @@ export const Sidebar = (props: Props) => {
       name: "Ayuda",
       icon: <HelpOutlineRounded />,
       link: "/help",
-    },
-    {
-      name: "Cerrar sesión",
-      icon: <LogoutRounded />,
-      link: "/login",
     },
   ];
 
@@ -211,6 +209,14 @@ export const Sidebar = (props: Props) => {
             </Link>
           </ListItemButton>
         ))}
+        <ListItemButton onClick={handleLogout}>
+          <IconButton size="large">
+            <LogoutRounded htmlColor="white" />
+          </IconButton>
+          <Typography variant="h6" color={"#fff"} fontWeight={400}>
+            Cerrar Sesion
+          </Typography>
+        </ListItemButton>
       </List>
     </div>
   );
