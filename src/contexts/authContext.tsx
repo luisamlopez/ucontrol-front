@@ -35,8 +35,8 @@ const AuthContextProvider = ({ children }: Props): JSX.Element => {
 	const login = async (userBody: Log) => {
 		//TODO revisar respuesta a errores
 		const data = await signIn(userBody);
-		const { user } = data;
-		localStorage.setItem("userData", user);
+
+		localStorage.setItem("userData", data);
 		setUser(user);
 	};
 

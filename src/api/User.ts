@@ -26,8 +26,8 @@ export const signIn = async (logData: Log) => {
 		}
 
 		const data = await response.json();
-
-		return data;
+		const { message, user, token } = data;
+		return user;
 	} catch (error) {
 		return error;
 	}
