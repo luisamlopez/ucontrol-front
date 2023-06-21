@@ -52,6 +52,7 @@ const PasswordCreation = ({
 		actions: FormikHelpers<FormValues>
 	) => {
 		try {
+			//TODO revisar UX
 			actions.setSubmitting(true);
 			const { password, passwordRepeat } = values;
 

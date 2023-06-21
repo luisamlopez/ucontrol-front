@@ -7,6 +7,7 @@ import { useSnackbar } from "notistack";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import PasswordField from "../components/PasswordField";
+import { useUser } from "../contexts/authContext";
 
 interface FormValues {
 	email: string;
@@ -32,6 +33,7 @@ const validationSchema = yup.object().shape({
 const Login = (): JSX.Element => {
 	const { enqueueSnackbar } = useSnackbar();
 	const navigate = useNavigate();
+	const { login } = useUser();
 
 	const onSubmit = async (
 		values: FormValues,
@@ -39,7 +41,8 @@ const Login = (): JSX.Element => {
 	) => {
 		try {
 			actions.setSubmitting(true);
-			console.log(values);
+			console.log(login);
+			login(values);
 			enqueueSnackbar("Inicio de sesión exitoso", { variant: "success" });
 			navigate("/dashboard");
 		} catch (error) {

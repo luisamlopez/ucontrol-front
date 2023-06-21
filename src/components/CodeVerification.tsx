@@ -40,6 +40,7 @@ const CodeVerification = ({
 		actions: FormikHelpers<FormValues>
 	) => {
 		try {
+			//TODO revisar UX
 			actions.setSubmitting(true);
 			const { code } = values;
 			if (checkCode === code) {

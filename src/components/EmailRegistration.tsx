@@ -43,6 +43,7 @@ const EmailRegistration = ({
 		actions: FormikHelpers<FormValues>
 	) => {
 		try {
+			//TODO revisar UX
 			actions.setSubmitting(true);
 			const { email } = values;
 			handleEmail(email);

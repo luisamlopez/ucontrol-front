@@ -22,12 +22,11 @@ export const signIn = async (logData: Log) => {
 
 		if (!response.ok) {
 			const error = await response.json();
-			console.log(error);
 			throw new Error(error.message);
 		}
 
 		const data = await response.json();
-		console.log(data);
+
 		return data;
 	} catch (error) {
 		return error;
