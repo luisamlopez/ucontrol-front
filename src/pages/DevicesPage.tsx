@@ -555,7 +555,7 @@ const DevicesPage = (): JSX.Element => {
           </Box>
         </Container>
         <Tooltip title="Agregar dispositivo" placement="left">
-          <Link to={"/devices/action/add"}>
+          <Link to={"/devices/add"}>
             <Fab
               color="secondary"
               sx={{

@@ -33,7 +33,7 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
   };
 
   const handleEditDevice = () => {
-    navigate(`/devices/action/edit/${device.id}`);
+    navigate(`/devices/edit/${device.id}`);
   };
 
   return (
@@ -48,7 +48,6 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
         p: 2,
         borderRadius: "8px",
         alignItems: "center",
-        height: "fit-content",
       }}
     >
       <Tooltip title="Cerrar">
