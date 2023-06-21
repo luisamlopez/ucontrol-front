@@ -181,7 +181,7 @@ const DevicesPage = (): JSX.Element => {
           },
           {
             id: "2",
-            name: "Device 2",
+            name: "Sensor de luz oficina del profe Franklin",
             description:
               "Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2",
             createdOn: "2021-10-01",

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Device } from "../../api/Device";
 import {
   Box,
@@ -9,77 +8,117 @@ import {
   Typography,
 } from "@mui/material";
 import DevicesDetailsText from "../DeviceDetailsText";
+import { useNavigate } from "react-router-dom";
+import DeviceModal from "./DeviceModal";
+import { useState } from "react";
 
 const DeviceCard = (device: Device): JSX.Element => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
   return (
-    <Card
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-        textAlign: "left",
-        flexGrow: 1,
-        m: 1,
-        backgroundColor: "#ECEEEF",
-        borderRadius: "8px",
-        height: "440px",
-      }}
-    >
-      <CardContent
+    <>
+      <Card
         sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          flexGrow: 1,
-          height: "calc(100% - 84px)",
-          overflowY: "hidden",
+          alignItems: "center",
+          textAlign: "left",
+          backgroundColor: "#ECEEEF",
+          borderRadius: "8px",
+          height: {
+            xs: "340px",
+            sm: "340px",
+            md: "400px",
+            lg: "440px",
+          },
+          p: 1,
         }}
       >
-        <Typography
-          variant="h3"
-          fontSize={24}
-          fontWeight={"bold"}
-          color={"primary.main"}
-          mb={1}
+        <CardContent
           sx={{
+            display: "flex",
+            flexDirection: "column",
+            flexGrow: 1,
+            height: "calc(100% - 64px)",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            whiteSpace: "wrap",
+            minWidth: "100%",
+            wordBreak: "break-word",
+            gap: "5px",
           }}
         >
-          {device.name}
-        </Typography>
-        <Box
-          sx={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            maxWidth: "10%",
-          }}
-        >
-          <DevicesDetailsText title="Descripción" value={device.description} />
-        </Box>
-
-        <DevicesDetailsText
-          title="Conectado desde el"
-          value={device.createdOn}
-        />
-        <DevicesDetailsText title="Tópico" value={device.currentTopic} />
-        <DevicesDetailsText title="Creado por" value={device.createdBy} />
-      </CardContent>
-      <CardActions
-        sx={{
-          alignSelf: "flex-end",
-        }}
-      >
-        <Button>
-          <Typography fontSize={18} color={"primary.main"} fontWeight="bold">
-            Ver más
+          <Typography
+            fontSize={{
+              xs: "1rem",
+              sm: "1rem",
+              md: "1.2rem",
+              lg: "1.2rem",
+            }}
+            fontWeight={"bold"}
+            color={"primary.main"}
+            mb={1}
+            sx={{
+              minHeight: { xs: "50px", sm: "50px", md: "50px", lg: "auto" },
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "wrap",
+              wordBreak: "break-word",
+              minWidth: "100%",
+            }}
+          >
+            {device.name}
           </Typography>
-        </Button>
-      </CardActions>
-    </Card>
+          <Box
+            sx={{
+              minHeight: "auto",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "wrap",
+              wordBreak: "break-word",
+              minWidth: "100%",
+            }}
+          >
+            <DevicesDetailsText
+              title="Descripción"
+              value={device.description}
+            />
+          </Box>
+
+          <DevicesDetailsText
+            title="Conectado desde el"
+            value={device.createdOn}
+          />
+          <DevicesDetailsText title="Tópico" value={device.currentTopic} />
+          <DevicesDetailsText title="Creado por" value={device.createdBy} />
+        </CardContent>
+        <CardActions
+          sx={{
+            alignSelf: "flex-end",
+          }}
+        >
+          <Button onClick={handleOpenModal}>
+            <Typography fontSize={18} color={"primary.main"} fontWeight="bold">
+              Ver más
+            </Typography>
+          </Button>
+        </CardActions>
+      </Card>
+      <DeviceModal
+        device={device}
+        isOpen={isModalOpen}
+        closeDialog={handleCloseModal}
+      />
+    </>
   );
 };
 
