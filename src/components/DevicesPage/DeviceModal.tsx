@@ -33,7 +33,7 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
   };
 
   const handleEditDevice = () => {
-    navigate(`/devices/${device.id}/edit`);
+    navigate(`/devices/action/edit/${device.id}`);
   };
 
   return (
