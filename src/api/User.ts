@@ -22,6 +22,51 @@ export const signIn = async (logData: Log) => {
 
 		if (!response.ok) {
 			const error = await response.json();
+			throw new Error(error.message);
+		}
+
+		const data = await response.json();
+		const { message, user, token } = data;
+		return user;
+	} catch (error) {
+		return error;
+	}
+};
+
+export const sendCode = async (email: string) => {
+	try {
+		const response = await fetch(`${url}sendCode`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ email }),
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+
+			console.log(error);
+			throw new Error(error.message);
+		}
+
+		const data = await response.json();
+		console.log(data);
+		return data;
+	} catch (error) {
+		return error;
+	}
+};
+
+export const signUp = async (signUpData: Log) => {
+	try {
+		const response = await fetch(`${url}firstTimeRegister`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(signUpData),
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+
 			console.log(error);
 			throw new Error(error.message);
 		}

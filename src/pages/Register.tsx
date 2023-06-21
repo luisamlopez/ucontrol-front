@@ -13,78 +13,105 @@ import CodeVerification from "../components/CodeVerification";
 import PasswordCreation from "../components/PasswordCreation";
 
 function Register(): JSX.Element {
-  const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
+	const { enqueueSnackbar } = useSnackbar();
+	const navigate = useNavigate();
 
-  // Registration steps (components) control
-  const [currentStep, setCurrentStep] = useState(1);
+	// Registration steps (components) control
+	const [currentStep, setCurrentStep] = useState(1);
+	const [email, setEmail] = useState("");
+	const [code, setCode] = useState("");
 
-  function nextStep() {
-    setCurrentStep(currentStep + 1);
-  }
-  let currentComponent;
+	function nextStep() {
+		setCurrentStep(currentStep + 1);
+	}
 
-  switch (currentStep) {
-    case 1:
-      currentComponent = <EmailRegistration next={nextStep} />;
-      break;
-    case 2:
-      currentComponent = <CodeVerification recover={false} next={nextStep} />;
-      break;
-    case 3:
-      currentComponent = <PasswordCreation recover={false} next={nextStep} />;
-      break;
-    default:
-      currentComponent = <EmailRegistration next={nextStep} />;
-  }
+	const handleEmail = (email: string) => {
+		setEmail(email);
+	};
 
-  return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      sx={{
-        background: "linear-gradient(180deg, #042F3E 0%, #40B4E5 100%);",
-        height: "100vh",
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          background: "white",
-          borderRadius: "8px",
-          width: {
-            xs: "80%",
-            lg: "730px",
-          },
-          padding: "2rem",
-        }}
-      >
-        <Box
-          component="img"
-          src={logo}
-          alt="logo"
-          sx={{
-            width: 330,
-            m: 0,
-          }}
-        />
-        {currentComponent}
+	const handleCode = (code: string) => {
+		setCode(code);
+	};
 
-        <Typography align="center" mt={2}>
-          ¿Ya tiene su contraseña de acceso?
-          <Link to="/login" style={{ textDecoration: "none" }}>
-            <Typography fontWeight="600" color="primary.main">
-              Inicie sesión
-            </Typography>
-          </Link>
-        </Typography>
-      </Box>
-    </Box>
-  );
+	let currentComponent;
+
+	switch (currentStep) {
+		case 1:
+			currentComponent = (
+				<EmailRegistration
+					next={nextStep}
+					handleEmail={handleEmail}
+					handleCode={handleCode}
+				/>
+			);
+			break;
+		case 2:
+			currentComponent = (
+				<CodeVerification checkCode={code} recover={false} next={nextStep} />
+			);
+			break;
+		case 3:
+			currentComponent = (
+				<PasswordCreation email={email} recover={false} next={nextStep} />
+			);
+			break;
+		default:
+			currentComponent = (
+				<EmailRegistration
+					next={nextStep}
+					handleEmail={handleEmail}
+					handleCode={handleCode}
+				/>
+			);
+	}
+
+	return (
+		<Box
+			display="flex"
+			alignItems="center"
+			justifyContent="center"
+			sx={{
+				background: "linear-gradient(180deg, #042F3E 0%, #40B4E5 100%);",
+				height: "100vh",
+			}}
+		>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					flexDirection: "column",
+					background: "white",
+					borderRadius: "8px",
+					width: {
+						xs: "80%",
+						lg: "730px",
+					},
+					padding: "2rem",
+				}}
+			>
+				<Box
+					component="img"
+					src={logo}
+					alt="logo"
+					sx={{
+						width: 330,
+						m: 0,
+					}}
+				/>
+				{currentComponent}
+
+				<Typography align="center" mt={2}>
+					¿Ya tiene su contraseña de acceso?
+					<Link to="/login" style={{ textDecoration: "none" }}>
+						<Typography fontWeight="600" color="primary.main">
+							Inicie sesión
+						</Typography>
+					</Link>
+				</Typography>
+			</Box>
+		</Box>
+	);
 }
 
 export default Register;

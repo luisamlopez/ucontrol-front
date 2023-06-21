@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
-import { Device } from "../api/Device";
-import DevicesDetailsText from "./DeviceDetailsText";
-import ChartCarousel from "./Charts/ChartCarousel";
+import { Device } from "../../api/Device";
+import DevicesDetailsText from "../DeviceDetailsText";
+import ChartCarousel from "../Charts/ChartCarousel";
 
 /**
  *
@@ -31,19 +31,19 @@ function Details(props: { device: Device }): JSX.Element {
       </Typography>
 
       <DevicesDetailsText
-        title={"Descripcion: "}
+        title={"Descripcion"}
         value={props.device.description}
       />
 
       <DevicesDetailsText
-        title={"Conectado desde el: "}
+        title={"Conectado desde el"}
         value={props.device.createdOn}
       />
 
-      <DevicesDetailsText title="Tópico: " value={props.device.currentTopic} />
+      <DevicesDetailsText title="Tópico" value={props.device.currentTopic} />
 
       <DevicesDetailsText
-        title={"Instrucciones: "}
+        title={"Instrucciones"}
         value={"props.device.instructions"}
       />
     </Box>

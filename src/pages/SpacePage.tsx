@@ -4,7 +4,7 @@ import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
-import SpaceDeviceDetails from "../components/SpaceDeviceDetails";
+import SpaceDeviceDetails from "../components/Dashboard/SpaceDeviceDetails";
 
 const SpacePage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
