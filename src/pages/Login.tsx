@@ -31,72 +31,74 @@ const validationSchema = yup.object().shape({
 });
 
 const Login = (): JSX.Element => {
-	const { enqueueSnackbar } = useSnackbar();
-	const navigate = useNavigate();
-	const { login } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const { login } = useUser();
 
-	const onSubmit = async (
-		values: FormValues,
-		actions: FormikHelpers<FormValues>
-	) => {
-		try {
-			actions.setSubmitting(true);
-			console.log(login);
-			login(values);
-			enqueueSnackbar("Inicio de sesión exitoso", { variant: "success" });
-			navigate("/dashboard");
-		} catch (error) {
-			enqueueSnackbar(
-				"Hubo un error al iniciar sesión, por favor intente de nuevo.",
-				{ variant: "error" }
-			);
-		} finally {
-			actions.setSubmitting(false);
-		}
-	};
-	return (
-		<Box
-			display="flex"
-			alignItems="center"
-			justifyContent="center"
-			sx={{
-				background: "linear-gradient(180deg, #042F3E 0%, #40B4E5 100%);",
-				height: "100vh",
-			}}
-		>
-			<Box
-				sx={{
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-					flexDirection: "column",
-					background: "white",
-					borderRadius: "8px",
-					width: {
-						xs: "80%",
-						lg: "730px",
-					},
-					padding: "2rem",
-				}}
-			>
-				<Box
-					component="img"
-					src={logo}
-					alt="logo"
-					sx={{
-						width: 330,
-						m: 0,
-					}}
-				/>
-				<Typography
-					variant="h1"
-					fontWeight={600}
-					color="primary.main"
-					fontSize={{ lg: "3rem", xs: "2rem" }}
-					textAlign={"center"}
-				>
-					Inicio de sesión
-				</Typography>
+  const onSubmit = async (
+    values: FormValues,
+    actions: FormikHelpers<FormValues>
+  ) => {
+    try {
+      actions.setSubmitting(true);
+      console.log(login);
+      login(values);
+      enqueueSnackbar("Inicio de sesión exitoso", { variant: "success" });
+      navigate("/dashboard");
+    } catch (error) {
+      enqueueSnackbar(
+        "Hubo un error al iniciar sesión, por favor intente de nuevo.",
+        { variant: "error" }
+      );
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
+  return (
+    <Box
+      m={-1}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      sx={{
+        background: "linear-gradient(180deg, #042F3E 0%, #40B4E5 100%);",
+        height: "100vh",
+        p: 0,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          background: "white",
+          borderRadius: "8px",
+          width: {
+            xs: "80%",
+            lg: "730px",
+          },
+          padding: "2rem",
+        }}
+      >
+        <Box
+          component="img"
+          src={logo}
+          alt="logo"
+          sx={{
+            width: 330,
+            m: 0,
+          }}
+        />
+        <Typography
+          variant="h1"
+          fontWeight={600}
+          color="primary.main"
+          fontSize={{ lg: "3rem", xs: "2rem" }}
+          textAlign={"center"}
+        >
+          Inicio de sesión
+        </Typography>
 
         <Typography
           color="primary.main"

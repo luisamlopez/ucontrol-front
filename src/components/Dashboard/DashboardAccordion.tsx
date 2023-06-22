@@ -21,8 +21,6 @@ export interface AccordionProps {
 }
 
 function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
-  console.log(devices);
-
   return (
     <Box
       sx={{
@@ -125,8 +123,8 @@ function Summary({ devices }: { devices: Device[] }): JSX.Element {
       >
         <Box>
           <ul>
-            {devices.map((device) => (
-              <li>
+            {devices.map((device, i) => (
+              <li key={i}>
                 <Typography textAlign={"left"}>
                   {device.name}:&nbsp;
                   {device.values[device.values.length - 1].value}&nbsp; tomada

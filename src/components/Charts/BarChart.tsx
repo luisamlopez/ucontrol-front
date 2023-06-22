@@ -71,8 +71,6 @@ const BarChart = ({ id, values }: ChartDataProps): JSX.Element => {
     };
   });
 
-  console.log(finalData);
-
   return (
     <Box
       sx={{
