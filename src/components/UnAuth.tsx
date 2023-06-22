@@ -9,7 +9,7 @@ const UnAuth = ({ children }: Props): JSX.Element => {
 	const { user } = useUser();
 
 	if (user) {
-		return <Navigate to="/home" replace />;
+		return <Navigate to="/" replace />;
 	}
 
 	return children;

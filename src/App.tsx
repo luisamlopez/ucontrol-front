@@ -15,8 +15,6 @@ const App = (): JSX.Element => {
 		<>
 			<AuthContextProvider>
 				<Routes>
-					<Route path="/dashboard" element={<Home />} />
-					<Route path="/" element={<Navigate to="/dashboard" replace />} />
 					<Route
 						element={
 							<UnAuth>
@@ -33,6 +31,8 @@ const App = (): JSX.Element => {
 							</Auth>
 						}
 					>
+						<Route path="/dashboard" element={<Home />} />
+						<Route path="/" element={<Navigate to="/dashboard" replace />} />
 						<Route path="/signup" element={<Register />} />
 						<Route path="/history" element={<History />} />
 						<Route path="/spaceID/:spaceID" element={<SpacePage />} />

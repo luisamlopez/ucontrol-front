@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Log, User, signIn } from "../api/User";
 
@@ -25,8 +25,8 @@ const AuthContext = createContext<AuthContextValue>({
 const AuthContextProvider = ({ children }: Props): JSX.Element => {
 	const [user, setUser] = useState<User | null>(() => {
 		let userData = localStorage.getItem("userData");
-
 		if (userData) {
+			console.log(userData);
 			return JSON.parse(userData);
 		}
 		return null;
@@ -34,10 +34,11 @@ const AuthContextProvider = ({ children }: Props): JSX.Element => {
 
 	const login = async (userBody: Log) => {
 		//TODO revisar respuesta a errores
-		const data = await signIn(userBody);
 
-		localStorage.setItem("userData", data);
-		setUser(user);
+		const data = await signIn(userBody);
+		console.log(data);
+		localStorage.setItem("userData", JSON.stringify(data));
+		setUser(data);
 	};
 
 	const logout = () => {
