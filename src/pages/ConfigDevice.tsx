@@ -183,7 +183,7 @@ const ConfigDevice = (): JSX.Element => {
         };
         //  setDevice(dataDevice);
         setDataLoaded(true);
-      }, 5000);
+      }, 2000);
     };
 
     try {
