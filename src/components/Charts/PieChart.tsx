@@ -64,7 +64,7 @@ const PieChart = ({ id, values }: ChartDataProps): JSX.Element => {
 
   values.forEach((item, i) => {
     finalData[i] = {
-      tiempo: item.timestamp,
+      tiempo: item.timestamp!,
       valor: item.value as number,
     };
   });

@@ -1,18 +1,67 @@
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
-import { Sidebar } from "../components/Sidebar";
-import { Device } from "../api/Device";
-import { useEffect, useState } from "react";
-import HistoryTable from "../components/HistoryPage/HistoryTable";
-import HistoryAccordion from "../components/HistoryPage/HistoryAccordion";
-import { Space } from "../api/Space";
+import {
+  Box,
+  Container,
+  Typography,
+  CircularProgress,
+  Button,
+  IconButton,
+  Stack,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import { Device, DeviceValues, MetricAndUnit } from "../../api/Device";
+import { Space } from "../../api/Space";
+import { Sidebar } from "../../components/Sidebar";
+import { DeleteRounded, KeyboardArrowLeftRounded } from "@mui/icons-material";
+import { Field, FieldArray, Form, Formik } from "formik";
+import * as yup from "yup";
+import { useSnackbar } from "notistack";
+import { TextField } from "formik-mui";
+import TextareaAutosize from "@mui/base/TextareaAutosize";
+import { styled } from "@mui/system";
+import TextAreaField from "../TextAreaField";
 
-const History = (): JSX.Element => {
+interface DeviceFormProps {
+  deviceID?: string;
+}
+
+interface FormValues {
+  id: string;
+  name: string;
+  description: string;
+  currentTopic: string;
+  dataVisualizationType: string[];
+  values: DeviceValues[];
+  createdBy: string;
+  createdOn: string;
+}
+
+const initialValues = {
+  id: "",
+  name: "",
+  description: "",
+  currentTopic: "",
+  dataVisualizationType: [],
+  values: [],
+  createdBy: "",
+  createdOn: "",
+};
+
+const validationSchema = yup.object().shape({
+  name: yup.string().required("Por favor, ingrese un nombre"),
+  description: yup.string().required("Por favor, ingrese una descripción"),
+  currentTopic: yup.string().required("Por favor, ingrese un tópico/espacio"),
+  dataVisualizationType: yup
+    .array()
+    .required("Por favor, seleccione al menos un tipo de visualización"),
+});
+
+const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [spaces, setSpaces] = useState<Space[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+
+  const device = devices.find((device) => device.id === props.deviceID);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,7 +214,7 @@ const History = (): JSX.Element => {
               },
               {
                 timestamp: "2021-10-03",
-                value: 30,
+                value: 40,
                 metricsAndUnits: [
                   {
                     metric: "Metric 1",
@@ -229,7 +278,7 @@ const History = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-03",
+                timestamp: "2021-10-08",
                 value: 30,
                 metricsAndUnits: [
                   {
@@ -319,6 +368,7 @@ const History = (): JSX.Element => {
             createdBy: "User 1",
             currentRoute: "/space/1",
           },
+
           {
             id: "2",
             name: "Space 2",
@@ -341,123 +391,134 @@ const History = (): JSX.Element => {
         setDevices(dataDevices);
         setSpaces(dataSpaces);
         setDataLoaded(true);
-      }, 2000);
+      }, 5000);
     };
 
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
     try {
       fetchData();
     } catch (error) {
       alert(error);
     } finally {
-      //  window.removeEventListener("resize", handleResize);
       setLoading(false);
     }
   }, []);
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="left">
-      <Sidebar />
-      <Container sx={{ m: 0, p: 0 }}>
+    <Box display="flex" justifyContent="left" flexDirection="column">
+      {loading ? (
         <Box
-          display={"flex"}
-          flexDirection="column"
           sx={{
-            p: 2,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Typography
-            color="primary"
-            textAlign="left"
-            fontSize={{ xs: 24, sm: 48, lg: 48 }}
-            fontWeight={600}
-            p={0}
-            mt={{ xs: 6, sm: 0, lg: 0 }}
-            mb={2}
-          >
-            Historial de dispositivos
-          </Typography>
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : devices.length === 0 ? (
-            <Typography>
-              Error: no se pudieron cargar los dispositivos
-            </Typography>
-          ) : (
-            <>
-              {windowWidth < 600 && <HistoryAccordion devices={devices} />}
-              {windowWidth >= 600 && windowWidth < 960 && (
-                <HistoryAccordion devices={devices} />
-              )}
-              {windowWidth >= 960 && <HistoryTable devices={devices} />}
-            </>
-          )}
-
-          <Typography
-            color="primary"
-            textAlign="left"
-            fontSize={{ xs: 24, sm: 48, lg: 48 }}
-            fontWeight={600}
-            p={0}
-            mt={{ xs: 6, sm: 0, lg: 0 }}
-            mb={2}
-          >
-            Historial de espacios
-          </Typography>
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : spaces.length === 0 ? (
-            <Typography>Error: no se pudieron cargar los espacios</Typography>
-          ) : (
-            <>
-              {windowWidth < 600 && <HistoryAccordion spaces={spaces} />}
-              {windowWidth >= 600 && windowWidth < 960 && (
-                <HistoryAccordion spaces={spaces} />
-              )}
-              {windowWidth >= 960 && <HistoryTable spaces={spaces} />}
-            </>
-          )}
+          <CircularProgress />
         </Box>
-      </Container>
+      ) : !dataLoaded ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : devices.length === 0 ? (
+        <Typography>Error: no se pudieron cargar los dispositivos.</Typography>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "left",
+            flexDirection: "column",
+            ml: {
+              lg: 0,
+              md: 5,
+              sm: 5,
+              xs: 5,
+            },
+          }}
+        >
+          {props.deviceID ? <> {props.deviceID} </> : <Add />}
+        </Box>
+      )}
     </Box>
   );
 };
 
-export default History;
+export default DeviceForm;
+
+function Add() {
+  let topic: string[] = [];
+  return (
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+    >
+      {({ isSubmitting }) => (
+        <Stack component={Form} spacing={2}>
+          <Field
+            component={TextField}
+            name="name"
+            type="text"
+            label="Nombre"
+            variant="outlined"
+            fullWidth
+          />
+          <Field
+            component={TextAreaField}
+            name="description"
+            type="text"
+            label="Descripción"
+            variant="outlined"
+            fullWidth
+          />
+
+          {/* Group of selects dynamically created to populate topic array*/}
+          <FieldArray name="topic">
+            {({ push, remove }) => (
+              <div>
+                {topic.map((topic, index) => (
+                  <div key={index}>
+                    <Field
+                      component={TextField}
+                      name={`currentTopic.${index}`}
+                      type="text"
+                      label="Topic"
+                      variant="outlined"
+                      fullWidth
+                    />
+                    <button type="button" onClick={() => remove(index)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => push("")}>
+                  Add Topic
+                </button>
+              </div>
+            )}
+          </FieldArray>
+        </Stack>
+      )}
+    </Formik>
+  );
+}
+
+function Edit(device: { device: Device }) {}
+
+const onSubmit = async (values: Device, { setSubmitting }: any) => {
+  await Save(false, values);
+  setSubmitting(false);
+};
+
+const Save = async (isAdd: boolean, values: Device) => {
+  if (isAdd) {
+    //  create
+  } else {
+    // update
+  }
+};
