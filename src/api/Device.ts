@@ -16,6 +16,7 @@ export interface Device {
   name: string;
   description: string;
   currentTopic: string;
+  topic?: string[];
   createdBy: string;
   createdOn: string;
   values: DeviceValues[];

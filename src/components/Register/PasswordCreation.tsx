@@ -14,7 +14,7 @@ import { useSnackbar } from "notistack";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 import { useState } from "react";
-import PasswordField from "../PasswordField";
+import PasswordField from "../Fields/PasswordField";
 import { signUp } from "../../api/User";
 import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 

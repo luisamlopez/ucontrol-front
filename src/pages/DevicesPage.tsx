@@ -410,7 +410,7 @@ const DevicesPage = (): JSX.Element => {
             >
               Administrador de dispositivos
             </Typography>
-            <Box sx={{ mb: 2 }}>
+            {/* <Box sx={{ mb: 2 }}>
               <TextField
                 label="Buscar dispositivo"
                 value={searchValue}
@@ -419,7 +419,7 @@ const DevicesPage = (): JSX.Element => {
                 size="small"
                 sx={{ width: 300 }}
               />
-            </Box>
+            </Box> */}
             {loading ? (
               <Box
                 sx={{

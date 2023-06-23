@@ -6,19 +6,27 @@ import {
   Button,
   IconButton,
   Stack,
+  TextField as TextFieldMUI,
+  AutocompleteRenderInputParams,
+  Tooltip,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device, DeviceValues, MetricAndUnit } from "../../api/Device";
 import { Space } from "../../api/Space";
 import { Sidebar } from "../../components/Sidebar";
-import { DeleteRounded, KeyboardArrowLeftRounded } from "@mui/icons-material";
+import {
+  AddRounded,
+  DeleteRounded,
+  KeyboardArrowLeftRounded,
+} from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik } from "formik";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
-import { TextField } from "formik-mui";
+import { Autocomplete, TextField } from "formik-mui";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
-import TextAreaField from "../TextAreaField";
+import TextAreaField from "../Fields/TextAreaField";
+import SelectField from "../Fields/SelectField";
 
 interface DeviceFormProps {
   deviceID?: string;
@@ -33,6 +41,7 @@ interface FormValues {
   values: DeviceValues[];
   createdBy: string;
   createdOn: string;
+  topic: string[];
 }
 
 const initialValues = {
@@ -44,6 +53,7 @@ const initialValues = {
   values: [],
   createdBy: "",
   createdOn: "",
+  topic: [],
 };
 
 const validationSchema = yup.object().shape({
@@ -74,6 +84,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 1",
             dataVisualizationType: ["pie", "bar"],
+            currentTopic: "Topic 1",
             history: [
               {
                 name: "Device 1",
@@ -181,8 +192,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 updatedOn: "2021-10-01",
               },
             ],
-            currentTopic: "Topic 1",
-
             values: [
               {
                 timestamp: "2021-10-01",
@@ -391,7 +400,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         setDevices(dataDevices);
         setSpaces(dataSpaces);
         setDataLoaded(true);
-      }, 5000);
+      }, 2000);
     };
 
     try {
@@ -441,7 +450,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             },
           }}
         >
-          {props.deviceID ? <> {props.deviceID} </> : <Add />}
+          {props.deviceID ? <> {props.deviceID} </> : <Add spaces={spaces} />}
         </Box>
       )}
     </Box>
@@ -450,15 +459,20 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
 export default DeviceForm;
 
-function Add() {
-  let topic: string[] = [];
+function Add(spaces: { spaces: Space[] }) {
+  let topics: string[] = [];
+
+  for (let i = 0; i < spaces.spaces.length; i++) {
+    topics.push(spaces.spaces[i].name);
+  }
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({ isSubmitting }) => (
+      {({ isSubmitting, touched, errors }) => (
         <Stack component={Form} spacing={2}>
           <Field
             component={TextField}
@@ -477,29 +491,54 @@ function Add() {
             fullWidth
           />
 
-          {/* Group of selects dynamically created to populate topic array*/}
           <FieldArray name="topic">
-            {({ push, remove }) => (
-              <div>
-                {topic.map((topic, index) => (
-                  <div key={index}>
+            {({ push, remove, form }) => (
+              <>
+                {form.values.topic.map((_: String, index: number) => (
+                  <Stack
+                    key={index}
+                    direction={"row"}
+                    spacing={1}
+                    alignItems={"center"}
+                  >
                     <Field
-                      component={TextField}
                       name={`currentTopic.${index}`}
-                      type="text"
-                      label="Topic"
-                      variant="outlined"
-                      fullWidth
+                      component={Autocomplete}
+                      options={topics}
+                      renderInput={(params: AutocompleteRenderInputParams) => (
+                        <TextFieldMUI
+                          {...params}
+                          name={`currentTopic`}
+                          label="Tópico/Espacio"
+                          required
+                          variant="outlined"
+                          fullWidth
+                          error={
+                            touched.currentTopic && Boolean(errors.currentTopic)
+                          }
+                          helperText={
+                            touched.currentTopic && errors.currentTopic
+                          }
+                        />
+                      )}
                     />
-                    <button type="button" onClick={() => remove(index)}>
-                      Remove
-                    </button>
-                  </div>
+                    {form.values.topic.length > 1 && (
+                      <Tooltip title="Eliminar" arrow>
+                        <IconButton size="large" onClick={() => remove(index)}>
+                          <DeleteRounded />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  </Stack>
                 ))}
-                <button type="button" onClick={() => push("")}>
-                  Add Topic
-                </button>
-              </div>
+                <Button
+                  variant="outlined"
+                  startIcon={<AddRounded />}
+                  onClick={() => push(new String())}
+                >
+                  Añadir tópico/espacio
+                </Button>
+              </>
             )}
           </FieldArray>
         </Stack>

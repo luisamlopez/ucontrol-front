@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { Link, useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
-import PasswordField from "../components/PasswordField";
+import PasswordField from "../components/Fields/PasswordField";
 import { useUser } from "../contexts/authContext";
 
 interface FormValues {
