@@ -1,6 +1,5 @@
 import {
   Box,
-  Container,
   Typography,
   CircularProgress,
   Button,
@@ -11,22 +10,13 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Device, DeviceValues, MetricAndUnit } from "../../api/Device";
-import { Space } from "../../api/Space";
-import { Sidebar } from "../../components/Sidebar";
-import {
-  AddRounded,
-  DeleteRounded,
-  KeyboardArrowLeftRounded,
-} from "@mui/icons-material";
+import { Device, DeviceValues } from "../../api/Device";
+import { Space, SpaceRoute } from "../../api/Space";
+import { AddRounded, DeleteRounded } from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik } from "formik";
 import * as yup from "yup";
-import { useSnackbar } from "notistack";
 import { Autocomplete, TextField } from "formik-mui";
-import TextareaAutosize from "@mui/base/TextareaAutosize";
-import { styled } from "@mui/system";
 import TextAreaField from "../Fields/TextAreaField";
-import SelectField from "../Fields/SelectField";
 
 interface DeviceFormProps {
   deviceID?: string;
@@ -53,7 +43,7 @@ const initialValues = {
   values: [],
   createdBy: "",
   createdOn: "",
-  topic: [],
+  topic: [""],
 };
 
 const validationSchema = yup.object().shape({
@@ -375,7 +365,16 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: "/space/1",
+            currentRoute: [
+              {
+                id: "1",
+                name: "Space 1.1",
+              },
+              {
+                id: "2",
+                name: "Space 1.2",
+              },
+            ],
           },
 
           {
@@ -384,7 +383,16 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: "/space/1",
+            currentRoute: [
+              {
+                id: "1",
+                name: "Space 2.1",
+              },
+              {
+                id: "2",
+                name: "Space 2.2",
+              },
+            ],
             history: [
               {
                 name: "cambio 1",
@@ -460,11 +468,27 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 export default DeviceForm;
 
 function Add(spaces: { spaces: Space[] }) {
-  let topics: string[] = [];
+  const [topics, setTopics] = useState<SpaceRoute[]>([]);
 
-  for (let i = 0; i < spaces.spaces.length; i++) {
-    topics.push(spaces.spaces[i].name);
-  }
+  useEffect(() => {
+    const newTopics = spaces.spaces.map((space) => ({
+      id: space.id,
+      name: space.name,
+    }));
+    setTopics(newTopics);
+  }, [spaces]);
+
+  const handleTopicChange = (selectedTopic: string) => {
+    const newTopics: SpaceRoute[] = [];
+    for (let i = 0; i < spaces.spaces.length; i++) {
+      if (spaces.spaces[i].name === selectedTopic) {
+        for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
+          newTopics.push(spaces.spaces[i].currentRoute[j]);
+        }
+      }
+    }
+    setTopics(newTopics);
+  };
 
   return (
     <Formik
@@ -494,6 +518,10 @@ function Add(spaces: { spaces: Space[] }) {
           <FieldArray name="topic">
             {({ push, remove, form }) => (
               <>
+                <Typography gutterBottom>
+                  Ingrese el tópico/espacio al que pertenece el dispositivo
+                </Typography>
+
                 {form.values.topic.map((_: String, index: number) => (
                   <Stack
                     key={index}
@@ -502,17 +530,18 @@ function Add(spaces: { spaces: Space[] }) {
                     alignItems={"center"}
                   >
                     <Field
-                      name={`currentTopic.${index}`}
+                      name={`topic.${index}`}
                       component={Autocomplete}
-                      options={topics}
+                      options={topics.flatMap((x) => x.name)}
                       renderInput={(params: AutocompleteRenderInputParams) => (
                         <TextFieldMUI
                           {...params}
-                          name={`currentTopic`}
+                          name={`topic.${index}`}
                           label="Tópico/Espacio"
                           required
                           variant="outlined"
                           fullWidth
+                          id="textfieldmui"
                           error={
                             touched.currentTopic && Boolean(errors.currentTopic)
                           }
@@ -521,6 +550,7 @@ function Add(spaces: { spaces: Space[] }) {
                           }
                         />
                       )}
+                      style={{ width: "100%" }}
                     />
                     {form.values.topic.length > 1 && (
                       <Tooltip title="Eliminar" arrow>
@@ -529,15 +559,21 @@ function Add(spaces: { spaces: Space[] }) {
                         </IconButton>
                       </Tooltip>
                     )}
+                    {form.values.topic.length === 1 && index === 0 && (
+                      <Tooltip title="Agregar" arrow>
+                        <IconButton
+                          size="large"
+                          onClick={() => {
+                            handleTopicChange(form.values.topic[0]);
+                            push(new String());
+                          }}
+                        >
+                          <AddRounded />
+                        </IconButton>
+                      </Tooltip>
+                    )}
                   </Stack>
                 ))}
-                <Button
-                  variant="outlined"
-                  startIcon={<AddRounded />}
-                  onClick={() => push(new String())}
-                >
-                  Añadir tópico/espacio
-                </Button>
               </>
             )}
           </FieldArray>

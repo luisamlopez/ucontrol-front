@@ -138,7 +138,9 @@ function SpaceDetails(object: Space) {
         </TableCell>
 
         <TableCell align="center">
-          {object.currentRoute ? object.currentRoute : "N/A"}
+          {object.currentRoute
+            ? object.currentRoute.flatMap((route) => route.name).join("/")
+            : "N/A"}
         </TableCell>
       </TableRow>
 

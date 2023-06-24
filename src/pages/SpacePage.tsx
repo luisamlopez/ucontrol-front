@@ -318,7 +318,16 @@ const SpacePage = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: "/space/1",
+            currentRoute: [
+              {
+                id: "1",
+                name: "Space 1",
+              },
+              {
+                id: "2",
+                name: "Space 2",
+              },
+            ],
           },
           {
             id: "2",
@@ -326,7 +335,16 @@ const SpacePage = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: "/space/1",
+            currentRoute: [
+              {
+                id: "1",
+                name: "Space 1",
+              },
+              {
+                id: "2",
+                name: "Space 2",
+              },
+            ],
             history: [
               {
                 name: "cambio 1",
