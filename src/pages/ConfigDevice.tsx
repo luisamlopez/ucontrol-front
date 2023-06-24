@@ -1,9 +1,17 @@
-import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import { useLocation, useParams } from "react-router-dom";
+import DeviceForm from "../components/DevicesPage/DeviceForm";
+import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 
 const ConfigDevice = (): JSX.Element => {
   const [device, setDevice] = useState<Device>();
@@ -14,7 +22,7 @@ const ConfigDevice = (): JSX.Element => {
   // const { deviceID } = useParams<{ deviceID: string }>();
   const location = useLocation();
   const action = location.pathname.split("/")[2];
-  const deviceID = new URLSearchParams(location.search).get("deviceID");
+  const deviceID = useParams<{ deviceID: string }>().deviceID;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,9 +189,9 @@ const ConfigDevice = (): JSX.Element => {
             },
           ],
         };
-        //  setDevice(dataDevice);
+        setDevice(dataDevice);
         setDataLoaded(true);
-      }, 5000);
+      }, 2000);
     };
 
     try {
@@ -206,22 +214,46 @@ const ConfigDevice = (): JSX.Element => {
             p: 2,
           }}
         >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+            mt={{ xs: 6, sm: 0, lg: 0 }}
+            p={0}
+            mb={2}
+          >
+            <IconButton
+              sx={{
+                display: {
+                  lg: "none",
+                },
+                fontSize: "large",
+                p: 0,
+                mt: 0.5,
+              }}
+            >
+              <KeyboardArrowLeftRounded
+                fontSize="large"
+                color="secondary"
+                sx={{
+                  display: {
+                    lg: "none",
+                  },
+                }}
+              />
+            </IconButton>
+            <Typography
+              color="primary"
+              textAlign="left"
+              fontSize={{ xs: 24, sm: 48, lg: 48 }}
+              fontWeight={600}
+            >
+              {action === "add" ? "Nuevo dispositivo" : "Editar dispositivo"}
+            </Typography>
+          </Box>
           {loading ? (
             <>
-              <Typography
-                color="primary"
-                textAlign="left"
-                fontSize={{ xs: 24, sm: 48, lg: 48 }}
-                fontWeight={600}
-                p={0}
-                mt={{ xs: 6, sm: 0, lg: 0 }}
-                mb={2}
-              >
-                {action === "add"
-                  ? "Nuevo dispositivo"
-                  : `Editar dispositivo ${device?.name} ${deviceID}`}
-              </Typography>
-
               <Box
                 sx={{
                   display: "flex",
@@ -243,9 +275,9 @@ const ConfigDevice = (): JSX.Element => {
               <CircularProgress />
             </Box>
           ) : action === "add" ? (
-            <>Add</>
+            <DeviceForm />
           ) : (
-            <>Edit</>
+            <DeviceForm deviceID={deviceID!} />
           )}
         </Box>
       </Container>

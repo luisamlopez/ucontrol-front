@@ -5,6 +5,7 @@ import {
   CircularProgress,
   Fab,
   Tooltip,
+  TextField,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device } from "../api/Device";
@@ -13,16 +14,13 @@ import { Sidebar } from "../components/Sidebar";
 import CardsContainer from "../components/CardsContainer";
 import DeviceCard from "../components/DevicesPage/DeviceCard";
 import { AddRounded } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const DevicesPage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-
-  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +28,7 @@ const DevicesPage = (): JSX.Element => {
         const dataDevices: Device[] = [
           {
             id: "1",
-            name: "Device 1",
+            name: "Sensor luz",
             description:
               "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
             createdOn: "2021-10-01",
@@ -322,114 +320,8 @@ const DevicesPage = (): JSX.Element => {
             ],
           },
           {
-            id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: "2021-10-01",
-            createdBy: "User 3",
-            currentTopic: "Topic 3",
-            dataVisualizationType: ["pie"],
-            values: [
-              {
-                timestamp: "2021-10-01",
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: "2021-10-02",
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: "2021-10-03",
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: "2021-10-01",
-            createdBy: "User 3",
-            currentTopic: "Topic 3",
-            dataVisualizationType: ["pie"],
-            values: [
-              {
-                timestamp: "2021-10-01",
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: "2021-10-02",
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: "2021-10-03",
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "3",
-            name: "Device 3",
+            id: "4",
+            name: "Device 4",
             description: "Description 3",
             createdOn: "2021-10-01",
             createdBy: "User 3",
@@ -495,9 +387,6 @@ const DevicesPage = (): JSX.Element => {
     }
   }, []);
 
-  const handleCLickAddDevice = () => {
-    navigate("/devices/add");
-  };
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
       <Sidebar />
@@ -521,6 +410,16 @@ const DevicesPage = (): JSX.Element => {
             >
               Administrador de dispositivos
             </Typography>
+            {/* <Box sx={{ mb: 2 }}>
+              <TextField
+                label="Buscar dispositivo"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                variant="outlined"
+                size="small"
+                sx={{ width: 300 }}
+              />
+            </Box> */}
             {loading ? (
               <Box
                 sx={{
@@ -546,11 +445,26 @@ const DevicesPage = (): JSX.Element => {
                 Error: no se pudieron cargar los dispositivos.
               </Typography>
             ) : (
-              <CardsContainer>
-                {devices.map((device) => (
-                  <DeviceCard key={device.id} {...device} />
-                ))}
-              </CardsContainer>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <CardsContainer>
+                  {devices.map(
+                    (device) => (
+                      // device.name
+                      //   .toLowerCase()
+                      //   .includes(searchValue.toLowerCase()) ? (
+                      <DeviceCard key={device.id} {...device} />
+                    )
+                    // ) : null
+                  )}
+                </CardsContainer>
+              </Box>
             )}
           </Box>
         </Container>
@@ -565,7 +479,7 @@ const DevicesPage = (): JSX.Element => {
                   xs: 10,
                   sm: 10,
                   md: 10,
-                  lg: 300,
+                  lg: "5%",
                 },
                 position: "fixed",
               }}

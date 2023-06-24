@@ -38,8 +38,6 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
 
   return (
     <Dialog
-      fullWidth
-      maxWidth="md"
       open={isOpen}
       onClose={closeDialog}
       sx={{
@@ -48,6 +46,7 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
         p: 2,
         borderRadius: "8px",
         alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Tooltip title="Cerrar">
@@ -75,6 +74,10 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
           sx={{
             py: 0,
             m: 0,
+            width: {
+              xs: "100%",
+              lg: "600px",
+            },
           }}
         >
           <Box
@@ -147,6 +150,7 @@ const DeviceModal = ({ isOpen, closeDialog, device }: DeviceModalProps) => {
         sx={{
           alignSelf: "flex-end",
           m: 2,
+          p: 2,
         }}
       >
         <Button sx={{ mr: 2 }} onClick={handleDeleteDevice}>

@@ -6,8 +6,8 @@ export interface MetricAndUnit {
 type DataVisualizationType = "line" | "bar" | "pie" | "gauge";
 
 export interface DeviceValues {
-  timestamp: string;
-  value: number | string | boolean;
+  timestamp?: string;
+  value?: number | string | boolean;
   metricsAndUnits?: MetricAndUnit[];
 }
 
@@ -16,6 +16,7 @@ export interface Device {
   name: string;
   description: string;
   currentTopic: string;
+  topic?: string[];
   createdBy: string;
   createdOn: string;
   values: DeviceValues[];
