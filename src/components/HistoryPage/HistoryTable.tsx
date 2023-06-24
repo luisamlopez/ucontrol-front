@@ -139,7 +139,7 @@ function SpaceDetails(object: Space) {
 
         <TableCell align="center">
           {object.currentRoute
-            ? object.currentRoute.flatMap((route) => route.name).join("/")
+            ? object.currentRoute.flatMap((route) => route.label).join("/")
             : "N/A"}
         </TableCell>
       </TableRow>

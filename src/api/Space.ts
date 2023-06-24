@@ -2,7 +2,7 @@ import { Device } from "./Device";
 
 export interface SpaceRoute {
   id: string;
-  name: string;
+  label: string;
 }
 
 export interface Space {

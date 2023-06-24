@@ -320,14 +320,15 @@ const History = (): JSX.Element => {
             currentRoute: [
               {
                 id: "1",
-                name: "Space 1",
+                label: "Space 1.1",
               },
               {
                 id: "2",
-                name: "Space 2",
+                label: "Space 1.2",
               },
             ],
           },
+
           {
             id: "2",
             name: "Space 2",
@@ -337,11 +338,11 @@ const History = (): JSX.Element => {
             currentRoute: [
               {
                 id: "1",
-                name: "Space 1",
+                label: "Space 2.1",
               },
               {
                 id: "2",
-                name: "Space 2",
+                label: "Space 2.2",
               },
             ],
             history: [

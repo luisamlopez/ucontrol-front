@@ -368,11 +368,15 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             currentRoute: [
               {
                 id: "1",
-                name: "Space 1.1",
+                label: "Space 1.1",
               },
               {
                 id: "2",
-                name: "Space 1.2",
+                label: "Space 1.2",
+              },
+              {
+                id: "3",
+                label: "Space 1.3",
               },
             ],
           },
@@ -386,11 +390,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             currentRoute: [
               {
                 id: "1",
-                name: "Space 2.1",
+                label: "Space 2.1",
               },
               {
                 id: "2",
-                name: "Space 2.2",
+                label: "Space 2.2",
               },
             ],
             history: [
@@ -473,15 +477,16 @@ function Add(spaces: { spaces: Space[] }) {
   useEffect(() => {
     const newTopics = spaces.spaces.map((space) => ({
       id: space.id,
-      name: space.name,
+      label: space.name,
     }));
     setTopics(newTopics);
   }, [spaces]);
 
-  const handleTopicChange = (selectedTopic: string) => {
+  const handleTopicChange = (selectedTopic: SpaceRoute) => {
+    alert(selectedTopic.id);
     const newTopics: SpaceRoute[] = [];
     for (let i = 0; i < spaces.spaces.length; i++) {
-      if (spaces.spaces[i].name === selectedTopic) {
+      if (spaces.spaces[i].id === selectedTopic.id) {
         for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
           newTopics.push(spaces.spaces[i].currentRoute[j]);
         }
@@ -516,7 +521,7 @@ function Add(spaces: { spaces: Space[] }) {
           />
 
           <FieldArray name="topic">
-            {({ push, remove, form }) => (
+            {({ push, remove, form }: any) => (
               <>
                 <Typography gutterBottom>
                   Ingrese el tópico/espacio al que pertenece el dispositivo
@@ -532,7 +537,11 @@ function Add(spaces: { spaces: Space[] }) {
                     <Field
                       name={`topic.${index}`}
                       component={Autocomplete}
-                      options={topics.flatMap((x) => x.name)}
+                      options={topics}
+                      getOptionLabel={(option: SpaceRoute) =>
+                        option.label || ""
+                      }
+                      // getOptionValue={(option: SpaceRoute) => option.id}
                       renderInput={(params: AutocompleteRenderInputParams) => (
                         <TextFieldMUI
                           {...params}
