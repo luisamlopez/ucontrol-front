@@ -8,15 +8,35 @@ import {
   TextField as TextFieldMUI,
   AutocompleteRenderInputParams,
   Tooltip,
+  FormControlLabel,
+  Radio,
+  FormLabel,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Device, DeviceValues } from "../../api/Device";
+import {
+  Device,
+  DeviceValues,
+  MetricAndUnit,
+  UnitsConfig,
+  accessControl,
+  airDVT,
+  humidityUnits,
+  lightDVT,
+  movementDVT,
+  temperatureAndHumDVT,
+  temperatureUnits,
+  vibrationsDVT,
+  vibrationsUnits,
+  waterFlowDVT,
+  waterFlowUnits,
+} from "../../api/Device";
 import { Space, SpaceRoute } from "../../api/Space";
 import { AddRounded, DeleteRounded } from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik } from "formik";
 import * as yup from "yup";
-import { Autocomplete, TextField } from "formik-mui";
+import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
+import RadioGroupField from "../Fields/RadioGroupField";
 
 interface DeviceFormProps {
   deviceID?: string;
@@ -473,6 +493,13 @@ export default DeviceForm;
 
 function Add(spaces: { spaces: Space[] }) {
   const [topics, setTopics] = useState<SpaceRoute[]>([]);
+  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
+
+  // const [metricsAndUnits, setMetricsAndUnits] = useState<MetricAndUnit[]>([]);
+  const [metricsAndUnits, setMetricsAndUnits] = useState<UnitsConfig[]>([]);
+  const [deviceType, setDeviceType] = useState<String>();
+
+  const tempAndHum = ["Temperatura", "Humedad"];
 
   useEffect(() => {
     const newTopics = spaces.spaces.map((space) => ({
@@ -480,10 +507,48 @@ function Add(spaces: { spaces: Space[] }) {
       label: space.name,
     }));
     setTopics(newTopics);
-  }, [spaces]);
+    switch (deviceType) {
+      case "tempHum":
+        setdtv(temperatureAndHumDVT);
+        setMetricsAndUnits(temperatureUnits.concat(humidityUnits));
+        break;
+      case "movimiento":
+        setdtv(movementDVT);
+        setMetricsAndUnits(vibrationsUnits);
+        break;
+      case "luz":
+        setdtv(lightDVT);
+        setMetricsAndUnits([]);
+        break;
+      case "agua":
+        setdtv(waterFlowDVT);
+        setMetricsAndUnits(waterFlowUnits);
+        break;
+      case "humedadTierra":
+        setdtv(temperatureAndHumDVT);
+        setMetricsAndUnits(temperatureUnits.concat(humidityUnits));
+        break;
+      case "aire":
+        setdtv(airDVT);
+        setMetricsAndUnits([]);
+        break;
+      case "controlAcceso":
+        setdtv(accessControl);
+        setMetricsAndUnits([]);
+        break;
+      case "vibraciones":
+        setdtv(vibrationsDVT);
+        setMetricsAndUnits(vibrationsUnits);
+        break;
+
+      default:
+        setdtv([]);
+        setMetricsAndUnits([]);
+        break;
+    }
+  }, []);
 
   const handleTopicChange = (selectedTopic: SpaceRoute) => {
-    alert(selectedTopic.id);
     const newTopics: SpaceRoute[] = [];
     for (let i = 0; i < spaces.spaces.length; i++) {
       if (spaces.spaces[i].id === selectedTopic.id) {
@@ -541,7 +606,6 @@ function Add(spaces: { spaces: Space[] }) {
                       getOptionLabel={(option: SpaceRoute) =>
                         option.label || ""
                       }
-                      // getOptionValue={(option: SpaceRoute) => option.id}
                       renderInput={(params: AutocompleteRenderInputParams) => (
                         <TextFieldMUI
                           {...params}
@@ -563,7 +627,14 @@ function Add(spaces: { spaces: Space[] }) {
                     />
                     {form.values.topic.length > 1 && (
                       <Tooltip title="Eliminar" arrow>
-                        <IconButton size="large" onClick={() => remove(index)}>
+                        <IconButton
+                          size="large"
+                          onClick={() => {
+                            /** If removes, then undo the changes of the topics array */
+
+                            remove(index);
+                          }}
+                        >
                           <DeleteRounded />
                         </IconButton>
                       </Tooltip>
@@ -573,8 +644,14 @@ function Add(spaces: { spaces: Space[] }) {
                         <IconButton
                           size="large"
                           onClick={() => {
-                            handleTopicChange(form.values.topic[0]);
-                            push(new String());
+                            if (
+                              form.values.topic[0] !== "" &&
+                              form.values.topic[0] !== undefined &&
+                              form.values.topic[0] !== null
+                            ) {
+                              handleTopicChange(form.values.topic[0]);
+                              push(new String());
+                            }
                           }}
                         >
                           <AddRounded />
@@ -583,6 +660,105 @@ function Add(spaces: { spaces: Space[] }) {
                     )}
                   </Stack>
                 ))}
+              </>
+            )}
+          </FieldArray>
+
+          <Field
+            component={RadioGroup}
+            name="deviceType"
+            label="Tipo de dispositivo"
+          >
+            <FormLabel> Indique el tipo de control del dispositivo </FormLabel>
+            <FormControlLabel
+              value="tempHum"
+              control={<Radio />}
+              label="Temperatura y Humedad"
+              onSelect={() => {
+                setDeviceType("temperatureHumidity");
+              }}
+            />
+            <FormControlLabel
+              value="movimiento"
+              control={<Radio />}
+              label="Movimiento"
+              onSelect={() => {
+                setDeviceType("movimiento");
+              }}
+            />
+
+            <FormControlLabel
+              value="luz"
+              control={<Radio />}
+              label="Luminarias"
+              onSelect={() => {
+                setDeviceType("luz");
+              }}
+            />
+
+            <FormControlLabel
+              value="agua"
+              control={<Radio />}
+              label="Flujo de agua"
+              onSelect={() => {
+                setDeviceType("agua");
+              }}
+            />
+
+            <FormControlLabel
+              value="humedadTierra"
+              control={<Radio />}
+              label="Humedad de la tierra"
+              onSelect={() => {
+                setDeviceType("humedadTierra");
+              }}
+            />
+
+            <FormControlLabel
+              value="aire"
+              control={<Radio />}
+              label="Aire acondicionado"
+              onSelect={() => {
+                setDeviceType("aire");
+              }}
+            />
+
+            <FormControlLabel
+              value="controlAcceso"
+              control={<Radio />}
+              label="Control de acceso"
+              onSelect={() => {
+                setDeviceType("controlAccess");
+              }}
+            />
+
+            <FormControlLabel
+              value="vibraciones"
+              control={<Radio />}
+              label="Vibraciones"
+              onSelect={() => {
+                setDeviceType("vibraciones");
+              }}
+            />
+          </Field>
+
+          {/* <RadioGroupField
+            name="deviceType"
+            label="Indique el tipo de dispositivo"
+            options={[
+              { value: "sensor", label: "Sensor" },
+              { value: "actuator", label: "Actuador" },
+            ]}
+          /> */}
+
+          {/*
+           * ToDo: Add this fieldArray and keep in mind that we need to change again the data structure for the device */}
+          <FieldArray name="metricsAndUnits">
+            {({ push, remove, form }: any) => (
+              <>
+                <Typography gutterBottom>
+                  Ingrese las métricas y unidades del dispositivo
+                </Typography>
               </>
             )}
           </FieldArray>
