@@ -26,11 +26,13 @@ export const signIn = async (logData: Log) => {
 		}
 
 		const data = await response.json();
-		const { message, user, token } = data;
+		const { user, token } = data;
 
-		return user;
+		return { success: true, user, message: "Inicio de sesión exitoso" };
 	} catch (error) {
-		return error;
+		if (error instanceof Error) {
+			return { success: false, message: error.message };
+		} else return { success: false, message: "Hubo un error desconocido" };
 	}
 };
 
