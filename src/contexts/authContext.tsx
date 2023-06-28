@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState } from "react";
 import { Log, User, signIn } from "../api/User";
 
 interface Props {
@@ -28,7 +27,6 @@ const AuthContextProvider = ({ children }: Props): JSX.Element => {
 	const [user, setUser] = useState<User | null>(() => {
 		let userData = localStorage.getItem("userData");
 		if (userData) {
-			console.log(userData);
 			return JSON.parse(userData);
 		}
 		return null;

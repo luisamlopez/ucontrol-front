@@ -26,7 +26,7 @@ export const signIn = async (logData: Log) => {
 		}
 
 		const data = await response.json();
-		const { user, token } = data;
+		const { user } = data;
 
 		return { success: true, user, message: "Inicio de sesión exitoso" };
 	} catch (error) {
@@ -46,16 +46,19 @@ export const sendCode = async (email: string) => {
 
 		if (!response.ok) {
 			const error = await response.json();
-
+			console.log("pato");
 			console.log(error);
 			throw new Error(error.message);
 		}
 
 		const data = await response.json();
+		const { code, message } = data;
 		console.log(data);
-		return data;
+		return { success: true, code, message };
 	} catch (error) {
-		return error;
+		if (error instanceof Error) {
+			return { success: false, message: error.message };
+		} else return { success: false, message: "Hubo un error desconocido" };
 	}
 };
 
@@ -75,9 +78,12 @@ export const signUp = async (signUpData: Log) => {
 		}
 
 		const data = await response.json();
-		console.log(data);
-		return data;
+		const { message } = data;
+
+		return { message, success: true };
 	} catch (error) {
-		return error;
+		if (error instanceof Error) {
+			return { success: false, message: error.message };
+		} else return { success: false, message: "Hubo un error desconocido" };
 	}
 };
