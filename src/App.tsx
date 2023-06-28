@@ -9,6 +9,7 @@ import { AuthContextProvider } from "./contexts/authContext";
 import UnAuth from "./components/UnAuth";
 import Auth from "./components/Auth";
 import ConfigDevice from "./pages/ConfigDevice";
+import SpacesPage from "./pages/SpacesPage";
 
 const App = (): JSX.Element => {
   return (
@@ -43,6 +44,7 @@ const App = (): JSX.Element => {
               path="/devices/:action/:deviceID?"
               element={<ConfigDevice />}
             />
+            <Route path="/spaces" element={<SpacesPage />} />
             {/*
 			<Route path="/spaces" element={<Spaces />} />
         <Route path="/settings" element={<Settings />} />

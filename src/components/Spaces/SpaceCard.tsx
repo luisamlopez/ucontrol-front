@@ -1,4 +1,4 @@
-import { Device } from "../../api/Device";
+import { Space } from "../../api/Space";
 import {
   Box,
   Button,
@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import { useState } from "react";
 
-const DeviceCard = (device: Device): JSX.Element => {
+const SpaceCard = (space: Space): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -76,7 +76,7 @@ const DeviceCard = (device: Device): JSX.Element => {
               minWidth: "100%",
             }}
           >
-            {device.name}
+            {space.name}
           </Typography>
           <Box
             sx={{
@@ -88,18 +88,36 @@ const DeviceCard = (device: Device): JSX.Element => {
               minWidth: "100%",
             }}
           >
-            <DevicesDetailsText
-              title="Descripción"
-              value={device.description}
-            />
+            <DevicesDetailsText title="Descripción" value={space.description} />
           </Box>
+          {space.devices && (
+            <Box
+              sx={{
+                minHeight: "auto",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "wrap",
+                wordBreak: "break-word",
+                minWidth: "100%",
+              }}
+            >
+              <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
+                Dispositivos:
+              </Typography>
+              <Typography textAlign={"left"} color={"black"}>
+                <ul>
+                  {space.devices.map((device) => (
+                    <li key={device.id}>{device.name}</li>
+                  ))}
+                </ul>
+              </Typography>
+            </Box>
+          )}
 
           <DevicesDetailsText
             title="Conectado desde el"
-            value={device.createdOn}
+            value={space.createdOn}
           />
-          <DevicesDetailsText title="Tópico" value={device.currentTopic} />
-          <DevicesDetailsText title="Creado por" value={device.createdBy} />
         </CardContent>
         <CardActions
           sx={{
@@ -114,7 +132,7 @@ const DeviceCard = (device: Device): JSX.Element => {
         </CardActions>
       </Card>
       <Modal
-        device={device}
+        space={space}
         isOpen={isModalOpen}
         closeDialog={handleCloseModal}
       />
@@ -122,4 +140,4 @@ const DeviceCard = (device: Device): JSX.Element => {
   );
 };
 
-export default DeviceCard;
+export default SpaceCard;
