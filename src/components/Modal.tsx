@@ -131,7 +131,9 @@ const Modal = (props: DeviceModalProps) => {
                       ))}
                     </ul>
                   )}
-                  No hay dispositivos en este espacio.
+                  {!props.space.devices && (
+                    <>No hay dispositivos en este espacio.</>
+                  )}
                 </Typography>
               </Box>
             )}
