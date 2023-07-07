@@ -1,5 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState } from "react";
 import { Log, User, signIn } from "../api/User";
 
 interface Props {
@@ -8,7 +7,7 @@ interface Props {
 
 interface AuthContextValue {
 	user: User | null;
-	login: (userBody: Log) => void;
+	login: (userBody: Log) => Promise<{ success: boolean; message?: string }>;
 	logout: () => void;
 }
 
@@ -18,7 +17,9 @@ const useUser = () => {
 
 const AuthContext = createContext<AuthContextValue>({
 	user: {} as User,
-	login: () => {},
+	login: async (userBody: Log) => {
+		throw new Error("AuthContext not implemented");
+	},
 	logout: () => {},
 });
 
@@ -26,7 +27,6 @@ const AuthContextProvider = ({ children }: Props): JSX.Element => {
 	const [user, setUser] = useState<User | null>(() => {
 		let userData = localStorage.getItem("userData");
 		if (userData) {
-			console.log(userData);
 			return JSON.parse(userData);
 		}
 		return null;
@@ -34,11 +34,18 @@ const AuthContextProvider = ({ children }: Props): JSX.Element => {
 
 	const login = async (userBody: Log) => {
 		//TODO revisar respuesta a errores
-
-		const data = await signIn(userBody);
-		console.log(data);
-		localStorage.setItem("userData", JSON.stringify(data));
-		setUser(data);
+		try {
+			const response = await signIn(userBody);
+			if (response.success) {
+				localStorage.setItem("userData", JSON.stringify(response.user));
+				setUser(response.user);
+			}
+			return { success: response.success, message: response.message };
+		} catch (error) {
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			} else return { success: false, message: "Hubo un error desconocido" };
+		}
 	};
 
 	const logout = () => {
