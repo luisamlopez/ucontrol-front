@@ -10,7 +10,7 @@ import { Device } from "../api/Device";
 import { Space } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import DeviceForm from "../components/DevicesPage/DeviceForm";
+import SpaceForm from "../components/SpacesPage/SpaceForm";
 import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 
 const ConfigDevice = (): JSX.Element => {
@@ -19,10 +19,9 @@ const ConfigDevice = (): JSX.Element => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  // const { deviceID } = useParams<{ deviceID: string }>();
   const location = useLocation();
   const action = location.pathname.split("/")[2];
-  const deviceID = useParams<{ deviceID: string }>().deviceID;
+  const spaceID = useParams<{ spaceID: string }>().spaceID;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -251,7 +250,7 @@ const ConfigDevice = (): JSX.Element => {
               fontSize={{ xs: 24, sm: 48, lg: 48 }}
               fontWeight={600}
             >
-              {action === "add" ? "Nuevo dispositivo" : "Editar dispositivo"}
+              {action === "add" ? "Nuevo espacio" : "Editar espacio"}
             </Typography>
           </Box>
           {loading ? (
@@ -277,9 +276,9 @@ const ConfigDevice = (): JSX.Element => {
               <CircularProgress />
             </Box>
           ) : action === "add" ? (
-            <DeviceForm />
+            <SpaceForm />
           ) : (
-            <DeviceForm deviceID={deviceID!} />
+            <SpaceForm spaceID={spaceID!} />
           )}
         </Box>
       </Container>

@@ -13,23 +13,6 @@ import {
   FormLabel,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import {
-  Device,
-  DeviceValues,
-  MetricAndUnit,
-  UnitsConfig,
-  accessControl,
-  airDVT,
-  humidityUnits,
-  lightDVT,
-  movementDVT,
-  temperatureAndHumDVT,
-  temperatureUnits,
-  vibrationsDVT,
-  vibrationsUnits,
-  waterFlowDVT,
-  waterFlowUnits,
-} from "../../api/Device";
 import { Space, SpaceRoute } from "../../api/Space";
 import { AddRounded, DeleteRounded } from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik } from "formik";
@@ -37,51 +20,43 @@ import * as yup from "yup";
 import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
 import RadioGroupField from "../Fields/RadioGroupField";
+import { Device } from "../../api/Device";
 
-interface DeviceFormProps {
-  deviceID?: string;
+interface SpaceFormProps {
+  spaceID?: string;
 }
 
 interface FormValues {
   id: string;
   name: string;
   description: string;
-  currentTopic: string;
-  dataVisualizationType: string[];
-  values: DeviceValues[];
+  currentRoute?: SpaceRoute[];
   createdBy: string;
   createdOn: string;
-  topic: string[];
 }
 
 const initialValues = {
   id: "",
   name: "",
   description: "",
-  currentTopic: "",
-  dataVisualizationType: [],
-  values: [],
+  currentRoute: [],
   createdBy: "",
   createdOn: "",
-  topic: [""],
 };
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Por favor, ingrese un nombre"),
   description: yup.string().required("Por favor, ingrese una descripción"),
-  currentTopic: yup.string().required("Por favor, ingrese un tópico/espacio"),
-  dataVisualizationType: yup
-    .array()
-    .required("Por favor, seleccione al menos un tipo de visualización"),
+  currentRoute: yup.string().required("Por favor, ingrese un tópico/espacio"),
 });
 
-const DeviceForm = (props: DeviceFormProps): JSX.Element => {
+const SpaceForm = (props: SpaceFormProps): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-  const device = devices.find((device) => device.id === props.deviceID);
+  const space = spaces.find((space) => space.id === props.spaceID);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,7 +69,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             createdOn: "2021-10-01",
             createdBy: "User 1",
             dataVisualizationType: ["pie", "bar"],
-            currentTopic: "Topic 1",
             history: [
               {
                 name: "Device 1",
@@ -202,6 +176,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 updatedOn: "2021-10-01",
               },
             ],
+            currentTopic: "Topic 1",
+
             values: [
               {
                 timestamp: "2021-10-01",
@@ -466,8 +442,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         >
           <CircularProgress />
         </Box>
-      ) : devices.length === 0 ? (
-        <Typography>Error: no se pudieron cargar los dispositivos.</Typography>
+      ) : spaces.length === 0 ? (
+        <Typography>Error: no se pudo cargar el espacio.</Typography>
       ) : (
         <Box
           sx={{
@@ -482,83 +458,29 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             },
           }}
         >
-          {props.deviceID ? <> {props.deviceID} </> : <Add spaces={spaces} />}
+          {props.spaceID ? <> {props.spaceID} </> : <Add spaces={spaces} />}
         </Box>
       )}
     </Box>
   );
 };
 
-export default DeviceForm;
+export default SpaceForm;
 
 function Add(spaces: { spaces: Space[] }) {
-  const [topics, setTopics] = useState<SpaceRoute[]>([]);
-  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
+  useEffect(() => {}, []);
 
-  // const [metricsAndUnits, setMetricsAndUnits] = useState<MetricAndUnit[]>([]);
-  const [metricsAndUnits, setMetricsAndUnits] = useState<UnitsConfig[]>([]);
-  const [deviceType, setDeviceType] = useState<String>();
-
-  const tempAndHum = ["Temperatura", "Humedad"];
-
-  useEffect(() => {
-    const newTopics = spaces.spaces.map((space) => ({
-      id: space.id,
-      label: space.name,
-    }));
-    setTopics(newTopics);
-    switch (deviceType) {
-      case "tempHum":
-        setdtv(temperatureAndHumDVT);
-        setMetricsAndUnits(temperatureUnits.concat(humidityUnits));
-        break;
-      case "movimiento":
-        setdtv(movementDVT);
-        setMetricsAndUnits(vibrationsUnits);
-        break;
-      case "luz":
-        setdtv(lightDVT);
-        setMetricsAndUnits([]);
-        break;
-      case "agua":
-        setdtv(waterFlowDVT);
-        setMetricsAndUnits(waterFlowUnits);
-        break;
-      case "humedadTierra":
-        setdtv(temperatureAndHumDVT);
-        setMetricsAndUnits(temperatureUnits.concat(humidityUnits));
-        break;
-      case "aire":
-        setdtv(airDVT);
-        setMetricsAndUnits([]);
-        break;
-      case "controlAcceso":
-        setdtv(accessControl);
-        setMetricsAndUnits([]);
-        break;
-      case "vibraciones":
-        setdtv(vibrationsDVT);
-        setMetricsAndUnits(vibrationsUnits);
-        break;
-
-      default:
-        setdtv([]);
-        setMetricsAndUnits([]);
-        break;
-    }
-  }, []);
-
-  const handleTopicChange = (selectedTopic: SpaceRoute) => {
-    const newTopics: SpaceRoute[] = [];
-    for (let i = 0; i < spaces.spaces.length; i++) {
-      if (spaces.spaces[i].id === selectedTopic.id) {
-        for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
-          newTopics.push(spaces.spaces[i].currentRoute[j]);
-        }
-      }
-    }
-    setTopics(newTopics);
-  };
+  // const handleTopicChange = (selectedTopic: SpaceRoute) => {
+  //   const newTopics: SpaceRoute[] = [];
+  //   for (let i = 0; i < spaces.spaces.length; i++) {
+  //     if (spaces.spaces[i].id === selectedTopic.id) {
+  //       for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
+  //         newTopics.push(spaces.spaces[i].currentRoute[j]);
+  //       }
+  //     }
+  //   }
+  //   setTopics(newTopics);
+  // };
 
   return (
     <Formik
@@ -585,7 +507,7 @@ function Add(spaces: { spaces: Space[] }) {
             fullWidth
           />
 
-          <FieldArray name="topic">
+          {/* <FieldArray name="topic">
             {({ push, remove, form }: any) => (
               <>
                 <Typography gutterBottom>
@@ -630,7 +552,6 @@ function Add(spaces: { spaces: Space[] }) {
                         <IconButton
                           size="large"
                           onClick={() => {
-                            /** If removes, then undo the changes of the topics array */
 
                             remove(index);
                           }}
@@ -662,120 +583,49 @@ function Add(spaces: { spaces: Space[] }) {
                 ))}
               </>
             )}
-          </FieldArray>
+          </FieldArray> */}
 
           <Field
             component={RadioGroup}
-            name="deviceType"
+            name="spaceType"
             label="Tipo de dispositivo"
           >
-            <FormLabel> Indique el tipo de control del dispositivo </FormLabel>
+            <FormLabel>¿Este espacio pertenece a otro?</FormLabel>
+            <Typography>
+              Ejemplo:
+              <ul>
+                <li>Laboratorio pertenece a edificio</li>
+                <li>Salón pertenece a piso</li>
+                <li>Piso pertenece a módulo</li>
+              </ul>
+            </Typography>
             <FormControlLabel
               value="tempHum"
               control={<Radio />}
-              label="Temperatura y Humedad"
-              onSelect={() => {
-                setDeviceType("temperatureHumidity");
-              }}
+              label="Si"
+              onSelect={() => {}}
             />
             <FormControlLabel
               value="movimiento"
               control={<Radio />}
-              label="Movimiento"
-              onSelect={() => {
-                setDeviceType("movimiento");
-              }}
-            />
-
-            <FormControlLabel
-              value="luz"
-              control={<Radio />}
-              label="Luminarias"
-              onSelect={() => {
-                setDeviceType("luz");
-              }}
-            />
-
-            <FormControlLabel
-              value="agua"
-              control={<Radio />}
-              label="Flujo de agua"
-              onSelect={() => {
-                setDeviceType("agua");
-              }}
-            />
-
-            <FormControlLabel
-              value="humedadTierra"
-              control={<Radio />}
-              label="Humedad de la tierra"
-              onSelect={() => {
-                setDeviceType("humedadTierra");
-              }}
-            />
-
-            <FormControlLabel
-              value="aire"
-              control={<Radio />}
-              label="Aire acondicionado"
-              onSelect={() => {
-                setDeviceType("aire");
-              }}
-            />
-
-            <FormControlLabel
-              value="controlAcceso"
-              control={<Radio />}
-              label="Control de acceso"
-              onSelect={() => {
-                setDeviceType("controlAccess");
-              }}
-            />
-
-            <FormControlLabel
-              value="vibraciones"
-              control={<Radio />}
-              label="Vibraciones"
-              onSelect={() => {
-                setDeviceType("vibraciones");
-              }}
+              label="No"
+              onSelect={() => {}}
             />
           </Field>
-
-          {/* <RadioGroupField
-            name="deviceType"
-            label="Indique el tipo de dispositivo"
-            options={[
-              { value: "sensor", label: "Sensor" },
-              { value: "actuator", label: "Actuador" },
-            ]}
-          /> */}
-
-          {/*
-           * ToDo: Add this fieldArray and keep in mind that we need to change again the data structure for the device */}
-          <FieldArray name="metricsAndUnits">
-            {({ push, remove, form }: any) => (
-              <>
-                <Typography gutterBottom>
-                  Ingrese las métricas y unidades del dispositivo
-                </Typography>
-              </>
-            )}
-          </FieldArray>
         </Stack>
       )}
     </Formik>
   );
 }
 
-function Edit(device: { device: Device }) {}
+function Edit(space: { space: Space }) {}
 
-const onSubmit = async (values: Device, { setSubmitting }: any) => {
+const onSubmit = async (values: Space, { setSubmitting }: any) => {
   await Save(false, values);
   setSubmitting(false);
 };
 
-const Save = async (isAdd: boolean, values: Device) => {
+const Save = async (isAdd: boolean, values: Space) => {
   if (isAdd) {
     //  create
   } else {
