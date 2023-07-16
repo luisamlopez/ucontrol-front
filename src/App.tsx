@@ -42,14 +42,14 @@ const App = (): JSX.Element => {
 						<Route path="/spaceID/:spaceID" element={<SpacePage />} />
 						<Route path="/devices" element={<DevicesPage />} />
 
-            <Route
-              path="/devices/:action/:deviceID?"
-              element={<ConfigDevice />}
-            <Route path="/spaces" element={<SpacesPage />} />
-            />
-            <Route path="/spaces/:action/:spaceID?" element={<ConfigSpace />} />
+						<Route
+							path="/devices/:action/:deviceID?"
+							element={<ConfigDevice />}
+						/>
+						<Route path="/spaces" element={<SpacesPage />} />
+						<Route path="/spaces/:action/:spaceID?" element={<ConfigSpace />} />
 
-            {/*
+						{/*
         <Route path="/settings" element={<Settings />} />
         <Route path="/help" element={<Help />} />
         */}
