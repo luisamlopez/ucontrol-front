@@ -19,7 +19,7 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
 }: ChartCarouselProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const types = device.dataVisualizationType;
+  const types = device.dvt;
 
   const handlePrevClick = () => {
     setActiveIndex((prevIndex) =>
@@ -55,13 +55,16 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
             }}
           >
             {type === "bar" && (
-              <BarChart id={device.id} values={device.values} />
+              // <BarChart id={device.id} values={device.values} />
+              <Box>Bar</Box>
             )}
             {type === "pie" && (
-              <PieChart id={device.id} values={device.values} />
+              // <PieChart id={device.id} values={device.values} />
+              <Box>Pie</Box>
             )}
             {type === "line" && (
-              <LineChart id={device.id} values={device.values} />
+              //  <LineChart id={device.id} values={device.values} />
+              <Box>Line</Box>
             )}
             {type === "gauge" && (
               // <Gauge id={device.id} values={device.values} />

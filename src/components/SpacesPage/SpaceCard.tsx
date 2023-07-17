@@ -116,7 +116,7 @@ const SpaceCard = (space: Space): JSX.Element => {
 
           <DevicesDetailsText
             title="Conectado desde el"
-            value={space.createdOn}
+            value={space.createdOn.toString()}
           />
         </CardContent>
         <CardActions

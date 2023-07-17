@@ -28,124 +28,15 @@ const DevicesPage = (): JSX.Element => {
         const dataDevices: Device[] = [
           {
             id: "1",
-            name: "Sensor luz",
-            description:
-              "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-            createdOn: "2021-10-01",
+            name: "Device 1",
+            description: "Description 1",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 1",
-            dataVisualizationType: ["pie", "bar"],
-            history: [
-              {
-                name: "Device 1",
-                description: "Description 1",
-                topic: "Topic 1",
-                dataVisualizationType: ["pie", "line"],
-                values: [
-                  {
-                    timestamp: "2021-10-01",
-                    value: 10,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-02",
-                    value: 20,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-03",
-                    value: 30,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                ],
-
-                updatedBy: "User 1.23",
-                updatedOn: "2021-10-01",
-              },
-              {
-                name: "Device 1.1",
-                description: "Description 1.1",
-                topic: "Topic 1.1",
-                dataVisualizationType: ["pie", "gauge"],
-                values: [
-                  {
-                    timestamp: "2021-10-01",
-                    value: 10,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-02",
-                    value: 20,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-03",
-                    value: 30,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                ],
-                updatedBy: "User 1.5",
-                updatedOn: "2021-10-01",
-              },
-            ],
-            currentTopic: "Topic 1",
-
+            dvt: ["pie", "bar"],
+            topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
             values: [
               {
-                timestamp: "2021-10-01",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 10,
                 metricsAndUnits: [
                   {
@@ -159,7 +50,7 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-02",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 20,
                 metricsAndUnits: [
                   {
@@ -173,8 +64,8 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-03",
-                value: 30,
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
+                value: 40,
                 metricsAndUnits: [
                   {
                     metric: "Metric 1",
@@ -187,19 +78,25 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
             ],
+            history: [
+              {
+                updatedBy: "User 1",
+                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
+                field: ["Cambio 1"],
+              },
+            ],
           },
           {
             id: "2",
-            name: "Sensor de luz oficina del profe Franklin",
-            description:
-              "Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2",
-            createdOn: "2021-10-01",
+            name: "Device 2",
+            description: "Description 2",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 2",
-            currentTopic: "Topic 2",
-            dataVisualizationType: ["bar", "line"],
+            dvt: ["bar", "line"],
+            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
             values: [
               {
-                timestamp: "2021-10-01",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 10,
                 metricsAndUnits: [
                   {
@@ -213,7 +110,7 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-02",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 20,
                 metricsAndUnits: [
                   {
@@ -239,7 +136,7 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-03",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 30,
                 metricsAndUnits: [
                   {
@@ -270,13 +167,14 @@ const DevicesPage = (): JSX.Element => {
             id: "3",
             name: "Device 3",
             description: "Description 3",
-            createdOn: "2021-10-01",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 3",
-            currentTopic: "Topic 3",
-            dataVisualizationType: ["pie"],
+            dvt: ["pie"],
+
+            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
             values: [
               {
-                timestamp: "2021-10-01",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 10,
                 metricsAndUnits: [
                   {
@@ -290,7 +188,7 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-02",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 20,
                 metricsAndUnits: [
                   {
@@ -304,60 +202,7 @@ const DevicesPage = (): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-03",
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "4",
-            name: "Device 4",
-            description: "Description 3",
-            createdOn: "2021-10-01",
-            createdBy: "User 3",
-            currentTopic: "Topic 3",
-            dataVisualizationType: ["pie"],
-            values: [
-              {
-                timestamp: "2021-10-01",
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: "2021-10-02",
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: "2021-10-03",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 30,
                 metricsAndUnits: [
                   {

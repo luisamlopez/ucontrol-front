@@ -78,11 +78,11 @@ function Summary({ devices }: { devices: Device[] }): JSX.Element {
 
   let values: DeviceValues[] = [];
 
-  devices.map((device) => {
-    for (let metric of device.values) {
-      values.push(metric);
-    }
-  });
+  // devices.map((device) => {
+  //   for (let metric of device.values) {
+  //     values.push(metric);
+  //   }
+  // });
 
   return (
     <Box
@@ -127,9 +127,11 @@ function Summary({ devices }: { devices: Device[] }): JSX.Element {
               <li key={i}>
                 <Typography textAlign={"left"}>
                   {device.name}:&nbsp;
-                  {device.values[device.values.length - 1].value}&nbsp; tomada
+                  {/* {device.values[device.values.length - 1].value}&nbsp; tomada
                   el&nbsp;
-                  {device.values[device.values.length - 1].timestamp}
+                  {device.values[
+                    device.values.length - 1
+                  ].timestamp?.toString()} */}
                 </Typography>
               </li>
             ))}

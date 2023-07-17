@@ -37,10 +37,13 @@ function Details(props: { device: Device }): JSX.Element {
 
       <DevicesDetailsText
         title={"Conectado desde el"}
-        value={props.device.createdOn}
+        value={props.device.createdOn.toString()}
       />
 
-      <DevicesDetailsText title="Tópico" value={props.device.currentTopic} />
+      <DevicesDetailsText
+        title="Tópico"
+        value={props.device.topic.flat().join("/")}
+      />
 
       <DevicesDetailsText
         title={"Instrucciones"}

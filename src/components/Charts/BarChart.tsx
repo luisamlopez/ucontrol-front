@@ -62,7 +62,7 @@ const BarChart = ({ id, values }: ChartDataProps): JSX.Element => {
     setOpen(false);
   };
 
-  let finalData: { tiempo: string; valor: number }[] = [];
+  let finalData: { tiempo: Date; valor: number }[] = [];
 
   values.forEach((item, i) => {
     finalData[i] = {

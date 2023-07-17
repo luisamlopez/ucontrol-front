@@ -3,17 +3,8 @@ export interface MetricAndUnit {
   unit: string;
 }
 
-type DataVisualizationType =
-  | "line"
-  | "bar"
-  | "pie"
-  | "gauge"
-  | "scatter"
-  | "table"
-  | "value";
-
 export interface DeviceValues {
-  timestamp?: string;
+  timestamp?: Date;
   value?: number | string | boolean;
   metricsAndUnits?: MetricAndUnit[];
 }
@@ -22,21 +13,19 @@ export interface Device {
   id: string;
   name: string;
   description: string;
-  currentTopic: string;
-  topic?: string[];
+  dvt: ("line" | "bar" | "pie" | "gauge" | "scatter" | "table" | "value")[];
   createdBy: string;
-  createdOn: string;
-  values: DeviceValues[];
-  dataVisualizationType: DataVisualizationType[];
+  createdOn: Date;
   history?: {
-    name: string;
-    description: string;
-    topic: string;
     updatedBy: string;
-    updatedOn: string;
-    dataVisualizationType: DataVisualizationType[];
-    values: DeviceValues[];
+    updatedOn: Date;
+    field: string[];
   }[];
+  /**
+   * @todo change this
+   */
+  topic: string[];
+  values?: DeviceValues[];
 }
 
 export interface UnitsConfig {

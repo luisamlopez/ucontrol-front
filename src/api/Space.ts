@@ -1,23 +1,17 @@
 import { Device } from "./Device";
 
-export interface SpaceRoute {
-  id: string;
-  label: string;
-}
-
 export interface Space {
   id: string;
   name: string;
   description: string;
-  currentRoute: SpaceRoute[];
   createdBy: string;
-  createdOn: string;
+  createdOn: Date;
   devices?: Device[];
   history?: {
-    name: string;
-    description: string;
-    route?: string;
+    field: string[];
     updatedBy: string;
-    updatedOn: string;
+    updatedOn: Date;
   }[];
+  parentSpace?: Space;
+  subSpaces?: Space[];
 }

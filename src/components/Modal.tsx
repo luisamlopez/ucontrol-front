@@ -25,11 +25,11 @@ const Modal = (props: DeviceModalProps) => {
 
   let hasMetricsAndUnits = false;
   if (props.device) {
-    for (let i = 0; i < props.device.values.length; i++) {
-      if (props.device.values[i].metricsAndUnits) {
-        hasMetricsAndUnits = true;
-      }
-    }
+    // for (let i = 0; i < props.device.values.length; i++) {
+    //   if (props.device.values[i].metricsAndUnits) {
+    //     hasMetricsAndUnits = true;
+    //   }
+    // }
   }
 
   const handleDeleteDevice = () => {
@@ -116,7 +116,7 @@ const Modal = (props: DeviceModalProps) => {
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>Tópico:</Typography>
-                <Typography>{props.device.currentTopic}</Typography>
+                <Typography>{props.device.topic}</Typography>
               </Box>
             )}
 
@@ -144,7 +144,7 @@ const Modal = (props: DeviceModalProps) => {
                   Métricas y unidades:
                 </Typography>
                 <Typography>
-                  <ul>
+                  {/* <ul>
                     {props.device.values.map((value) => (
                       <>
                         {value.metricsAndUnits &&
@@ -155,7 +155,7 @@ const Modal = (props: DeviceModalProps) => {
                           ))}
                       </>
                     ))}
-                  </ul>
+                  </ul> */}
                 </Typography>
               </Box>
             )}
@@ -168,7 +168,7 @@ const Modal = (props: DeviceModalProps) => {
                 <Typography>
                   {props.device && (
                     <ul>
-                      {props.device.dataVisualizationType.map((obj) => (
+                      {props.device.dvt.map((obj) => (
                         <li>
                           {obj === "pie"
                             ? "Gráfico de pastel"
@@ -199,7 +199,7 @@ const Modal = (props: DeviceModalProps) => {
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>
-                <Typography>{props.device.createdOn}</Typography>
+                <Typography>{props.device.createdOn.toString()}</Typography>
               </Box>
             )}
 
@@ -207,9 +207,11 @@ const Modal = (props: DeviceModalProps) => {
               <Box>
                 <Typography fontWeight={"bold"}>Ubicación:</Typography>
                 <Typography>
-                  {props.space.currentRoute
-                    .flatMap((obj) => obj.label)
-                    .join("/")}
+                  {props.space.parentSpace
+                    ? props.space.parentSpace.name
+                    : props.space.subSpaces
+                    ? props.space.subSpaces.flatMap((obj) => obj.name).join("/")
+                    : "No hay ubicación"}
                 </Typography>
               </Box>
             )}

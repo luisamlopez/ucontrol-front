@@ -32,121 +32,14 @@ const ConfigDevice = (): JSX.Element => {
           name: "Device 1",
           description:
             "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-          createdOn: "2021-10-01",
+          createdOn: new Date(2022, 10, 1, 14, 23, 8),
           createdBy: "User 1",
-          dataVisualizationType: ["pie", "bar"],
-          history: [
-            {
-              name: "Device 1",
-              description: "Description 1",
-              topic: "Topic 1",
-              dataVisualizationType: ["pie", "line"],
-              values: [
-                {
-                  timestamp: "2021-10-01",
-                  value: 10,
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                },
-                {
-                  timestamp: "2021-10-02",
-                  value: 20,
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                },
-                {
-                  timestamp: "2021-10-03",
-                  value: 30,
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                },
-              ],
-
-              updatedBy: "User 1.23",
-              updatedOn: "2021-10-01",
-            },
-            {
-              name: "Device 1.1",
-              description: "Description 1.1",
-              topic: "Topic 1.1",
-              dataVisualizationType: ["pie", "gauge"],
-              values: [
-                {
-                  timestamp: "2021-10-01",
-                  value: 10,
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                },
-                {
-                  timestamp: "2021-10-02",
-                  value: 20,
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                },
-                {
-                  timestamp: "2021-10-03",
-                  value: 30,
-                  metricsAndUnits: [
-                    {
-                      metric: "Metric 1",
-                      unit: "Unit 1",
-                    },
-                    {
-                      metric: "Metric 2",
-                      unit: "Unit 2",
-                    },
-                  ],
-                },
-              ],
-              updatedBy: "User 1.5",
-              updatedOn: "2021-10-01",
-            },
-          ],
-          currentTopic: "Topic 1",
+          dvt: ["pie", "bar"],
+          topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
 
           values: [
             {
-              timestamp: "2021-10-01",
+              timestamp: new Date(2022, 10, 1, 14, 23, 8),
               value: 10,
               metricsAndUnits: [
                 {
@@ -160,7 +53,7 @@ const ConfigDevice = (): JSX.Element => {
               ],
             },
             {
-              timestamp: "2021-10-02",
+              timestamp: new Date(2022, 10, 1, 14, 23, 8),
               value: 20,
               metricsAndUnits: [
                 {
@@ -174,7 +67,7 @@ const ConfigDevice = (): JSX.Element => {
               ],
             },
             {
-              timestamp: "2021-10-03",
+              timestamp: new Date(2022, 10, 1, 14, 23, 8),
               value: 30,
               metricsAndUnits: [
                 {

@@ -33,6 +33,14 @@ interface Props {
   window?: () => Window;
 }
 
+/**
+ * @luisamlopez
+ * @description The `interface Option` defines the structure of an option in the sidebar. It has three properties:
+ * @property name: the name of the option
+ * @property icon: the icon of the option
+ * @property link: the link to the option
+ *
+ */
 interface Option {
   name: string;
   icon: JSX.Element;
@@ -51,7 +59,10 @@ export const Sidebar = (props: Props) => {
     setMobileOpen(!mobileOpen);
   };
 
-  //Array of options for sidebar
+  /**
+   * @description Array of options for sidebar
+   */
+
   const options: Option[] = [
     {
       name: "Inicio",

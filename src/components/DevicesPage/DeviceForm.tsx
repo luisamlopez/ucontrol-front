@@ -30,7 +30,7 @@ import {
   waterFlowDVT,
   waterFlowUnits,
 } from "../../api/Device";
-import { Space, SpaceRoute } from "../../api/Space";
+import { Space } from "../../api/Space";
 import { AddRounded, DeleteRounded } from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik } from "formik";
 import * as yup from "yup";
@@ -46,31 +46,32 @@ interface FormValues {
   id: string;
   name: string;
   description: string;
-  currentTopic: string;
-  dataVisualizationType: string[];
-  values: DeviceValues[];
+  dvt: ("line" | "bar" | "pie" | "gauge" | "scatter" | "table" | "value")[];
   createdBy: string;
-  createdOn: string;
+  createdOn: Date;
+  /**
+   * @todo change this
+   */
   topic: string[];
+  values: DeviceValues[];
 }
 
-const initialValues = {
+const initialValues: FormValues = {
   id: "",
   name: "",
   description: "",
-  currentTopic: "",
-  dataVisualizationType: [],
-  values: [],
+  dvt: ["value"],
   createdBy: "",
-  createdOn: "",
+  createdOn: new Date(),
   topic: [""],
+  values: [],
 };
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Por favor, ingrese un nombre"),
   description: yup.string().required("Por favor, ingrese una descripción"),
-  currentTopic: yup.string().required("Por favor, ingrese un tópico/espacio"),
-  dataVisualizationType: yup
+  topic: yup.string().required("Por favor, ingrese un tópico/espacio"),
+  dvt: yup
     .array()
     .required("Por favor, seleccione al menos un tipo de visualización"),
 });
@@ -81,8 +82,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-  const device = devices.find((device) => device.id === props.deviceID);
-
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
@@ -91,120 +90,13 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             id: "1",
             name: "Device 1",
             description: "Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 1",
-            dataVisualizationType: ["pie", "bar"],
-            currentTopic: "Topic 1",
-            history: [
-              {
-                name: "Device 1",
-                description: "Description 1",
-                topic: "Topic 1",
-                dataVisualizationType: ["pie", "line"],
-                values: [
-                  {
-                    timestamp: "2021-10-01",
-                    value: 10,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-02",
-                    value: 20,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-03",
-                    value: 30,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                ],
-
-                updatedBy: "User 1.23",
-                updatedOn: "2021-10-01",
-              },
-              {
-                name: "Device 1.1",
-                description: "Description 1.1",
-                topic: "Topic 1.1",
-                dataVisualizationType: ["pie", "gauge"],
-                values: [
-                  {
-                    timestamp: "2021-10-01",
-                    value: 10,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-02",
-                    value: 20,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-03",
-                    value: 30,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                ],
-                updatedBy: "User 1.5",
-                updatedOn: "2021-10-01",
-              },
-            ],
+            dvt: ["pie", "bar"],
+            topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
             values: [
               {
-                timestamp: "2021-10-01",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 10,
                 metricsAndUnits: [
                   {
@@ -218,7 +110,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-02",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 20,
                 metricsAndUnits: [
                   {
@@ -232,7 +124,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-03",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 40,
                 metricsAndUnits: [
                   {
@@ -246,18 +138,25 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
             ],
+            history: [
+              {
+                updatedBy: "User 1",
+                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
+                field: ["Cambio 1"],
+              },
+            ],
           },
           {
             id: "2",
             name: "Device 2",
             description: "Description 2",
-            createdOn: "2021-10-01",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 2",
-            currentTopic: "Topic 2",
-            dataVisualizationType: ["bar", "line"],
+            dvt: ["bar", "line"],
+            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
             values: [
               {
-                timestamp: "2021-10-01",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 10,
                 metricsAndUnits: [
                   {
@@ -271,7 +170,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-02",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 20,
                 metricsAndUnits: [
                   {
@@ -297,7 +196,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-08",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 30,
                 metricsAndUnits: [
                   {
@@ -328,13 +227,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             id: "3",
             name: "Device 3",
             description: "Description 3",
-            createdOn: "2021-10-01",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 3",
-            currentTopic: "Topic 3",
-            dataVisualizationType: ["pie"],
+            dvt: ["pie"],
+
+            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
             values: [
               {
-                timestamp: "2021-10-01",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 10,
                 metricsAndUnits: [
                   {
@@ -348,7 +248,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-02",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 20,
                 metricsAndUnits: [
                   {
@@ -362,7 +262,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
               },
               {
-                timestamp: "2021-10-03",
+                timestamp: new Date(2022, 10, 1, 14, 23, 8),
                 value: 30,
                 metricsAndUnits: [
                   {
@@ -383,47 +283,21 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             id: "1",
             name: "Space 1",
             description: "Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 1",
-            currentRoute: [
-              {
-                id: "1",
-                label: "Space 1.1",
-              },
-              {
-                id: "2",
-                label: "Space 1.2",
-              },
-              {
-                id: "3",
-                label: "Space 1.3",
-              },
-            ],
           },
 
           {
             id: "2",
             name: "Space 2",
             description: "Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date(2022, 10, 1, 14, 23, 8),
             createdBy: "User 1",
-            currentRoute: [
-              {
-                id: "1",
-                label: "Space 2.1",
-              },
-              {
-                id: "2",
-                label: "Space 2.2",
-              },
-            ],
             history: [
               {
-                name: "cambio 1",
-                description: "descipcion 2",
+                field: ["cambio 1"],
                 updatedBy: "userr",
-                updatedOn: "565",
-                route: "ruta",
+                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
               },
             ],
             devices: dataDevices,
@@ -492,7 +366,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 export default DeviceForm;
 
 function Add(spaces: { spaces: Space[] }) {
-  const [topics, setTopics] = useState<SpaceRoute[]>([]);
+  const [topics, setTopics] = useState<any[]>([]);
   const [dtv, setdtv] = useState<UnitsConfig[]>([]);
 
   // const [metricsAndUnits, setMetricsAndUnits] = useState<MetricAndUnit[]>([]);
@@ -548,16 +422,20 @@ function Add(spaces: { spaces: Space[] }) {
     }
   }, []);
 
-  const handleTopicChange = (selectedTopic: SpaceRoute) => {
-    const newTopics: SpaceRoute[] = [];
-    for (let i = 0; i < spaces.spaces.length; i++) {
-      if (spaces.spaces[i].id === selectedTopic.id) {
-        for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
-          newTopics.push(spaces.spaces[i].currentRoute[j]);
-        }
-      }
-    }
-    setTopics(newTopics);
+  /**
+   * @todo FIX!
+   * @param selectedTopic SpaceRoute
+   */
+  const handleTopicChange = (selectedTopic: any) => {
+    const newTopics: any[] = [];
+    // for (let i = 0; i < spaces.spaces.length; i++) {
+    //   if (spaces.spaces[i].id === selectedTopic.id) {
+    //     for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
+    //       newTopics.push(spaces.spaces[i].currentRoute[j]);
+    //     }
+    //   }
+    // }
+    // setTopics(newTopics);
   };
 
   return (
@@ -603,9 +481,9 @@ function Add(spaces: { spaces: Space[] }) {
                       name={`topic.${index}`}
                       component={Autocomplete}
                       options={topics}
-                      getOptionLabel={(option: SpaceRoute) =>
-                        option.label || ""
-                      }
+                      // getOptionLabel={(option: SpaceRoute) =>
+                      //   option.label || ""
+                      // }
                       renderInput={(params: AutocompleteRenderInputParams) => (
                         <TextFieldMUI
                           {...params}
@@ -615,12 +493,8 @@ function Add(spaces: { spaces: Space[] }) {
                           variant="outlined"
                           fullWidth
                           id="textfieldmui"
-                          error={
-                            touched.currentTopic && Boolean(errors.currentTopic)
-                          }
-                          helperText={
-                            touched.currentTopic && errors.currentTopic
-                          }
+                          error={touched.topic && Boolean(errors.topic)}
+                          helperText={touched.topic && errors.topic}
                         />
                       )}
                       style={{ width: "100%" }}

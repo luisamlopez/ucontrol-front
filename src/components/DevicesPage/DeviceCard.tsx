@@ -96,9 +96,12 @@ const DeviceCard = (device: Device): JSX.Element => {
 
           <DevicesDetailsText
             title="Conectado desde el"
-            value={device.createdOn}
+            value={device.createdOn.toString()}
           />
-          <DevicesDetailsText title="Tópico" value={device.currentTopic} />
+          <DevicesDetailsText
+            title="Tópico"
+            value={device.topic.flat().join("/")}
+          />
           <DevicesDetailsText title="Creado por" value={device.createdBy} />
         </CardContent>
         <CardActions

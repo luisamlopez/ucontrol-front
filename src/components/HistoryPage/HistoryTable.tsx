@@ -48,15 +48,14 @@ function DeviceDetails(object: Device) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? object.history[object.history?.length].updatedOn
-            : object.createdOn}
+            ? object.history[object.history?.length].updatedOn.toString()
+            : object.createdOn.toString()}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
             ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
         </TableCell>
-        <TableCell align="center">{object.currentTopic}</TableCell>
       </TableRow>
 
       {/* Details on collapse */}
@@ -75,10 +74,7 @@ function DeviceDetails(object: Device) {
                     <TableRow>
                       <TableCell>Fecha del cambio</TableCell>
                       <TableCell>Responsable del cambio</TableCell>
-                      <TableCell>Nombre del dispositivo</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Tópico/Espacio</TableCell>
-                      <TableCell>Unidades y métricas</TableCell>
+                      <TableCell>Descripción del cambio</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -86,12 +82,10 @@ function DeviceDetails(object: Device) {
                     {object.history?.map((history) => (
                       <TableRow key={object.id}>
                         <TableCell component="th" scope="row" align="center">
-                          {history.updatedOn}
+                          {history.updatedOn.toString()}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
-                        <TableCell>{history.name}</TableCell>
-                        <TableCell>{history.description}</TableCell>
-                        <TableCell>{history.topic}</TableCell>
+                        <TableCell>{history.field}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -128,19 +122,13 @@ function SpaceDetails(object: Space) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? object.history[object.history?.length].updatedOn
-            : object.createdOn}
+            ? object.history[object.history?.length].updatedOn.toString()
+            : object.createdOn.toString()}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
             ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
-        </TableCell>
-
-        <TableCell align="center">
-          {object.currentRoute
-            ? object.currentRoute.flatMap((route) => route.label).join("/")
-            : "N/A"}
         </TableCell>
       </TableRow>
 
@@ -159,10 +147,7 @@ function SpaceDetails(object: Space) {
                     <TableRow>
                       <TableCell>Fecha del cambio</TableCell>
                       <TableCell>Responsable del cambio</TableCell>
-                      <TableCell>Nombre del espacio</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Ruta</TableCell>
-                      <TableCell>Dispositivos!!!</TableCell>
+                      <TableCell>Descripción del cambio</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -170,17 +155,10 @@ function SpaceDetails(object: Space) {
                     {object.history?.map((history) => (
                       <TableRow key={object.id}>
                         <TableCell component="th" scope="row">
-                          {history.updatedOn}
+                          {history.updatedOn.toString()}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
-                        <TableCell>{history.name}</TableCell>
-                        <TableCell>{history.description}</TableCell>
-                        <TableCell>{history.route}</TableCell>
-                        <TableCell>
-                          {object.devices
-                            ?.map((device) => `${device.name}`)
-                            .join(", ")}
-                        </TableCell>
+                        <TableCell>{history.field}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -238,17 +216,6 @@ const HistoryTable = ({ devices, spaces }: HistoryProps): JSX.Element => {
               }}
             >
               Responsable del cambio
-            </TableCell>
-
-            <TableCell
-              align="center"
-              sx={{
-                color: "primary.main",
-                fontWeight: "bold",
-                fontSize: "1rem",
-              }}
-            >
-              {devices ? "Tópico/Espacio" : "Ruta"}
             </TableCell>
           </TableRow>
         </TableHead>

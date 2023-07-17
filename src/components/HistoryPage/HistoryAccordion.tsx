@@ -52,8 +52,8 @@ function DeviceDetails(device: Device) {
           }}
         >
           {device.history?.length === 0
-            ? device.history[device.history?.length].updatedOn
-            : device.createdOn}
+            ? device.history[device.history?.length].updatedOn.toString()
+            : device.createdOn.toString()}
         </Typography>
 
         <Typography
@@ -96,7 +96,7 @@ function DeviceDetails(device: Device) {
                   <Typography color={"primary.main"} fontWeight={"medium"}>
                     Fecha del cambio:
                   </Typography>
-                  <Typography>{history.updatedOn}</Typography>
+                  <Typography>{history.updatedOn.toString()}</Typography>
                 </Box>
 
                 <Box display={"flex"} justifyContent={"space-between"}>
@@ -108,23 +108,11 @@ function DeviceDetails(device: Device) {
 
                 <Box display={"flex"} justifyContent={"space-between"}>
                   <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Nombre del dispositivo:
+                    Descripción del cambio:
                   </Typography>
-                  <Typography>{history.name}</Typography>
-                </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Descripción:
+                  <Typography>
+                    {history.field[history.field.length - 1]}
                   </Typography>
-                  <Typography>{history.description}</Typography>
-                </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Tópico/Espacio:
-                  </Typography>
-                  <Typography>{history.topic}</Typography>
                 </Box>
               </Box>
             ))}
@@ -174,8 +162,8 @@ function SpaceDetails(device: Space) {
           }}
         >
           {device.history?.length === 0
-            ? device.history[device.history?.length].updatedOn
-            : device.createdOn}
+            ? device.history[device.history?.length].updatedOn.toString()
+            : device.createdOn.toString()}
         </Typography>
 
         <Typography
@@ -218,7 +206,7 @@ function SpaceDetails(device: Space) {
                   <Typography color={"primary.main"} fontWeight={"medium"}>
                     Fecha del cambio:
                   </Typography>
-                  <Typography>{history.updatedOn}</Typography>
+                  <Typography>{history.updatedOn.toString()}</Typography>
                 </Box>
 
                 <Box display={"flex"} justifyContent={"space-between"}>
@@ -232,21 +220,7 @@ function SpaceDetails(device: Space) {
                   <Typography color={"primary.main"} fontWeight={"medium"}>
                     Nombre del dispositivo:
                   </Typography>
-                  <Typography>{history.name}</Typography>
-                </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Descripción:
-                  </Typography>
-                  <Typography>{history.description}</Typography>
-                </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Ruta:
-                  </Typography>
-                  <Typography>{history.route}</Typography>
+                  <Typography>{history.field}</Typography>
                 </Box>
 
                 <Box display={"flex"} justifyContent={"space-between"}>
