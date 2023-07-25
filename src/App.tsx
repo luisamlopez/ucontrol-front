@@ -11,53 +11,54 @@ import Auth from "./components/Auth";
 import ConfigDevice from "./pages/ConfigDevice";
 import SpacesPage from "./pages/SpacesPage";
 import ConfigSpace from "./pages/ConfigSpace";
+import SettingsPage from "./pages/Settings";
 
 const App = (): JSX.Element => {
-	return (
-		<>
-			<AuthContextProvider>
-				<Routes>
-					<Route
-						element={
-							<UnAuth>
-								<Outlet />
-							</UnAuth>
-						}
-					>
-						<Route path="/login" element={<Login />} />
-						<Route path="/signup" element={<Register />} />
-						<Route path="/forgot-password" element={<Register />} />
-					</Route>
-					<Route
-						element={
-							<Auth>
-								<Outlet />
-							</Auth>
-						}
-					>
-						<Route path="/dashboard" element={<Home />} />
-						<Route path="/" element={<Navigate to="/dashboard" replace />} />
+  return (
+    <>
+      <AuthContextProvider>
+        <Routes>
+          <Route
+            element={
+              <UnAuth>
+                <Outlet />
+              </UnAuth>
+            }
+          >
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Register />} />
+            <Route path="/forgot-password" element={<Register />} />
+          </Route>
+          <Route
+            element={
+              <Auth>
+                <Outlet />
+              </Auth>
+            }
+          >
+            <Route path="/dashboard" element={<Home />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-						<Route path="/history" element={<History />} />
-						<Route path="/spaceID/:spaceID" element={<SpacePage />} />
-						<Route path="/devices" element={<DevicesPage />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/spaceID/:spaceID" element={<SpacePage />} />
+            <Route path="/devices" element={<DevicesPage />} />
 
-						<Route
-							path="/devices/:action/:deviceID?"
-							element={<ConfigDevice />}
-						/>
-						<Route path="/spaces" element={<SpacesPage />} />
-						<Route path="/spaces/:action/:spaceID?" element={<ConfigSpace />} />
-
-						{/*
-        <Route path="/settings" element={<Settings />} />
+            <Route
+              path="/devices/:action/:deviceID?"
+              element={<ConfigDevice />}
+            />
+            <Route path="/spaces" element={<SpacesPage />} />
+            <Route path="/spaces/:action/:spaceID?" element={<ConfigSpace />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            {/*
+       
         <Route path="/help" element={<Help />} />
         */}
-					</Route>
-				</Routes>
-			</AuthContextProvider>
-		</>
-	);
+          </Route>
+        </Routes>
+      </AuthContextProvider>
+    </>
+  );
 };
 
 export default App;
