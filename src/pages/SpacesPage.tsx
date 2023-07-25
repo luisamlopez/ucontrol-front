@@ -15,8 +15,10 @@ import { AddRounded } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { Device } from "../api/Device";
 import SpaceCard from "../components/SpacesPage/SpaceCard";
+import { useUser } from "../contexts/authContext";
 
 const SpacesPage = (): JSX.Element => {
+  const { user } = useUser();
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
@@ -339,25 +341,26 @@ const SpacesPage = (): JSX.Element => {
             )}
           </Box>
         </Container>
-
-        <Link to={"/spaces/add"}>
-          <Fab
-            color="secondary"
-            sx={{
-              m: 2,
-              bottom: 50,
-              right: {
-                xs: 10,
-                sm: 10,
-                md: 10,
-                lg: "5%",
-              },
-              position: "fixed",
-            }}
-          >
-            <AddRounded fontSize="large" />
-          </Fab>
-        </Link>
+        {user?.admin && (
+          <Link to={"/spaces/add"}>
+            <Fab
+              color="secondary"
+              sx={{
+                m: 2,
+                bottom: 50,
+                right: {
+                  xs: 10,
+                  sm: 10,
+                  md: 10,
+                  lg: "5%",
+                },
+                position: "fixed",
+              }}
+            >
+              <AddRounded fontSize="large" />
+            </Fab>
+          </Link>
+        )}
       </Box>
     </Box>
   );

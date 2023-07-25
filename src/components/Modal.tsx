@@ -12,6 +12,7 @@ import { Device } from "../api/Device";
 import { CloseRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Space } from "../api/Space";
+import { useUser } from "../contexts/authContext";
 
 interface DeviceModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface DeviceModalProps {
 
 const Modal = (props: DeviceModalProps) => {
   const navigate = useNavigate();
+  const { user } = useUser();
 
   let hasMetricsAndUnits = false;
   if (props.device) {
@@ -237,18 +239,20 @@ const Modal = (props: DeviceModalProps) => {
         >
           <Typography>Eliminar</Typography>
         </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            if (props.device) {
-              handleEditDevice();
-            } else if (props.space) {
-              handleEditSpace();
-            }
-          }}
-        >
-          <Typography>Editar</Typography>
-        </Button>
+        {user?.admin && (
+          <Button
+            variant="contained"
+            onClick={() => {
+              if (props.device) {
+                handleEditDevice();
+              } else if (props.space) {
+                handleEditSpace();
+              }
+            }}
+          >
+            <Typography>Editar</Typography>
+          </Button>
+        )}
       </Box>
     </Dialog>
   );
