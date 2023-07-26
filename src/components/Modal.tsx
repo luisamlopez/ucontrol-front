@@ -207,9 +207,11 @@ const Modal = (props: DeviceModalProps) => {
               <Box>
                 <Typography fontWeight={"bold"}>Ubicación:</Typography>
                 <Typography>
-                  {props.space.currentRoute
-                    .flatMap((obj) => obj.label)
-                    .join("/")}
+                  {props.space.parentSpace
+                    ? props.space.parentSpace
+                    : props.space.subSpaces
+                    ? props.space.subSpaces.flatMap((obj) => obj.name).join("/")
+                    : "No hay ubicación"}
                 </Typography>
               </Box>
             )}

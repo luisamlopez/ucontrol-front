@@ -20,4 +20,6 @@ export interface Space {
     updatedBy: string;
     updatedOn: string;
   }[];
+  parentSpace?: string;
+  subSpaces?: Space[];
 }
