@@ -385,20 +385,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: [
-              {
-                id: "1",
-                label: "Space 1.1",
-              },
-              {
-                id: "2",
-                label: "Space 1.2",
-              },
-              {
-                id: "3",
-                label: "Space 1.3",
-              },
-            ],
           },
 
           {
@@ -407,16 +393,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: [
-              {
-                id: "1",
-                label: "Space 2.1",
-              },
-              {
-                id: "2",
-                label: "Space 2.2",
-              },
-            ],
+
             history: [
               {
                 name: "cambio 1",
@@ -549,15 +526,15 @@ function Add(spaces: { spaces: Space[] }) {
   }, []);
 
   const handleTopicChange = (selectedTopic: SpaceRoute) => {
-    const newTopics: SpaceRoute[] = [];
-    for (let i = 0; i < spaces.spaces.length; i++) {
-      if (spaces.spaces[i].id === selectedTopic.id) {
-        for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
-          newTopics.push(spaces.spaces[i].currentRoute[j]);
-        }
-      }
-    }
-    setTopics(newTopics);
+    // const newTopics: SpaceRoute[] = [];
+    // for (let i = 0; i < spaces.spaces.length; i++) {
+    //   if (spaces.spaces[i].id === selectedTopic.id) {
+    //     for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
+    //       newTopics.push(spaces.spaces[i].currentRoute[j]);
+    //     }
+    //   }
+    // }
+    // setTopics(newTopics);
   };
 
   return (

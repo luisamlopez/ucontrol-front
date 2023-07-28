@@ -137,11 +137,11 @@ function SpaceDetails(object: Space) {
             : object.createdBy}
         </TableCell>
 
-        <TableCell align="center">
+        {/* <TableCell align="center">
           {object.currentRoute
             ? object.currentRoute.flatMap((route) => route.label).join("/")
             : "N/A"}
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       {/* Details on collapse */}
@@ -161,7 +161,6 @@ function SpaceDetails(object: Space) {
                       <TableCell>Responsable del cambio</TableCell>
                       <TableCell>Nombre del espacio</TableCell>
                       <TableCell>Descripción</TableCell>
-                      <TableCell>Ruta</TableCell>
                       <TableCell>Dispositivos!!!</TableCell>
                     </TableRow>
                   </TableHead>

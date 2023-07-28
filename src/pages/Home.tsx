@@ -321,16 +321,6 @@ const Home = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: [
-              {
-                id: "1",
-                label: "Space 1.1",
-              },
-              {
-                id: "2",
-                label: "Space 1.2",
-              },
-            ],
           },
 
           {
@@ -339,16 +329,7 @@ const Home = (): JSX.Element => {
             description: "Description 1",
             createdOn: "2021-10-01",
             createdBy: "User 1",
-            currentRoute: [
-              {
-                id: "1",
-                label: "Space 2.1",
-              },
-              {
-                id: "2",
-                label: "Space 2.2",
-              },
-            ],
+
             history: [
               {
                 name: "cambio 1",
