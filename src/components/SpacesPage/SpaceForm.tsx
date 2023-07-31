@@ -114,26 +114,29 @@ function Add(spaces: { spaces: Space[] }) {
     null
   );
   const [selectedSubSpace, setSelectedSubSpace] = useState<Space | null>(null);
-  const [options, setOptions] = useState<Space[]>(spaces.spaces);
+  const [options, setOptions] = useState<Space[]>([]);
 
   const handleParentSpaceChange = (selectedSpace: Space | null) => {
+    /** Set the subspace info */
+
+    console.log(subSpaces);
     setSelectedParentSpace(selectedSpace);
-    setSelectedSubSpace(null);
+
     if (selectedSpace && selectedSpace.subSpaces) {
-      setOptions(selectedSpace.subSpaces);
-      setSubSpaces(selectedSpace.subSpaces);
+      for (let i = 0; i < spaces.spaces.length; i++) {
+        if (spaces.spaces[i].subSpaces) {
+          for (let j = 0; j < spaces.spaces[i].subSpaces!.length; j++) {
+            if (spaces.spaces[i].subSpaces![j].id === selectedSpace.id) {
+              setSubSpaces(spaces.spaces[i].subSpaces!);
+            }
+          }
+        }
+      }
+
+      //   setSubSpaces(selectedSpace.subSpaces);
     } else {
       setOptions(spaces.spaces);
       setSubSpaces([]);
-    }
-  };
-
-  const handleSubSpaceDelete = () => {
-    if (selectedSubSpace) {
-      setSubSpaces((prevSubSpaces) =>
-        prevSubSpaces.filter((subSpace) => subSpace.id !== selectedSubSpace.id)
-      );
-      setSelectedSubSpace(null);
     }
   };
 
@@ -237,20 +240,21 @@ function Add(spaces: { spaces: Space[] }) {
                         id="textfieldmui"
                       />
                     )}
-                  ></Field>
+                  />
 
+                  {/* Si hay un subespacio renderiza un nuevo select con ese espacio */}
                   {selectedParentSpace &&
                     selectedParentSpace.subSpaces &&
                     subSpaces.length > 0 && (
                       <Field
                         component={Autocomplete}
                         name="subSpace"
-                        options={
-                          selectedParentSpace
-                            ? selectedParentSpace.subSpaces
-                            : subSpaces
-                        }
-                        //      getOptionLabel={(option: Space) => option.id || ""}
+                        options={subSpaces}
+                        autoComplete
+                        /**Get the name of the subspaces and use it as label by look for them on the spaces array
+                         * @todo change this to a better solution
+                         */
+                        getOptionLabel={(option: Space) => option.name || ""}
                         value={selectedSubSpace}
                         onChange={(event: any, newValue: Space | null) => {
                           setSelectedSubSpace(newValue);
@@ -269,7 +273,7 @@ function Add(spaces: { spaces: Space[] }) {
                         )}
                       ></Field>
                     )}
-
+                  {/* Si no hay mas subespacios, no renderiza el select */}
                   {subSpaces.length === 0 && (
                     <Typography gutterBottom>No hay subespacios</Typography>
                   )}
