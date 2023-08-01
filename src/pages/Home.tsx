@@ -316,7 +316,7 @@ const Home = (): JSX.Element => {
 
         const dataSpaces: Space[] = [
           {
-            id: "1",
+            _id: "1",
             name: "Space 1",
             description: "Description 1",
             createdOn: "2021-10-01",
@@ -324,7 +324,7 @@ const Home = (): JSX.Element => {
           },
 
           {
-            id: "2",
+            _id: "2",
             name: "Space 2",
             description: "Description 1",
             createdOn: "2021-10-01",

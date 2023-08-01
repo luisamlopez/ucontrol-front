@@ -28,7 +28,7 @@ interface SpaceFormProps {
 }
 
 interface FormValues {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   parentSpace?: Space;
@@ -38,7 +38,7 @@ interface FormValues {
 }
 
 const initialValues = {
-  id: "",
+  _id: "",
   name: "",
   description: "",
   subSpaces: [],
@@ -63,7 +63,7 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
       getSpaces((allSpaces) => {
         setSpaces(allSpaces);
       });
-      console.log(spaces);
+      // console.log(spaces);
       setLoading(false);
     } catch (error) {
       alert(error);
@@ -109,44 +109,74 @@ export default SpaceForm;
 
 function Add(spaces: { spaces: Space[] }) {
   const [spaceType, setSpaceType] = useState(false);
-  const [subSpaces, setSubSpaces] = useState<Space[]>([]);
+  const [parentSpaces, setParentSpaces] = useState<Space[]>([]);
   const [selectedParentSpace, setSelectedParentSpace] = useState<Space | null>(
     null
   );
   const [selectedSubSpace, setSelectedSubSpace] = useState<Space | null>(null);
-  const [options, setOptions] = useState<Space[]>([]);
+  const [selectedSubSpaces, setSelectedSubSpaces] = useState<Space[]>([]);
 
-  const handleParentSpaceChange = (selectedSpace: Space | null) => {
-    /** Set the subspace info */
+  const getParentSpaces = () => {
+    const parentSpaces: Space[] = [];
+    for (let i = 0; i < spaces.spaces.length; i++) {
+      if (
+        spaces.spaces[i].subSpaces &&
+        spaces.spaces[i].subSpaces!.length > 0 &&
+        !spaces.spaces[i].parentSpace
+      ) {
+        parentSpaces.push(spaces.spaces[i]);
+      }
+    }
+    setParentSpaces(parentSpaces);
+  };
 
-    console.log(subSpaces);
-    setSelectedParentSpace(selectedSpace);
+  const getSpaceInfo = (id: string) => {
+    let space: Space | undefined;
+    for (let i = 0; i < spaces.spaces.length; i++) {
+      if (spaces.spaces[i]._id === id) {
+        space = spaces.spaces[i];
 
-    if (selectedSpace && selectedSpace.subSpaces) {
-      for (let i = 0; i < spaces.spaces.length; i++) {
-        if (spaces.spaces[i].subSpaces) {
-          for (let j = 0; j < spaces.spaces[i].subSpaces!.length; j++) {
-            if (spaces.spaces[i].subSpaces![j].id === selectedSpace.id) {
-              setSubSpaces(spaces.spaces[i].subSpaces!);
-            }
-          }
+        break;
+      }
+    }
+    return space;
+  };
+
+  const getSubSpaces = (space: Space) => {
+    const subSpaces: Space[] = [];
+    if (space.subSpaces) {
+      for (let i = 0; i < space.subSpaces.length; i++) {
+        const subSpace = getSpaceInfo(space.subSpaces[i]);
+        if (subSpace) {
+          subSpaces.push(subSpace);
         }
       }
+    }
+    return subSpaces;
+  };
 
-      //   setSubSpaces(selectedSpace.subSpaces);
-    } else {
-      setOptions(spaces.spaces);
-      setSubSpaces([]);
+  const handleParentSpaceChange = (selectedSpace: Space | null) => {
+    setSelectedParentSpace(selectedSpace);
+    setSelectedSubSpace(null);
+    setSelectedSubSpaces([]); // limpia los subespacios seleccionados al cambiar el espacio padre
+  };
+
+  const handleSubSpaceChange = (selectedSpace: Space | null) => {
+    setSelectedSubSpace(selectedSpace);
+    if (selectedSpace) {
+      setSelectedSubSpaces([...selectedSubSpaces, selectedSpace]); // agrega el subespacio seleccionado al arreglo de subespacios seleccionados
     }
   };
 
+  const handleSubSpaceRemove = (removedSpace: Space) => {
+    setSelectedSubSpaces(
+      selectedSubSpaces.filter((subSpace) => subSpace._id !== removedSpace._id) // elimina el subespacio seleccionado del arreglo de subespacios seleccionados
+    );
+  };
+
   useEffect(() => {
-    if (selectedParentSpace) {
-      setSubSpaces(selectedParentSpace.subSpaces || []);
-    } else {
-      setSubSpaces([]);
-    }
-  }, [selectedParentSpace]);
+    getParentSpaces();
+  }, []);
 
   return (
     <Formik
@@ -211,76 +241,80 @@ function Add(spaces: { spaces: Space[] }) {
               }}
             />
           </Field>
-
           {spaceType && (
-            <FieldArray name="spaces">
-              {({ push, remove, form }: any) => (
-                <>
-                  <Typography gutterBottom>
-                    Ingrese el tópico/espacio al que pertenece el dispositivo
-                  </Typography>
+            <>
+              <Typography gutterBottom>
+                Ingrese el tópico/espacio al que pertenece el dispositivo
+              </Typography>
 
+              <Field
+                component={Autocomplete}
+                name="parentSpace"
+                options={parentSpaces}
+                getOptionLabel={(option: Space) => option.name || ""}
+                value={selectedParentSpace}
+                onChange={(event: any, newValue: Space | null) => {
+                  handleParentSpaceChange(newValue);
+                }}
+                renderInput={(params: AutocompleteRenderInputParams) => (
+                  <TextFieldMUI
+                    {...params}
+                    label="Espacio Padre"
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+              />
+
+              {selectedParentSpace && (
+                <Field
+                  component={Autocomplete}
+                  name="subSpaces"
+                  options={getSubSpaces(selectedParentSpace)}
+                  getOptionLabel={(option: Space) => option.name || ""}
+                  value={selectedSubSpace}
+                  onChange={(event: any, newValue: Space | null) => {
+                    handleSubSpaceChange(newValue);
+                  }}
+                  renderInput={(params: AutocompleteRenderInputParams) => (
+                    <TextFieldMUI
+                      {...params}
+                      label={`Subespacio de ${selectedParentSpace.name}`}
+                      variant="outlined"
+                      fullWidth
+                    />
+                  )}
+                />
+              )}
+
+              {selectedSubSpaces.map((subSpace) => (
+                <>
                   <Field
                     component={Autocomplete}
-                    name="parentSpace"
-                    options={spaces.spaces}
+                    name={`subSpaces-${subSpace._id}`}
+                    options={getSubSpaces(subSpace)}
                     getOptionLabel={(option: Space) => option.name || ""}
-                    value={selectedParentSpace}
+                    value={null}
                     onChange={(event: any, newValue: Space | null) => {
-                      handleParentSpaceChange(newValue);
+                      handleSubSpaceChange(newValue);
                     }}
                     renderInput={(params: AutocompleteRenderInputParams) => (
                       <TextFieldMUI
                         {...params}
-                        name="parentSpace"
-                        label="Tópico/Espacio"
-                        required
+                        label={`Subespacio de ${subSpace.name}`}
                         variant="outlined"
                         fullWidth
-                        id="textfieldmui"
                       />
                     )}
                   />
-
-                  {/* Si hay un subespacio renderiza un nuevo select con ese espacio */}
-                  {selectedParentSpace &&
-                    selectedParentSpace.subSpaces &&
-                    subSpaces.length > 0 && (
-                      <Field
-                        component={Autocomplete}
-                        name="subSpace"
-                        options={subSpaces}
-                        autoComplete
-                        /**Get the name of the subspaces and use it as label by look for them on the spaces array
-                         * @todo change this to a better solution
-                         */
-                        getOptionLabel={(option: Space) => option.name || ""}
-                        value={selectedSubSpace}
-                        onChange={(event: any, newValue: Space | null) => {
-                          setSelectedSubSpace(newValue);
-                        }}
-                        renderInput={(
-                          params: AutocompleteRenderInputParams
-                        ) => (
-                          <TextFieldMUI
-                            {...params}
-                            name="subSpace"
-                            label="Subespacio"
-                            variant="outlined"
-                            fullWidth
-                            id="textfieldmui"
-                          />
-                        )}
-                      ></Field>
-                    )}
-                  {/* Si no hay mas subespacios, no renderiza el select */}
-                  {subSpaces.length === 0 && (
-                    <Typography gutterBottom>No hay subespacios</Typography>
-                  )}
                 </>
-              )}
-            </FieldArray>
+              ))}
+            </>
           )}
+
+          <Button type="submit" color="primary" variant="contained">
+            Agregar
+          </Button>
         </Stack>
       )}
     </Formik>

@@ -109,7 +109,7 @@ const SpacesPage = (): JSX.Element => {
                       //   .toLowerCase()
                       //   .includes(searchValue.toLowerCase()) ? (
                       // <spaceCard key={space.id} {...space} />
-                      <SpaceCard key={space.id} {...space} />
+                      <SpaceCard key={space._id} {...space} />
                     )
                     // ) : null
                   )}

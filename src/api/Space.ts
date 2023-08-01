@@ -7,7 +7,7 @@ export interface SpaceRoute {
 }
 
 export interface Space {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   createdBy: string;
@@ -21,7 +21,7 @@ export interface Space {
     updatedOn: string;
   }[];
   parentSpace?: string;
-  subSpaces?: Space[];
+  subSpaces?: string[];
 }
 
 export const createSpace = async (spaceData: Space) => {

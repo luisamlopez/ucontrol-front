@@ -45,7 +45,7 @@ const Modal = (props: DeviceModalProps) => {
   };
 
   const handleEditSpace = () => {
-    navigate(`/spaces/edit/${props.space!.id}`);
+    navigate(`/spaces/edit/${props.space!._id}`);
   };
 
   return (
@@ -210,7 +210,7 @@ const Modal = (props: DeviceModalProps) => {
                   {props.space.parentSpace
                     ? props.space.parentSpace
                     : props.space.subSpaces
-                    ? props.space.subSpaces.flatMap((obj) => obj.name).join("/")
+                    ? props.space.subSpaces.flatMap((obj) => obj).join("/")
                     : "No hay ubicación"}
                 </Typography>
               </Box>

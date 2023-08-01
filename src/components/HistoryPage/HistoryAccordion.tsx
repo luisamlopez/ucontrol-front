@@ -147,13 +147,13 @@ function SpaceDetails(device: Space) {
 
   return (
     <Accordion
-      expanded={expanded === device.id}
-      onChange={handleChange(device.id)}
+      expanded={expanded === device._id}
+      onChange={handleChange(device._id)}
       sx={{ mr: 1 }}
     >
       <AccordionSummary
         expandIcon={<KeyboardArrowDownRounded />}
-        id={`${device.id}-header`}
+        id={`${device._id}-header`}
       >
         <Typography
           sx={{
