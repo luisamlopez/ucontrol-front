@@ -19,7 +19,7 @@ export interface DeviceValues {
 }
 
 export interface Device {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   currentTopic: string;

@@ -58,7 +58,7 @@ function Details(props: { device: Device }): JSX.Element {
 
 function Graph(props: { device: Device }): JSX.Element {
   // let chartData: ChartDataProps = {
-  //   id: props.device.id,
+  //   _id: props.device._id,
   //   data: [],
   // };
 

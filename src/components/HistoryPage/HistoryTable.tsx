@@ -84,7 +84,7 @@ function DeviceDetails(object: Device) {
 
                   <TableBody>
                     {object.history?.map((history) => (
-                      <TableRow key={object.id}>
+                      <TableRow key={object._id}>
                         <TableCell component="th" scope="row" align="center">
                           {history.updatedOn}
                         </TableCell>
@@ -255,7 +255,7 @@ const HistoryTable = ({ devices, spaces }: HistoryProps): JSX.Element => {
           {/* If it's a device or a space */}
           {devices
             ? devices.map((device) => (
-                <DeviceDetails key={device.id} {...device} />
+                <DeviceDetails key={device._id} {...device} />
               ))
             : spaces?.map((space) => (
                 <SpaceDetails key={space._id} {...space} />

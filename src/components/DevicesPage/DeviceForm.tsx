@@ -43,7 +43,7 @@ interface DeviceFormProps {
 }
 
 interface FormValues {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   currentTopic: string;
@@ -55,7 +55,7 @@ interface FormValues {
 }
 
 const initialValues = {
-  id: "",
+  _id: "",
   name: "",
   description: "",
   currentTopic: "",
@@ -81,14 +81,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-  const device = devices.find((device) => device.id === props.deviceID);
+  const device = devices.find((device) => device._id === props.deviceID);
 
   useEffect(() => {
     const fetchData = async () => {
       setTimeout(() => {
         const dataDevices: Device[] = [
           {
-            id: "1",
+            _id: "1",
             name: "Device 1",
             description: "Description 1",
             createdOn: "2021-10-01",
@@ -248,7 +248,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             ],
           },
           {
-            id: "2",
+            _id: "2",
             name: "Device 2",
             description: "Description 2",
             createdOn: "2021-10-01",
@@ -325,7 +325,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             ],
           },
           {
-            id: "3",
+            _id: "3",
             name: "Device 3",
             description: "Description 3",
             createdOn: "2021-10-01",
@@ -480,7 +480,7 @@ function Add(spaces: { spaces: Space[] }) {
 
   useEffect(() => {
     const newTopics = spaces.spaces.map((space) => ({
-      id: space._id,
+      _id: space._id!,
       label: space.name,
     }));
     setTopics(newTopics);
@@ -528,7 +528,7 @@ function Add(spaces: { spaces: Space[] }) {
   const handleTopicChange = (selectedTopic: SpaceRoute) => {
     // const newTopics: SpaceRoute[] = [];
     // for (let i = 0; i < spaces.spaces.length; i++) {
-    //   if (spaces.spaces[i].id === selectedTopic.id) {
+    //   if (spaces.spaces[i]._id === selectedTopic._id) {
     //     for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
     //       newTopics.push(spaces.spaces[i].currentRoute[j]);
     //     }

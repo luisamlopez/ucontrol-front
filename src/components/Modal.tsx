@@ -37,7 +37,7 @@ const Modal = (props: DeviceModalProps) => {
   };
 
   const handleEditDevice = () => {
-    navigate(`/devices/edit/${props.device!.id}`);
+    navigate(`/devices/edit/${props.device!._id}`);
   };
 
   const handleDeleteSpace = () => {

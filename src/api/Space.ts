@@ -2,14 +2,14 @@ import { Device } from "./Device";
 import { url } from "./url";
 
 export interface SpaceRoute {
-  id: string;
+  _id: string;
   label: string;
 }
 
 export interface Space {
-  _id: string;
+  _id?: string;
   name: string;
-  description: string;
+  description?: string;
   createdBy: string;
   createdOn: string;
   devices?: Device[];
@@ -31,7 +31,10 @@ export const createSpace = async (spaceData: Space) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(spaceData),
     });
-  } catch (error) {}
+    if (response.ok) return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 export const createSubSpace = async (subSpaceData: Space) => {

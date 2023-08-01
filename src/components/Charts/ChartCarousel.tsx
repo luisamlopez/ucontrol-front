@@ -55,16 +55,16 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
             }}
           >
             {type === "bar" && (
-              <BarChart id={device.id} values={device.values} />
+              <BarChart id={device._id} values={device.values} />
             )}
             {type === "pie" && (
-              <PieChart id={device.id} values={device.values} />
+              <PieChart id={device._id} values={device.values} />
             )}
             {type === "line" && (
-              <LineChart id={device.id} values={device.values} />
+              <LineChart id={device._id} values={device.values} />
             )}
             {type === "gauge" && (
-              // <Gauge id={device.id} values={device.values} />
+              // <Gauge id={device._id} values={device.values} />
               <Box>Gauge</Box>
             )}
           </Box>

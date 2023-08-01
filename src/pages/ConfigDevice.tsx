@@ -29,7 +29,7 @@ const ConfigDevice = (): JSX.Element => {
     const fetchData = async () => {
       setTimeout(() => {
         const dataDevice: Device = {
-          id: "1",
+          _id: "1",
           name: "Device 1",
           description:
             "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",

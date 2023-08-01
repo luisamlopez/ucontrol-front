@@ -12,16 +12,20 @@ import {
   Radio,
   FormLabel,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-import { Space, SpaceRoute, getSpaces } from "../../api/Space";
+import { useState, useEffect, useRef } from "react";
+import { Space, SpaceRoute, createSpace, getSpaces } from "../../api/Space";
 import { AddRounded, DeleteRounded } from "@mui/icons-material";
-import { Field, FieldArray, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
 import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
 import RadioGroupField from "../Fields/RadioGroupField";
 import { Device } from "../../api/Device";
 import { get } from "http";
+import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { useUser } from "../../contexts/authContext";
 
 interface SpaceFormProps {
   spaceID?: string;
@@ -48,15 +52,120 @@ const initialValues = {
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Por favor, ingrese un nombre"),
-  description: yup.string().required("Por favor, ingrese una descripción"),
-  parentSpace: yup.string().required("Por favor, ingrese un tópico/espacio"),
+  description: yup.string(),
+  parentSpace: yup.string(),
 });
 
 const SpaceForm = (props: SpaceFormProps): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  //const space = spaces.find((space) => space.id === props.spaceID);
+  const [spaceType, setSpaceType] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<Space | undefined>({
+    _id: "",
+    name: "",
+    description: "",
+    subSpaces: [],
+    createdBy: "",
+    createdOn: "",
+  });
+  const [spaceToEdit, setSpaceToEdit] = useState<Space | undefined>(undefined); // Space to edit, if any
+
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const { user } = useUser();
+
+  const routeRef = useRef<string>(""); // Create a ref to store the route value
+
+  /**
+   * @description Get the information of a space given its id
+   * @param id
+   * @returns Space
+   */
+  const getSpaceInfo = (_id: string) => {
+    let space: Space | undefined;
+    for (let i = 0; i < spaces.length; i++) {
+      if (spaces[i]._id === _id) {
+        space = spaces[i];
+
+        break;
+      }
+    }
+    return space;
+  };
+
+  /**
+   * @description Recursive function to find the "route" of the space, i.e. the parent spaces that it belongs to, if any (e.g. a room belongs to a floor, which belongs to a building, etc.)
+   * @param space The space to find the route of
+   */
+  const findRoute = (space: Space): Space[] => {
+    let route: Space[] = [];
+    let currentSpace: Space | undefined = space;
+
+    while (currentSpace) {
+      route.unshift(currentSpace); // Add current space to the beginning of the route array
+      const parentSpaceId = currentSpace.parentSpace;
+
+      if (parentSpaceId) {
+        // Find the parent space based on its ID
+        const parentSpace = getSpaceInfo(parentSpaceId);
+
+        if (parentSpace) {
+          currentSpace = parentSpace;
+        } else {
+          // If parent space is not found, stop the loop
+          currentSpace = undefined;
+          console.error(`Parent space with ID ${parentSpaceId} not found.`);
+        }
+      } else {
+        // If there is no parent space, stop the loop
+        currentSpace = undefined;
+      }
+    }
+
+    return route;
+  };
+
+  const onSubmit = async (
+    values: FormValues,
+    actions: FormikHelpers<FormValues>
+  ) => {
+    try {
+      const spaceData: Space = {
+        name: values.name,
+        description: values.description,
+        parentSpace: selectedSpace?._id,
+        createdBy: user?._id!,
+        createdOn: new Date().toISOString(),
+      };
+      console.log(spaceData);
+
+      if (await createSpace(spaceData)) {
+        if (props.spaceID) {
+          enqueueSnackbar("Espacio editado con éxito", { variant: "success" });
+        } else {
+          enqueueSnackbar("Espacio creado con éxito", { variant: "success" });
+        }
+      } else {
+        enqueueSnackbar("Hubo un error", { variant: "error" });
+      }
+
+      actions.setSubmitting(true);
+    } catch (error) {
+      //enqueueSnackbar("Hubo un error", { variant: "error" });
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedSpace) {
+      const route = findRoute(selectedSpace)
+        .map((space) => space.name)
+        .join(" / ");
+      routeRef.current = route; // Update the ref with the new route value
+    }
+  }, [selectedSpace]);
 
   useEffect(() => {
     try {
@@ -69,6 +178,12 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
       alert(error);
     }
   }, []);
+
+  useEffect(() => {
+    if (props.spaceID) {
+      setSpaceToEdit(getSpaceInfo(props.spaceID));
+    }
+  }, [spaces]);
 
   return (
     <Box display="flex" justifyContent="left" flexDirection="column">
@@ -98,7 +213,193 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
             },
           }}
         >
-          {props.spaceID ? <> {props.spaceID} </> : <Add spaces={spaces} />}
+          {/* {props.spaceID ? <> {props.spaceID} </> : <>
+    
+          </>} */}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
+            {({ isSubmitting, touched, errors }) => (
+              <Stack component={Form} spacing={2}>
+                <Field
+                  component={TextField}
+                  name="name"
+                  type="text"
+                  label="Nombre"
+                  variant="outlined"
+                  fullWidth
+                  {...(props.spaceID && { value: spaceToEdit?.name })}
+                />
+                <Field
+                  component={TextAreaField}
+                  name="description"
+                  type="text"
+                  label="Descripción"
+                  variant="outlined"
+                  fullWidth
+                  {...(props.spaceID && {
+                    value: spaceToEdit?.description
+                      ? spaceToEdit?.description
+                      : "",
+                  })}
+                />
+
+                <Field
+                  component={RadioGroup}
+                  name="spaceType"
+                  label="Tipo de dispositivo"
+                  required
+                >
+                  <FormLabel
+                    sx={{
+                      color: "primary.main",
+                      fontWeight: 600,
+                      fontSize: "18px",
+                    }}
+                  >
+                    ¿Este espacio pertenece a otro espacio?
+                  </FormLabel>
+                  <Typography>
+                    Ejemplo: <br />
+                    Laboratorio pertenece a edificio
+                    <br /> Salón pertenece a Piso <br />
+                    Piso pertenece a módulo
+                  </Typography>
+                  <FormControlLabel
+                    value={
+                      !props.spaceID
+                        ? true
+                        : spaceToEdit?.parentSpace
+                        ? true
+                        : false
+                    }
+                    control={<Radio />}
+                    label="Si"
+                    onChange={() => {
+                      setSpaceType(true);
+                    }}
+                  />
+                  <FormControlLabel
+                    value={
+                      !props.spaceID
+                        ? false
+                        : !spaceToEdit?.parentSpace
+                        ? false
+                        : true
+                    }
+                    control={<Radio />}
+                    label="No"
+                    onChange={() => {
+                      setSpaceType(false);
+                    }}
+                  />
+                </Field>
+                {spaceType && (
+                  <>
+                    <Typography gutterBottom>
+                      Ingrese el tópico/espacio al que pertenece el dispositivo
+                    </Typography>
+
+                    <Field
+                      component={Autocomplete}
+                      name="parentSpace"
+                      options={spaces}
+                      getOptionLabel={(option: Space) => option.name || ""}
+                      value={
+                        props.spaceID
+                          ? getSpaceInfo(
+                              spaceToEdit?.parentSpace
+                                ? spaceToEdit.parentSpace
+                                : spaceToEdit?._id!
+                            )
+                          : selectedSpace
+                      }
+                      onChange={(event: any, newValue: Space) => {
+                        setSelectedSpace(newValue);
+                        console.log(findRoute(newValue));
+                      }}
+                      renderInput={(params: AutocompleteRenderInputParams) => (
+                        <TextFieldMUI
+                          {...params}
+                          label="Espacio/Tópico"
+                          variant="outlined"
+                          fullWidth
+                          autoComplete="on"
+                          required
+                          error={touched.parentSpace && !!errors.parentSpace}
+                          helperText={
+                            touched.parentSpace && errors.parentSpace
+                              ? errors.parentSpace
+                              : ""
+                          }
+                          sx={{
+                            my: 2,
+                          }}
+                        />
+                      )}
+                    />
+                    {routeRef && (
+                      <>
+                        <Typography
+                          sx={{
+                            fontStyle: "italic",
+                            fontSize: "14px",
+                          }}
+                        >
+                          Ruta del espacio seleccionado:
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontStyle: "italic",
+                            fontSize: "14px",
+                            my: 2,
+                          }}
+                        >
+                          {routeRef.current}
+                        </Typography>
+                      </>
+                    )}
+                  </>
+                )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    placeSelf: "flex-end",
+                    width: "50%",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      navigate("/spaces");
+                    }}
+                    sx={{
+                      mt: 2,
+                      mr: 2,
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <LoadingButton
+                    sx={{
+                      mt: 2,
+                    }}
+                    type="submit"
+                    loading={isSubmitting}
+                    loadingIndicator="Procesando..."
+                    variant="contained"
+                    color="primary"
+                  >
+                    Guardar
+                  </LoadingButton>
+                </Box>
+              </Stack>
+            )}
+          </Formik>
         </Box>
       )}
     </Box>
@@ -106,309 +407,3 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
 };
 
 export default SpaceForm;
-
-function Add(spaces: { spaces: Space[] }) {
-  const [spaceType, setSpaceType] = useState(false);
-  const [parentSpaces, setParentSpaces] = useState<Space[]>([]);
-  const [selectedParentSpace, setSelectedParentSpace] = useState<Space | null>(
-    null
-  );
-  const [selectedSubSpace, setSelectedSubSpace] = useState<Space | null>(null);
-  const [selectedSubSpaces, setSelectedSubSpaces] = useState<Space[]>([]);
-
-  const getParentSpaces = () => {
-    const parentSpaces: Space[] = [];
-    for (let i = 0; i < spaces.spaces.length; i++) {
-      if (
-        spaces.spaces[i].subSpaces &&
-        spaces.spaces[i].subSpaces!.length > 0 &&
-        !spaces.spaces[i].parentSpace
-      ) {
-        parentSpaces.push(spaces.spaces[i]);
-      }
-    }
-    setParentSpaces(parentSpaces);
-  };
-
-  const getSpaceInfo = (id: string) => {
-    let space: Space | undefined;
-    for (let i = 0; i < spaces.spaces.length; i++) {
-      if (spaces.spaces[i]._id === id) {
-        space = spaces.spaces[i];
-
-        break;
-      }
-    }
-    return space;
-  };
-
-  const getSubSpaces = (space: Space) => {
-    const subSpaces: Space[] = [];
-    if (space.subSpaces) {
-      for (let i = 0; i < space.subSpaces.length; i++) {
-        const subSpace = getSpaceInfo(space.subSpaces[i]);
-        if (subSpace) {
-          subSpaces.push(subSpace);
-        }
-      }
-    }
-    return subSpaces;
-  };
-
-  const handleParentSpaceChange = (selectedSpace: Space | null) => {
-    setSelectedParentSpace(selectedSpace);
-    setSelectedSubSpace(null);
-    setSelectedSubSpaces([]); // limpia los subespacios seleccionados al cambiar el espacio padre
-  };
-
-  const handleSubSpaceChange = (selectedSpace: Space | null) => {
-    setSelectedSubSpace(selectedSpace);
-    if (selectedSpace) {
-      setSelectedSubSpaces([...selectedSubSpaces, selectedSpace]); // agrega el subespacio seleccionado al arreglo de subespacios seleccionados
-    }
-  };
-
-  const handleSubSpaceRemove = (removedSpace: Space) => {
-    setSelectedSubSpaces(
-      selectedSubSpaces.filter((subSpace) => subSpace._id !== removedSpace._id) // elimina el subespacio seleccionado del arreglo de subespacios seleccionados
-    );
-  };
-
-  useEffect(() => {
-    getParentSpaces();
-  }, []);
-
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ isSubmitting, touched, errors }) => (
-        <Stack component={Form} spacing={2}>
-          <Field
-            component={TextField}
-            name="name"
-            type="text"
-            label="Nombre"
-            variant="outlined"
-            fullWidth
-          />
-          <Field
-            component={TextAreaField}
-            name="description"
-            type="text"
-            label="Descripción"
-            variant="outlined"
-            fullWidth
-          />
-
-          <Field
-            component={RadioGroup}
-            name="spaceType"
-            label="Tipo de dispositivo"
-            required
-          >
-            <FormLabel
-              sx={{
-                color: "primary.main",
-                fontWeight: 600,
-                fontSize: "18px",
-              }}
-            >
-              ¿Este espacio pertenece a otro espacio?
-            </FormLabel>
-            <Typography>
-              Ejemplo: <br />
-              Laboratorio pertenece a edificio
-              <br /> Salón pertenece a Piso <br />
-              Piso pertenece a módulo
-            </Typography>
-            <FormControlLabel
-              value={true}
-              control={<Radio />}
-              label="Si"
-              onChange={() => {
-                setSpaceType(true);
-              }}
-            />
-            <FormControlLabel
-              value={false}
-              control={<Radio />}
-              label="No"
-              onChange={() => {
-                setSpaceType(false);
-              }}
-            />
-          </Field>
-          {spaceType && (
-            <>
-              <Typography gutterBottom>
-                Ingrese el tópico/espacio al que pertenece el dispositivo
-              </Typography>
-
-              <Field
-                component={Autocomplete}
-                name="parentSpace"
-                options={parentSpaces}
-                getOptionLabel={(option: Space) => option.name || ""}
-                value={selectedParentSpace}
-                onChange={(event: any, newValue: Space | null) => {
-                  handleParentSpaceChange(newValue);
-                }}
-                renderInput={(params: AutocompleteRenderInputParams) => (
-                  <TextFieldMUI
-                    {...params}
-                    label="Espacio Padre"
-                    variant="outlined"
-                    fullWidth
-                  />
-                )}
-              />
-
-              {selectedParentSpace && (
-                <Field
-                  component={Autocomplete}
-                  name="subSpaces"
-                  options={getSubSpaces(selectedParentSpace)}
-                  getOptionLabel={(option: Space) => option.name || ""}
-                  value={selectedSubSpace}
-                  onChange={(event: any, newValue: Space | null) => {
-                    handleSubSpaceChange(newValue);
-                  }}
-                  renderInput={(params: AutocompleteRenderInputParams) => (
-                    <TextFieldMUI
-                      {...params}
-                      label={`Subespacio de ${selectedParentSpace.name}`}
-                      variant="outlined"
-                      fullWidth
-                    />
-                  )}
-                />
-              )}
-
-              {selectedSubSpaces.map((subSpace) => (
-                <>
-                  <Field
-                    component={Autocomplete}
-                    name={`subSpaces-${subSpace._id}`}
-                    options={getSubSpaces(subSpace)}
-                    getOptionLabel={(option: Space) => option.name || ""}
-                    value={null}
-                    onChange={(event: any, newValue: Space | null) => {
-                      handleSubSpaceChange(newValue);
-                    }}
-                    renderInput={(params: AutocompleteRenderInputParams) => (
-                      <TextFieldMUI
-                        {...params}
-                        label={`Subespacio de ${subSpace.name}`}
-                        variant="outlined"
-                        fullWidth
-                      />
-                    )}
-                  />
-                </>
-              ))}
-            </>
-          )}
-
-          <Button type="submit" color="primary" variant="contained">
-            Agregar
-          </Button>
-        </Stack>
-      )}
-    </Formik>
-  );
-}
-
-function Edit(space: { space: Space }) {}
-
-const onSubmit = async (values: Space, { setSubmitting }: any) => {
-  await Save(false, values);
-  setSubmitting(false);
-};
-
-const Save = async (isAdd: boolean, values: Space) => {
-  if (isAdd) {
-    //  create
-  } else {
-    // update
-  }
-};
-
-// {/* <FieldArray name="space">
-//   {({ push, remove, form }: any) => (
-//     <>
-//       <Typography gutterBottom>
-//         Ingrese el tópico/espacio al que pertenece el dispositivo
-//       </Typography>
-
-//       {/* {form.values.space.map((_: String, index: number) => (
-//                   <Stack
-//                     key={index}
-//                     direction={"row"}
-//                     spacing={1}
-//                     alignItems={"center"}
-//                   >
-//                     <Field
-//                       name={`space.${index}`}
-//                       component={Autocomplete}
-//                       options={spaces}
-//                       getOptionLabel={(option: SpaceRoute) =>
-//                         option.label || ""
-//                       }
-//                       renderInput={(params: AutocompleteRenderInputParams) => (
-//                         <TextFieldMUI
-//                           {...params}
-//                           name={`space.${index}`}
-//                           label="Tópico/Espacio"
-//                           required
-//                           variant="outlined"
-//                           fullWidth
-//                           id="textfieldmui"
-//                           // error={
-//                           // 	touched.currentSpace && Boolean(errors.currentSpace)
-//                           // }
-//                           // helperText={
-//                           // 	touched.currentSpace && errors.currentSpace
-//                           // }
-//                         />
-//                       )}
-//                       style={{ width: "100%" }}
-//                     />
-//                     {form.values.space.length > 1 && (
-//                       <Tooltip title="Eliminar" arrow>
-//                         <IconButton
-//                           size="large"
-//                           onClick={() => {
-//                             remove(index);
-//                           }}
-//                         >
-//                           <DeleteRounded />
-//                         </IconButton>
-//                       </Tooltip>
-//                     )}
-//                     {form.values.space.length === 1 && index === 0 && (
-//                       <Tooltip title="Agregar" arrow>
-//                         <IconButton
-//                           size="large"
-//                           onClick={() => {
-//                             if (
-//                               form.values.space[0] !== "" &&
-//                               form.values.space[0] !== undefined &&
-//                               form.values.space[0] !== null
-//                             ) {
-//                               handleSpaceChange(form.values.space[0]);
-//                               push(new String());
-//                             }
-//                           }}
-//                         >
-//                           <AddRounded />
-//                         </IconButton>
-//                       </Tooltip>
-//                     )}
-//                   </Stack>
-//                 ))} */}
-//     </>
-//   )}
-// </FieldArray>; */}

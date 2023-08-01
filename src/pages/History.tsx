@@ -19,7 +19,7 @@ const History = (): JSX.Element => {
       setTimeout(() => {
         const dataDevices: Device[] = [
           {
-            id: "1",
+            _id: "1",
             name: "Device 1",
             description: "Description 1",
             createdOn: "2021-10-01",
@@ -180,7 +180,7 @@ const History = (): JSX.Element => {
             ],
           },
           {
-            id: "2",
+            _id: "2",
             name: "Device 2",
             description: "Description 2",
             createdOn: "2021-10-01",
@@ -257,7 +257,7 @@ const History = (): JSX.Element => {
             ],
           },
           {
-            id: "3",
+            _id: "3",
             name: "Device 3",
             description: "Description 3",
             createdOn: "2021-10-01",

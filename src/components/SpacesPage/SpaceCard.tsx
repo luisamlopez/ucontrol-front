@@ -88,7 +88,10 @@ const SpaceCard = (space: Space): JSX.Element => {
               minWidth: "100%",
             }}
           >
-            <DevicesDetailsText title="Descripción" value={space.description} />
+            <DevicesDetailsText
+              title="Descripción"
+              value={space.description ? space.description : "N/A"}
+            />
           </Box>
           {space.devices && (
             <Box
@@ -107,7 +110,7 @@ const SpaceCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} color={"black"}>
                 <ul>
                   {space.devices.map((device) => (
-                    <li key={device.id}>{device.name}</li>
+                    <li key={device._id}>{device.name}</li>
                   ))}
                 </ul>
               </Typography>

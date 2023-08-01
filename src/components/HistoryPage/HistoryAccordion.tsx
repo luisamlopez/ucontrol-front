@@ -25,13 +25,13 @@ function DeviceDetails(device: Device) {
 
   return (
     <Accordion
-      expanded={expanded === device.id}
-      onChange={handleChange(device.id)}
+      expanded={expanded === device._id}
+      onChange={handleChange(device._id)}
       sx={{ mr: 1 }}
     >
       <AccordionSummary
         expandIcon={<KeyboardArrowDownRounded />}
-        id={`${device.id}-header`}
+        id={`${device._id}-header`}
       >
         <Typography
           sx={{
@@ -137,7 +137,7 @@ function DeviceDetails(device: Device) {
   );
 }
 
-function SpaceDetails(device: Space) {
+function SpaceDetails(space: Space) {
   const [expanded, setExpanded] = useState<string | false>(false);
 
   const handleChange =
@@ -147,13 +147,13 @@ function SpaceDetails(device: Space) {
 
   return (
     <Accordion
-      expanded={expanded === device._id}
-      onChange={handleChange(device._id)}
+      expanded={expanded === space._id}
+      onChange={handleChange(space._id!)}
       sx={{ mr: 1 }}
     >
       <AccordionSummary
         expandIcon={<KeyboardArrowDownRounded />}
-        id={`${device._id}-header`}
+        id={`${space._id}-header`}
       >
         <Typography
           sx={{
@@ -163,7 +163,7 @@ function SpaceDetails(device: Space) {
             fontWeight: "bold",
           }}
         >
-          {device.name}
+          {space.name}
         </Typography>
         <Typography
           sx={{
@@ -173,9 +173,9 @@ function SpaceDetails(device: Space) {
             fontWeight: "bold",
           }}
         >
-          {device.history?.length === 0
-            ? device.history[device.history?.length].updatedOn
-            : device.createdOn}
+          {space.history?.length === 0
+            ? space.history[space.history?.length].updatedOn
+            : space.createdOn}
         </Typography>
 
         <Typography
@@ -186,16 +186,16 @@ function SpaceDetails(device: Space) {
             fontWeight: "bold",
           }}
         >
-          {device.history && device.history.length > 0
-            ? device.history[device.history.length - 1].updatedBy
-            : device.createdBy}
+          {space.history && space.history.length > 0
+            ? space.history[space.history.length - 1].updatedBy
+            : space.createdBy}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Typography mb={2} fontWeight={"bold"}>
           Historial de Cambios
         </Typography>
-        {device && device.history && device.history.length > 0 ? (
+        {space && space.history && space.history.length > 0 ? (
           <Box
             sx={{
               width: "100%",
@@ -205,7 +205,7 @@ function SpaceDetails(device: Space) {
               justifyContent: "center",
             }}
           >
-            {device.history.map((history) => (
+            {space.history.map((history) => (
               <Box
                 sx={{
                   width: "90%",
@@ -254,8 +254,8 @@ function SpaceDetails(device: Space) {
                     Dispositivos:
                   </Typography>
                   <Typography mb={2}>
-                    {device.devices && device.devices.length > 0
-                      ? device.devices.map((device) => device.name).join(", ")
+                    {space.devices && space.devices.length > 0
+                      ? space.devices.map((space) => space.name).join(", ")
                       : "No hay dispositivos asociados"}
                   </Typography>
                 </Box>

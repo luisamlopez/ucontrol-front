@@ -27,7 +27,7 @@ const DevicesPage = (): JSX.Element => {
       setTimeout(() => {
         const dataDevices: Device[] = [
           {
-            id: "1",
+            _id: "1",
             name: "Sensor luz",
             description:
               "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
@@ -189,7 +189,7 @@ const DevicesPage = (): JSX.Element => {
             ],
           },
           {
-            id: "2",
+            _id: "2",
             name: "Sensor de luz oficina del profe Franklin",
             description:
               "Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2",
@@ -267,7 +267,7 @@ const DevicesPage = (): JSX.Element => {
             ],
           },
           {
-            id: "3",
+            _id: "3",
             name: "Device 3",
             description: "Description 3",
             createdOn: "2021-10-01",
@@ -320,7 +320,7 @@ const DevicesPage = (): JSX.Element => {
             ],
           },
           {
-            id: "4",
+            _id: "4",
             name: "Device 4",
             description: "Description 3",
             createdOn: "2021-10-01",
@@ -459,7 +459,7 @@ const DevicesPage = (): JSX.Element => {
                       // device.name
                       //   .toLowerCase()
                       //   .includes(searchValue.toLowerCase()) ? (
-                      <DeviceCard key={device.id} {...device} />
+                      <DeviceCard key={device._id} {...device} />
                     )
                     // ) : null
                   )}
