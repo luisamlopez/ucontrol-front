@@ -11,14 +11,14 @@ export interface Space {
   name: string;
   description?: string;
   createdBy: string;
-  createdOn: string;
+  createdOn: Date;
   devices?: Device[];
   history?: {
     name: string;
     description: string;
     route?: string;
     updatedBy: string;
-    updatedOn: string;
+    updatedOn: Date;
   }[];
   parentSpace?: string;
   subSpaces?: string[];

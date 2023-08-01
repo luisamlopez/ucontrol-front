@@ -18,6 +18,7 @@ import {
   KeyboardArrowDownRounded,
   KeyboardArrowUpRounded,
 } from "@mui/icons-material";
+import { format } from "date-fns";
 
 interface HistoryProps {
   devices?: Device[];
@@ -56,7 +57,6 @@ function DeviceDetails(object: Device) {
             ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
         </TableCell>
-        <TableCell align="center">{object.currentTopic}</TableCell>
       </TableRow>
 
       {/* Details on collapse */}
@@ -91,7 +91,6 @@ function DeviceDetails(object: Device) {
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{history.name}</TableCell>
                         <TableCell>{history.description}</TableCell>
-                        <TableCell>{history.topic}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -128,20 +127,17 @@ function SpaceDetails(object: Space) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? object.history[object.history?.length].updatedOn
-            : object.createdOn}
+            ? format(
+                object.history[object.history?.length].updatedOn,
+                "dd/MM/yyyy"
+              )
+            : format(object.createdOn, "dd/MM/yyyy")}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
             ? object.history[object.history.length - 1].updatedBy
             : object.createdBy}
         </TableCell>
-
-        {/* <TableCell align="center">
-          {object.currentRoute
-            ? object.currentRoute.flatMap((route) => route.label).join("/")
-            : "N/A"}
-        </TableCell> */}
       </TableRow>
 
       {/* Details on collapse */}
@@ -169,7 +165,7 @@ function SpaceDetails(object: Space) {
                     {object.history?.map((history) => (
                       <TableRow key={object._id}>
                         <TableCell component="th" scope="row">
-                          {history.updatedOn}
+                          {format(history.updatedOn, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{history.name}</TableCell>
@@ -237,17 +233,6 @@ const HistoryTable = ({ devices, spaces }: HistoryProps): JSX.Element => {
               }}
             >
               Responsable del cambio
-            </TableCell>
-
-            <TableCell
-              align="center"
-              sx={{
-                color: "primary.main",
-                fontWeight: "bold",
-                fontSize: "1rem",
-              }}
-            >
-              {devices ? "Tópico/Espacio" : "Ruta"}
             </TableCell>
           </TableRow>
         </TableHead>

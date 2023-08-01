@@ -14,7 +14,8 @@ import { useState } from "react";
 
 const SpaceCard = (space: Space): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const myDate: Date = space.createdOn;
+  console.log(myDate);
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -119,7 +120,7 @@ const SpaceCard = (space: Space): JSX.Element => {
 
           <DevicesDetailsText
             title="Conectado desde el"
-            value={space.createdOn}
+            value={space.createdOn as unknown as string}
           />
         </CardContent>
         <CardActions

@@ -319,7 +319,7 @@ const Home = (): JSX.Element => {
             _id: "1",
             name: "Space 1",
             description: "Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
           },
 
@@ -327,7 +327,7 @@ const Home = (): JSX.Element => {
             _id: "2",
             name: "Space 2",
             description: "Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
 
             history: [
@@ -335,7 +335,7 @@ const Home = (): JSX.Element => {
                 name: "cambio 1",
                 description: "descipcion 2",
                 updatedBy: "userr",
-                updatedOn: "565",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
                 route: "ruta",
               },
             ],

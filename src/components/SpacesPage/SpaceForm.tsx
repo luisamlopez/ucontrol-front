@@ -38,7 +38,7 @@ interface FormValues {
   parentSpace?: Space;
   subSpaces?: Space[];
   createdBy: string;
-  createdOn: string;
+  createdOn: Date;
 }
 
 const initialValues = {
@@ -47,7 +47,7 @@ const initialValues = {
   description: "",
   subSpaces: [],
   createdBy: "",
-  createdOn: "",
+  createdOn: new Date(),
 };
 
 const validationSchema = yup.object().shape({
@@ -67,7 +67,7 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
     description: "",
     subSpaces: [],
     createdBy: "",
-    createdOn: "",
+    createdOn: new Date(),
   });
   const [spaceToEdit, setSpaceToEdit] = useState<Space | undefined>(undefined); // Space to edit, if any
 
@@ -136,11 +136,11 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
         description: values.description,
         parentSpace: selectedSpace?._id,
         createdBy: user?._id!,
-        createdOn: new Date().toISOString(),
+        createdOn: new Date(),
       };
       console.log(spaceData);
-
-      if (await createSpace(spaceData)) {
+      const response = await createSpace(spaceData);
+      if (response?.valueOf()) {
         if (props.spaceID) {
           enqueueSnackbar("Espacio editado con éxito", { variant: "success" });
         } else {

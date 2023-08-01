@@ -9,6 +9,7 @@ import { Device } from "../../api/Device";
 import { Space } from "../../api/Space";
 import { useState } from "react";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
+import { format } from "date-fns";
 
 interface HistoryProps {
   devices?: Device[];
@@ -139,7 +140,11 @@ function DeviceDetails(device: Device) {
 
 function SpaceDetails(space: Space) {
   const [expanded, setExpanded] = useState<string | false>(false);
-
+  const formattedCreatedOn = format(space.createdOn, "dd/MM/yyyy");
+  const formattedUpdatedOn = format(
+    space.history![space.history!.length - 1].updatedOn,
+    "dd/MM/yyyy"
+  );
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
@@ -174,8 +179,8 @@ function SpaceDetails(space: Space) {
           }}
         >
           {space.history?.length === 0
-            ? space.history[space.history?.length].updatedOn
-            : space.createdOn}
+            ? formattedUpdatedOn
+            : formattedCreatedOn}
         </Typography>
 
         <Typography
@@ -218,7 +223,9 @@ function SpaceDetails(space: Space) {
                   <Typography color={"primary.main"} fontWeight={"medium"}>
                     Fecha del cambio:
                   </Typography>
-                  <Typography>{history.updatedOn}</Typography>
+                  <Typography>
+                    {format(history.updatedOn, "dd/mm/yyyy")}
+                  </Typography>
                 </Box>
 
                 <Box display={"flex"} justifyContent={"space-between"}>
