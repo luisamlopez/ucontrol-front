@@ -53,8 +53,11 @@ function DeviceDetails(device: Device) {
           }}
         >
           {device.history?.length === 0
-            ? device.history[device.history?.length].updatedOn
-            : device.createdOn}
+            ? format(
+                device.history[device.history?.length].updatedOn,
+                "dd/MM/yyyy"
+              )
+            : format(device.createdOn!, "dd/MM/yyyy")}
         </Typography>
 
         <Typography
@@ -97,7 +100,9 @@ function DeviceDetails(device: Device) {
                   <Typography color={"primary.main"} fontWeight={"medium"}>
                     Fecha del cambio:
                   </Typography>
-                  <Typography>{history.updatedOn}</Typography>
+                  <Typography>
+                    {format(history.updatedOn, "dd/mm/yyyy")}
+                  </Typography>
                 </Box>
 
                 <Box display={"flex"} justifyContent={"space-between"}>
@@ -141,10 +146,9 @@ function DeviceDetails(device: Device) {
 function SpaceDetails(space: Space) {
   const [expanded, setExpanded] = useState<string | false>(false);
   const formattedCreatedOn = format(space.createdOn!, "dd/MM/yyyy");
-  const formattedUpdatedOn = format(
-    space.history![space.history!.length - 1].updatedOn,
-    "dd/MM/yyyy"
-  );
+  // const formattedUpdatedOn = space.history![space.history!.length - 1].updatedOn
+  //   ? format(space.history![space.history!.length - 1].updatedOn, "dd/MM/yyyy")
+  //   : formattedCreatedOn;
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
@@ -178,9 +182,9 @@ function SpaceDetails(space: Space) {
             fontWeight: "bold",
           }}
         >
-          {space.history?.length === 0
+          {/* {space.history?.length === 0
             ? formattedUpdatedOn
-            : formattedCreatedOn}
+            : formattedCreatedOn} */}
         </Typography>
 
         <Typography
@@ -191,16 +195,16 @@ function SpaceDetails(space: Space) {
             fontWeight: "bold",
           }}
         >
-          {space.history && space.history.length > 0
+          {/* " {space.history && space.history.length > 0
             ? space.history[space.history.length - 1].updatedBy
-            : space.createdBy}
+            : space.createdBy}" */}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Typography mb={2} fontWeight={"bold"}>
           Historial de Cambios
         </Typography>
-        {space && space.history && space.history.length > 0 ? (
+        {/* {space && space.history && space.history.length > 0 ? (
           <Box
             sx={{
               width: "100%",
@@ -271,7 +275,7 @@ function SpaceDetails(space: Space) {
           </Box>
         ) : (
           <Typography>No hay historial de cambios</Typography>
-        )}
+        )} */}
       </AccordionDetails>
     </Accordion>
   );

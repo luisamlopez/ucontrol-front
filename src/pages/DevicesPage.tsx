@@ -31,7 +31,7 @@ const DevicesPage = (): JSX.Element => {
             name: "Sensor luz",
             description:
               "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
             dataVisualizationType: ["pie", "bar"],
             history: [
@@ -86,7 +86,7 @@ const DevicesPage = (): JSX.Element => {
                 ],
 
                 updatedBy: "User 1.23",
-                updatedOn: "2021-10-01",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
               },
               {
                 name: "Device 1.1",
@@ -138,7 +138,7 @@ const DevicesPage = (): JSX.Element => {
                   },
                 ],
                 updatedBy: "User 1.5",
-                updatedOn: "2021-10-01",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
               },
             ],
             currentTopic: "Topic 1",
@@ -193,7 +193,7 @@ const DevicesPage = (): JSX.Element => {
             name: "Sensor de luz oficina del profe Franklin",
             description:
               "Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 2",
             currentTopic: "Topic 2",
             dataVisualizationType: ["bar", "line"],
@@ -270,7 +270,7 @@ const DevicesPage = (): JSX.Element => {
             _id: "3",
             name: "Device 3",
             description: "Description 3",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 3",
             currentTopic: "Topic 3",
             dataVisualizationType: ["pie"],
@@ -323,7 +323,7 @@ const DevicesPage = (): JSX.Element => {
             _id: "4",
             name: "Device 4",
             description: "Description 3",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 3",
             currentTopic: "Topic 3",
             dataVisualizationType: ["pie"],

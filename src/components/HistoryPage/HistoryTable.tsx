@@ -49,8 +49,11 @@ function DeviceDetails(object: Device) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? object.history[object.history?.length].updatedOn
-            : object.createdOn}
+            ? format(
+                object.history[object.history?.length].updatedOn,
+                "dd/MM/yyyy"
+              )
+            : format(object.createdOn!, "dd/MM/yyyy")}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
@@ -86,7 +89,7 @@ function DeviceDetails(object: Device) {
                     {object.history?.map((history) => (
                       <TableRow key={object._id}>
                         <TableCell component="th" scope="row" align="center">
-                          {history.updatedOn}
+                          {format(history.updatedOn, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{history.name}</TableCell>

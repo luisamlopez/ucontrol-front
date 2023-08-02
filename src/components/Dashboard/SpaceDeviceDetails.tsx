@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
 import ChartCarousel from "../Charts/ChartCarousel";
+import { format } from "date-fns";
 
 /**
  *
@@ -9,6 +10,12 @@ import ChartCarousel from "../Charts/ChartCarousel";
  * @returns  un componente con los detalles del dispositivo
  */
 function Details(props: { device: Device }): JSX.Element {
+  // Verifica y convierte la propiedad 'createdOn' a tipo Date
+  let modifiedDevice = { ...props.device }; // Crea un nuevo objeto a partir del objeto original
+  if (modifiedDevice.createdOn && !(modifiedDevice.createdOn instanceof Date)) {
+    modifiedDevice.createdOn = new Date(modifiedDevice.createdOn);
+  }
+
   return (
     <Box
       sx={{
@@ -37,7 +44,7 @@ function Details(props: { device: Device }): JSX.Element {
 
       <DevicesDetailsText
         title={"Conectado desde el"}
-        value={props.device.createdOn}
+        value={format(modifiedDevice.createdOn, "dd/MM/yyyy")}
       />
 
       <DevicesDetailsText title="Tópico" value={props.device.currentTopic} />

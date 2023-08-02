@@ -33,7 +33,7 @@ const ConfigDevice = (): JSX.Element => {
           name: "Device 1",
           description:
             "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-          createdOn: "2021-10-01",
+          createdOn: new Date("2022-01-01T00:00:00Z"),
           createdBy: "User 1",
           dataVisualizationType: ["pie", "bar"],
           history: [
@@ -88,7 +88,7 @@ const ConfigDevice = (): JSX.Element => {
               ],
 
               updatedBy: "User 1.23",
-              updatedOn: "2021-10-01",
+              updatedOn: new Date("2022-01-01T00:00:00Z"),
             },
             {
               name: "Device 1.1",
@@ -140,7 +140,7 @@ const ConfigDevice = (): JSX.Element => {
                 },
               ],
               updatedBy: "User 1.5",
-              updatedOn: "2021-10-01",
+              updatedOn: new Date("2022-01-01T00:00:00Z"),
             },
           ],
           currentTopic: "Topic 1",

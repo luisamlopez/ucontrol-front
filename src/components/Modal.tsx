@@ -12,6 +12,8 @@ import { Device } from "../api/Device";
 import { CloseRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Space } from "../api/Space";
+import { format } from "date-fns";
+import { useEffect } from "react";
 
 interface DeviceModalProps {
   isOpen: boolean;
@@ -22,6 +24,21 @@ interface DeviceModalProps {
 
 const Modal = (props: DeviceModalProps) => {
   const navigate = useNavigate();
+
+  let modifiedDevice: Device; // Crea un nuevo objeto a partir del objeto original
+  let modifiedSpace: Space;
+
+  if (props.device) {
+    modifiedDevice = { ...props.device };
+    if (props.device.createdOn && !(props.device.createdOn instanceof Date)) {
+      modifiedDevice.createdOn = new Date(props.device.createdOn);
+    }
+  } else if (props.space) {
+    modifiedSpace = { ...props.space };
+    if (props.space.createdOn && !(props.space.createdOn instanceof Date)) {
+      modifiedSpace.createdOn = new Date(props.space.createdOn);
+    }
+  }
 
   let hasMetricsAndUnits = false;
   if (props.device) {
@@ -199,7 +216,9 @@ const Modal = (props: DeviceModalProps) => {
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>
-                <Typography>{props.device.createdOn}</Typography>
+                <Typography>
+                  {format(modifiedDevice!.createdOn, "dd/mm/yyyy")}
+                </Typography>
               </Box>
             )}
 
@@ -212,6 +231,15 @@ const Modal = (props: DeviceModalProps) => {
                     : props.space.subSpaces
                     ? props.space.subSpaces.flatMap((obj) => obj).join("/")
                     : "No hay ubicación"}
+                </Typography>
+              </Box>
+            )}
+
+            {props.space && (
+              <Box>
+                <Typography fontWeight={"bold"}>Creado el:</Typography>
+                <Typography>
+                  {format(modifiedSpace!.createdOn!, "dd/mm/yyyy")}
                 </Typography>
               </Box>
             )}

@@ -50,7 +50,7 @@ interface FormValues {
   dataVisualizationType: string[];
   values: DeviceValues[];
   createdBy: string;
-  createdOn: string;
+  createdOn: Date;
   topic: string[];
 }
 
@@ -62,7 +62,7 @@ const initialValues = {
   dataVisualizationType: [],
   values: [],
   createdBy: "",
-  createdOn: "",
+  createdOn: new Date(),
   topic: [""],
 };
 
@@ -91,7 +91,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             _id: "1",
             name: "Device 1",
             description: "Description 1",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
             dataVisualizationType: ["pie", "bar"],
             currentTopic: "Topic 1",
@@ -147,7 +147,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ],
 
                 updatedBy: "User 1.23",
-                updatedOn: "2021-10-01",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
               },
               {
                 name: "Device 1.1",
@@ -199,7 +199,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                   },
                 ],
                 updatedBy: "User 1.5",
-                updatedOn: "2021-10-01",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
               },
             ],
             values: [
@@ -251,7 +251,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             _id: "2",
             name: "Device 2",
             description: "Description 2",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 2",
             currentTopic: "Topic 2",
             dataVisualizationType: ["bar", "line"],
@@ -328,7 +328,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             _id: "3",
             name: "Device 3",
             description: "Description 3",
-            createdOn: "2021-10-01",
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 3",
             currentTopic: "Topic 3",
             dataVisualizationType: ["pie"],

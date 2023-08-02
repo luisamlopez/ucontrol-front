@@ -25,7 +25,7 @@ export interface Device {
   currentTopic: string;
   topic?: string[];
   createdBy: string;
-  createdOn: string;
+  createdOn: Date;
   values: DeviceValues[];
   dataVisualizationType: DataVisualizationType[];
   history?: {
@@ -33,7 +33,7 @@ export interface Device {
     description: string;
     topic: string;
     updatedBy: string;
-    updatedOn: string;
+    updatedOn: Date;
     dataVisualizationType: DataVisualizationType[];
     values: DeviceValues[];
   }[];
