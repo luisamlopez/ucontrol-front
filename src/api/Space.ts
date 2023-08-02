@@ -11,7 +11,7 @@ export interface Space {
   name: string;
   description?: string;
   createdBy: string;
-  createdOn: Date;
+  createdOn?: Date;
   devices?: Device[];
   history?: {
     name: string;
@@ -24,12 +24,13 @@ export interface Space {
   subSpaces?: string[];
 }
 
-export const createSpace = async (spaceData: Space) => {
+export const createSpace = async (spaceData: Space, userId: string) => {
   try {
+    console.log(spaceData);
     const response = await fetch(`${url}createSpace`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(spaceData),
+      body: JSON.stringify({ space: spaceData, userId: userId }),
     });
     if (response.ok) return true;
   } catch (error) {
@@ -37,14 +38,17 @@ export const createSpace = async (spaceData: Space) => {
   }
 };
 
-export const createSubSpace = async (subSpaceData: Space) => {
+export const createSubSpace = async (subSpaceData: Space, userId: string) => {
   try {
     const response = await fetch(`${url}createSpace`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(subSpaceData),
+      body: JSON.stringify({ space: subSpaceData, userId: userId }),
     });
-  } catch (error) {}
+    if (response.ok) return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 export const getSpaces = async (callback: (spaces: Space[]) => void) => {

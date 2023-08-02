@@ -131,7 +131,7 @@ function SpaceDetails(object: Space) {
                 object.history[object.history?.length].updatedOn,
                 "dd/MM/yyyy"
               )
-            : format(object.createdOn, "dd/MM/yyyy")}
+            : object.createdOn!.toISOString()}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0

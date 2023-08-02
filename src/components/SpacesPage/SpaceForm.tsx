@@ -13,7 +13,13 @@ import {
   FormLabel,
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
-import { Space, SpaceRoute, createSpace, getSpaces } from "../../api/Space";
+import {
+  Space,
+  SpaceRoute,
+  createSpace,
+  createSubSpace,
+  getSpaces,
+} from "../../api/Space";
 import { AddRounded, DeleteRounded } from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
@@ -131,28 +137,56 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
     actions: FormikHelpers<FormValues>
   ) => {
     try {
-      const spaceData: Space = {
-        name: values.name,
-        description: values.description,
-        parentSpace: selectedSpace?._id,
-        createdBy: user?._id!,
-        createdOn: new Date(),
-      };
-      console.log(spaceData);
-      const response = await createSpace(spaceData);
-      if (response?.valueOf()) {
-        if (props.spaceID) {
-          enqueueSnackbar("Espacio editado con éxito", { variant: "success" });
+      if (!spaceType) {
+        const spaceData: Space = {
+          name: values.name,
+          description: values.description,
+          createdBy: user?._id!,
+        };
+        console.log(spaceData);
+        const response = await createSpace(spaceData, user?._id!);
+        console.log(response);
+        if (response) {
+          if (props.spaceID) {
+            enqueueSnackbar("Espacio editado con éxito", {
+              variant: "success",
+            });
+          } else {
+            enqueueSnackbar("Espacio creado con éxito", { variant: "success" });
+          }
         } else {
-          enqueueSnackbar("Espacio creado con éxito", { variant: "success" });
+          enqueueSnackbar("Hubo un error", { variant: "error" });
         }
-      } else {
-        enqueueSnackbar("Hubo un error", { variant: "error" });
-      }
 
-      actions.setSubmitting(true);
+        actions.setSubmitting(true);
+      } else {
+        const spaceData: Space = {
+          name: values.name,
+          description: values.description,
+          parentSpace: selectedSpace?._id,
+          createdBy: user?._id!,
+        };
+        console.log(spaceData);
+        const response = await createSubSpace(spaceData, user?._id!);
+        console.log(response);
+        if (response) {
+          if (props.spaceID) {
+            enqueueSnackbar("Espacio editado con éxito", {
+              variant: "success",
+            });
+          } else {
+            enqueueSnackbar("Espacio creado con éxito", {
+              variant: "success",
+            });
+          }
+        } else {
+          enqueueSnackbar("Hubo un error", { variant: "error" });
+        }
+
+        actions.setSubmitting(true);
+      }
     } catch (error) {
-      //enqueueSnackbar("Hubo un error", { variant: "error" });
+      enqueueSnackbar("Hubo un error", { variant: "error" });
     } finally {
       actions.setSubmitting(false);
     }

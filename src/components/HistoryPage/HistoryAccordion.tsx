@@ -140,7 +140,7 @@ function DeviceDetails(device: Device) {
 
 function SpaceDetails(space: Space) {
   const [expanded, setExpanded] = useState<string | false>(false);
-  const formattedCreatedOn = format(space.createdOn, "dd/MM/yyyy");
+  const formattedCreatedOn = format(space.createdOn!, "dd/MM/yyyy");
   const formattedUpdatedOn = format(
     space.history![space.history!.length - 1].updatedOn,
     "dd/MM/yyyy"
