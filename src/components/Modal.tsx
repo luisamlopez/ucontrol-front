@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Space } from "../api/Space";
 import { format } from "date-fns";
 import { useEffect } from "react";
+import { useUser } from "../contexts/authContext";
 
 interface DeviceModalProps {
   isOpen: boolean;

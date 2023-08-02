@@ -24,160 +24,10 @@ const History = (): JSX.Element => {
             description: "Description 1",
             createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
-            dataVisualizationType: ["pie", "bar"],
-            history: [
-              {
-                name: "Device 1",
-                description: "Description 1",
-                topic: "Topic 1",
-                dataVisualizationType: ["pie", "line"],
-                values: [
-                  {
-                    timestamp: "2021-10-01",
-                    value: 10,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-02",
-                    value: 20,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-03",
-                    value: 30,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                ],
+            dvt: ["pie", "bar"],
 
-                updatedBy: "User 1.23",
-                updatedOn: new Date("2022-01-01T00:00:00Z"),
-              },
-              {
-                name: "Device 1.1",
-                description: "Description 1.1",
-                topic: "Topic 1.1",
-                dataVisualizationType: ["pie", "gauge"],
-                values: [
-                  {
-                    timestamp: "2021-10-01",
-                    value: 10,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-02",
-                    value: 20,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                  {
-                    timestamp: "2021-10-03",
-                    value: 30,
-                    metricsAndUnits: [
-                      {
-                        metric: "Metric 1",
-                        unit: "Unit 1",
-                      },
-                      {
-                        metric: "Metric 2",
-                        unit: "Unit 2",
-                      },
-                    ],
-                  },
-                ],
-                updatedBy: "User 1.5",
-                updatedOn: new Date("2022-01-01T00:00:00Z"),
-              },
-            ],
-            currentTopic: "Topic 1",
+            topic: ["Topic 1.1", "Topic 1.2", "Topic 1.3"],
 
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 40,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
             history: [
               {
                 updatedBy: "User 1",
@@ -194,74 +44,6 @@ const History = (): JSX.Element => {
             createdBy: "User 2",
             dvt: ["bar", "line"],
             topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-            ],
           },
           {
             _id: "3",
@@ -272,50 +54,6 @@ const History = (): JSX.Element => {
             dvt: ["pie"],
 
             topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
           },
         ];
         const dataSpaces: Space[] = [
@@ -339,8 +77,6 @@ const History = (): JSX.Element => {
                 field: ["cambio 1"],
                 updatedBy: "userr",
                 updatedOn: new Date("2022-01-01T00:00:00Z"),
-
-                route: "ruta",
               },
             ],
             devices: dataDevices,

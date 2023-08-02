@@ -27,7 +27,7 @@ function DeviceDetails(device: Device) {
   return (
     <Accordion
       expanded={expanded === device._id}
-      onChange={handleChange(device._id)}
+      onChange={handleChange(device._id!)}
       sx={{ mr: 1 }}
     >
       <AccordionSummary

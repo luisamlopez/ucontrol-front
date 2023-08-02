@@ -1,7 +1,7 @@
 import { url } from "./url";
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   registered: boolean;

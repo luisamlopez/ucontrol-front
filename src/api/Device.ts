@@ -10,7 +10,7 @@ export interface DeviceValues {
 }
 
 export interface Device {
-  _id: string;
+  _id?: string;
   name: string;
   description: string;
   dvt: ("line" | "bar" | "pie" | "gauge" | "scatter" | "table" | "value")[];

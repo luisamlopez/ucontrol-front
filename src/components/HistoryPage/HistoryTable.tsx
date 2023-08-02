@@ -89,8 +89,7 @@ function DeviceDetails(object: Device) {
                           {format(history.updatedOn, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
-                        <TableCell>{history.name}</TableCell>
-                        <TableCell>{history.description}</TableCell>
+                        <TableCell>{history.field}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -157,7 +156,6 @@ function SpaceDetails(object: Space) {
                       <TableCell>Responsable del cambio</TableCell>
                       <TableCell>Nombre del espacio</TableCell>
                       <TableCell>Descripción</TableCell>
-                      <TableCell>Dispositivos!!!</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -168,6 +166,7 @@ function SpaceDetails(object: Space) {
                           {format(history.updatedOn, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
+                        <TableCell>{object.name}</TableCell>
                         <TableCell>{history.field}</TableCell>
                       </TableRow>
                     ))}
