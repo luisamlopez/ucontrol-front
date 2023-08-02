@@ -151,8 +151,10 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
             enqueueSnackbar("Espacio editado con éxito", {
               variant: "success",
             });
+            navigate("/spaces");
           } else {
             enqueueSnackbar("Espacio creado con éxito", { variant: "success" });
+            navigate("/spaces");
           }
         } else {
           enqueueSnackbar("Hubo un error", { variant: "error" });
@@ -163,21 +165,22 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
         const spaceData: Space = {
           name: values.name,
           description: values.description,
-          parentSpace: selectedSpace?._id,
           createdBy: user?._id!,
         };
-        console.log(spaceData);
-        const response = await createSubSpace(spaceData, user?._id!);
-        console.log(response);
+        //  console.log(spaceData);
+        const response = await createSubSpace(spaceData, selectedSpace?._id!);
+        //  console.log(response);
         if (response) {
           if (props.spaceID) {
             enqueueSnackbar("Espacio editado con éxito", {
               variant: "success",
             });
+            navigate("/spaces");
           } else {
             enqueueSnackbar("Espacio creado con éxito", {
               variant: "success",
             });
+            navigate("/spaces");
           }
         } else {
           enqueueSnackbar("Hubo un error", { variant: "error" });
@@ -231,8 +234,6 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
         >
           <CircularProgress />
         </Box>
-      ) : spaces.length === 0 ? (
-        <Typography>Error: no se pudo cargar el espacio.</Typography>
       ) : (
         <Box
           sx={{

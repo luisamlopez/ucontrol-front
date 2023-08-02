@@ -91,7 +91,7 @@ const SpacesPage = (): JSX.Element => {
               </Box>
             ) : spaces.length === 0 ? (
               <Typography>
-                Error: no se pudieron cargar los espacios.
+                No hay espacios registrados. Agrega uno nuevo.
               </Typography>
             ) : (
               <Box

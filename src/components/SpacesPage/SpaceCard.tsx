@@ -15,8 +15,14 @@ import { format } from "date-fns";
 
 const SpaceCard = (space: Space): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const myDate: Date = space.createdOn!;
-  console.log(myDate);
+  console.log(space);
+
+  // Verifica y convierte la propiedad 'createdOn' a tipo Date
+  let modifiedSpace = { ...space }; // Crea un nuevo objeto a partir del objeto original
+  if (modifiedSpace.createdOn && !(modifiedSpace.createdOn instanceof Date)) {
+    modifiedSpace.createdOn = new Date(modifiedSpace.createdOn);
+  }
+
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -43,6 +49,9 @@ const SpaceCard = (space: Space): JSX.Element => {
             lg: "440px",
           },
           p: 1,
+          width: "100%",
+          maxWidth: "300px",
+          m: " 0 auto",
         }}
       >
         <CardContent
@@ -120,8 +129,12 @@ const SpaceCard = (space: Space): JSX.Element => {
           )}
 
           <DevicesDetailsText
-            title="Conectado desde el"
-            value={format(myDate, "dd/MM/yyyy")}
+            title="Creado el"
+            value={
+              space.createdOn
+                ? format(modifiedSpace.createdOn!, "dd/MM/yyyy")
+                : "N/A"
+            }
           />
         </CardContent>
         <CardActions

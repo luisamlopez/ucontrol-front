@@ -38,12 +38,12 @@ export const createSpace = async (spaceData: Space, userId: string) => {
   }
 };
 
-export const createSubSpace = async (subSpaceData: Space, userId: string) => {
+export const createSubSpace = async (newSubspace: Space, spaceId: string) => {
   try {
-    const response = await fetch(`${url}createSpace`, {
+    const response = await fetch(`${url}createSubspace`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ space: subSpaceData, userId: userId }),
+      body: JSON.stringify({ newSubspace: newSubspace, spaceId: spaceId }),
     });
     if (response.ok) return true;
   } catch (error) {
