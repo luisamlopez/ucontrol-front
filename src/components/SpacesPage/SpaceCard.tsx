@@ -11,9 +11,17 @@ import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import { useState } from "react";
+import { format } from "date-fns";
 
 const SpaceCard = (space: Space): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
+  console.log(space);
+
+  // Verifica y convierte la propiedad 'createdOn' a tipo Date
+  let modifiedSpace = { ...space }; // Crea un nuevo objeto a partir del objeto original
+  if (modifiedSpace.createdOn && !(modifiedSpace.createdOn instanceof Date)) {
+    modifiedSpace.createdOn = new Date(modifiedSpace.createdOn);
+  }
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -41,6 +49,9 @@ const SpaceCard = (space: Space): JSX.Element => {
             lg: "440px",
           },
           p: 1,
+          width: "100%",
+          maxWidth: "300px",
+          m: " 0 auto",
         }}
       >
         <CardContent
@@ -88,7 +99,10 @@ const SpaceCard = (space: Space): JSX.Element => {
               minWidth: "100%",
             }}
           >
-            <DevicesDetailsText title="Descripción" value={space.description} />
+            <DevicesDetailsText
+              title="Descripción"
+              value={space.description ? space.description : "N/A"}
+            />
           </Box>
           {space.devices && (
             <Box
@@ -107,7 +121,7 @@ const SpaceCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} color={"black"}>
                 <ul>
                   {space.devices.map((device) => (
-                    <li key={device.id}>{device.name}</li>
+                    <li key={device._id}>{device.name}</li>
                   ))}
                 </ul>
               </Typography>
@@ -115,8 +129,12 @@ const SpaceCard = (space: Space): JSX.Element => {
           )}
 
           <DevicesDetailsText
-            title="Conectado desde el"
-            value={space.createdOn.toString()}
+            title="Creado el"
+            value={
+              space.createdOn
+                ? format(modifiedSpace.createdOn!, "dd/MM/yyyy")
+                : "N/A"
+            }
           />
         </CardContent>
         <CardActions

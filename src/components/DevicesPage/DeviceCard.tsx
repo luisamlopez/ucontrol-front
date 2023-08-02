@@ -11,6 +11,7 @@ import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import { useState } from "react";
+import { format } from "date-fns";
 
 const DeviceCard = (device: Device): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -22,6 +23,12 @@ const DeviceCard = (device: Device): JSX.Element => {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+
+  // Verifica y convierte la propiedad 'createdOn' a tipo Date
+  let modifiedDevice = { ...device }; // Crea un nuevo objeto a partir del objeto original
+  if (modifiedDevice.createdOn && !(modifiedDevice.createdOn instanceof Date)) {
+    modifiedDevice.createdOn = new Date(modifiedDevice.createdOn);
+  }
 
   return (
     <>
@@ -96,7 +103,7 @@ const DeviceCard = (device: Device): JSX.Element => {
 
           <DevicesDetailsText
             title="Conectado desde el"
-            value={device.createdOn.toString()}
+            value={format(modifiedDevice.createdOn, "dd/MM/yyyy")}
           />
           <DevicesDetailsText
             title="Tópico"

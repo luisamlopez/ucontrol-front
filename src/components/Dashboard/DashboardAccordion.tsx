@@ -237,7 +237,7 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
                   }}
                 >
                   <Link
-                    to={`/spaceID/${space.id}`}
+                    to={`/spaceID/${space._id}`}
                     style={{
                       textDecoration: "none",
                       color: "#042F3E",

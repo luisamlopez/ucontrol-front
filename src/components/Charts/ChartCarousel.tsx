@@ -67,7 +67,7 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
               <Box>Line</Box>
             )}
             {type === "gauge" && (
-              // <Gauge id={device.id} values={device.values} />
+              // <Gauge id={device._id} values={device.values} />
               <Box>Gauge</Box>
             )}
           </Box>

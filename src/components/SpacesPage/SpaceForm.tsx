@@ -12,281 +12,215 @@ import {
   Radio,
   FormLabel,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-import { Space } from "../../api/Space";
+import { useState, useEffect, useRef } from "react";
+import {
+  Space,
+  SpaceRoute,
+  createSpace,
+  createSubSpace,
+  getSpaces,
+} from "../../api/Space";
 import { AddRounded, DeleteRounded } from "@mui/icons-material";
-import { Field, FieldArray, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
 import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
 import RadioGroupField from "../Fields/RadioGroupField";
 import { Device } from "../../api/Device";
+import { get } from "http";
+import { LoadingButton } from "@mui/lab";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import { useUser } from "../../contexts/authContext";
 
 interface SpaceFormProps {
   spaceID?: string;
 }
 
 interface FormValues {
-  id: string;
+  _id: string;
   name: string;
   description: string;
+  parentSpace?: Space;
+  subSpaces?: Space[];
   createdBy: string;
   createdOn: Date;
 }
 
-const initialValues: FormValues = {
-  id: "",
+const initialValues = {
+  _id: "",
   name: "",
   description: "",
+  subSpaces: [],
   createdBy: "",
   createdOn: new Date(),
 };
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Por favor, ingrese un nombre"),
-  description: yup.string().required("Por favor, ingrese una descripción"),
-  currentRoute: yup.string().required("Por favor, ingrese un tópico/espacio"),
+  description: yup.string(),
+  parentSpace: yup.string(),
 });
 
 const SpaceForm = (props: SpaceFormProps): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-  const space = spaces.find((space) => space.id === props.spaceID);
+  const [spaceType, setSpaceType] = useState(false);
+  const [selectedSpace, setSelectedSpace] = useState<Space | undefined>({
+    _id: "",
+    name: "",
+    description: "",
+    subSpaces: [],
+    createdBy: "",
+    createdOn: new Date(),
+  });
+  const [spaceToEdit, setSpaceToEdit] = useState<Space | undefined>(undefined); // Space to edit, if any
+
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const { user } = useUser();
+
+  const routeRef = useRef<string>(""); // Create a ref to store the route value
+
+  /**
+   * @description Get the information of a space given its id
+   * @param id
+   * @returns Space
+   */
+  const getSpaceInfo = (_id: string) => {
+    let space: Space | undefined;
+    for (let i = 0; i < spaces.length; i++) {
+      if (spaces[i]._id === _id) {
+        space = spaces[i];
+
+        break;
+      }
+    }
+    return space;
+  };
+
+  /**
+   * @description Recursive function to find the "route" of the space, i.e. the parent spaces that it belongs to, if any (e.g. a room belongs to a floor, which belongs to a building, etc.)
+   * @param space The space to find the route of
+   */
+  const findRoute = (space: Space): Space[] => {
+    let route: Space[] = [];
+    let currentSpace: Space | undefined = space;
+
+    while (currentSpace) {
+      route.unshift(currentSpace); // Add current space to the beginning of the route array
+      const parentSpaceId = currentSpace.parentSpace;
+
+      if (parentSpaceId) {
+        // Find the parent space based on its ID
+        const parentSpace = getSpaceInfo(parentSpaceId);
+
+        if (parentSpace) {
+          currentSpace = parentSpace;
+        } else {
+          // If parent space is not found, stop the loop
+          currentSpace = undefined;
+          console.error(`Parent space with ID ${parentSpaceId} not found.`);
+        }
+      } else {
+        // If there is no parent space, stop the loop
+        currentSpace = undefined;
+      }
+    }
+
+    return route;
+  };
+
+  const onSubmit = async (
+    values: FormValues,
+    actions: FormikHelpers<FormValues>
+  ) => {
+    try {
+      if (!spaceType) {
+        const spaceData: Space = {
+          name: values.name,
+          description: values.description,
+          createdBy: user?._id!,
+        };
+        console.log(spaceData);
+        const response = await createSpace(spaceData, user?._id!);
+        console.log(response);
+        if (response) {
+          if (props.spaceID) {
+            enqueueSnackbar("Espacio editado con éxito", {
+              variant: "success",
+            });
+            navigate("/spaces");
+          } else {
+            enqueueSnackbar("Espacio creado con éxito", { variant: "success" });
+            navigate("/spaces");
+          }
+        } else {
+          enqueueSnackbar("Hubo un error", { variant: "error" });
+        }
+
+        actions.setSubmitting(true);
+      } else {
+        const spaceData: Space = {
+          name: values.name,
+          description: values.description,
+          createdBy: user?._id!,
+        };
+        //  console.log(spaceData);
+        const response = await createSubSpace(spaceData, selectedSpace?._id!);
+        //  console.log(response);
+        if (response) {
+          if (props.spaceID) {
+            enqueueSnackbar("Espacio editado con éxito", {
+              variant: "success",
+            });
+            navigate("/spaces");
+          } else {
+            enqueueSnackbar("Espacio creado con éxito", {
+              variant: "success",
+            });
+            navigate("/spaces");
+          }
+        } else {
+          enqueueSnackbar("Hubo un error", { variant: "error" });
+        }
+
+        actions.setSubmitting(true);
+      }
+    } catch (error) {
+      enqueueSnackbar("Hubo un error", { variant: "error" });
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 1",
-            dvt: ["pie", "bar"],
+    if (selectedSpace) {
+      const route = findRoute(selectedSpace)
+        .map((space) => space.name)
+        .join(" / ");
+      routeRef.current = route; // Update the ref with the new route value
+    }
+  }, [selectedSpace]);
 
-            topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 40,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 2",
-            dvt: ["bar", "line"],
-            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
-
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 3",
-            dvt: ["pie"],
-            topic: ["Topic 3.2", "Topic 3.2", "Topic 3.3"],
-
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-        ];
-        const dataSpaces: Space[] = [
-          {
-            id: "1",
-            name: "Space 1",
-            description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 1",
-          },
-
-          {
-            id: "2",
-            name: "Space 2",
-            description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 1",
-
-            history: [
-              {
-                field: ["cambio 1"],
-                updatedBy: "userr",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
-              },
-            ],
-            devices: dataDevices,
-          },
-        ];
-        setDevices(dataDevices);
-        setSpaces(dataSpaces);
-        setDataLoaded(true);
-      }, 2000);
-    };
-
+  useEffect(() => {
     try {
-      fetchData();
+      getSpaces((allSpaces) => {
+        setSpaces(allSpaces);
+      });
+      // console.log(spaces);
+      setLoading(false);
     } catch (error) {
       alert(error);
-    } finally {
-      setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (props.spaceID) {
+      setSpaceToEdit(getSpaceInfo(props.spaceID));
+    }
+  }, [spaces]);
 
   return (
     <Box display="flex" justifyContent="left" flexDirection="column">
@@ -300,18 +234,6 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
         >
           <CircularProgress />
         </Box>
-      ) : !dataLoaded ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : spaces.length === 0 ? (
-        <Typography>Error: no se pudo cargar el espacio.</Typography>
       ) : (
         <Box
           sx={{
@@ -326,7 +248,193 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
             },
           }}
         >
-          {props.spaceID ? <> {props.spaceID} </> : <Add spaces={spaces} />}
+          {/* {props.spaceID ? <> {props.spaceID} </> : <>
+    
+          </>} */}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
+          >
+            {({ isSubmitting, touched, errors }) => (
+              <Stack component={Form} spacing={2}>
+                <Field
+                  component={TextField}
+                  name="name"
+                  type="text"
+                  label="Nombre"
+                  variant="outlined"
+                  fullWidth
+                  {...(props.spaceID && { value: spaceToEdit?.name })}
+                />
+                <Field
+                  component={TextAreaField}
+                  name="description"
+                  type="text"
+                  label="Descripción"
+                  variant="outlined"
+                  fullWidth
+                  {...(props.spaceID && {
+                    value: spaceToEdit?.description
+                      ? spaceToEdit?.description
+                      : "",
+                  })}
+                />
+
+                <Field
+                  component={RadioGroup}
+                  name="spaceType"
+                  label="Tipo de dispositivo"
+                  required
+                >
+                  <FormLabel
+                    sx={{
+                      color: "primary.main",
+                      fontWeight: 600,
+                      fontSize: "18px",
+                    }}
+                  >
+                    ¿Este espacio pertenece a otro espacio?
+                  </FormLabel>
+                  <Typography>
+                    Ejemplo: <br />
+                    Laboratorio pertenece a edificio
+                    <br /> Salón pertenece a Piso <br />
+                    Piso pertenece a módulo
+                  </Typography>
+                  <FormControlLabel
+                    value={
+                      !props.spaceID
+                        ? true
+                        : spaceToEdit?.parentSpace
+                        ? true
+                        : false
+                    }
+                    control={<Radio />}
+                    label="Si"
+                    onChange={() => {
+                      setSpaceType(true);
+                    }}
+                  />
+                  <FormControlLabel
+                    value={
+                      !props.spaceID
+                        ? false
+                        : !spaceToEdit?.parentSpace
+                        ? false
+                        : true
+                    }
+                    control={<Radio />}
+                    label="No"
+                    onChange={() => {
+                      setSpaceType(false);
+                    }}
+                  />
+                </Field>
+                {spaceType && (
+                  <>
+                    <Typography gutterBottom>
+                      Ingrese el tópico/espacio al que pertenece el dispositivo
+                    </Typography>
+
+                    <Field
+                      component={Autocomplete}
+                      name="parentSpace"
+                      options={spaces}
+                      getOptionLabel={(option: Space) => option.name || ""}
+                      value={
+                        props.spaceID
+                          ? getSpaceInfo(
+                              spaceToEdit?.parentSpace
+                                ? spaceToEdit.parentSpace
+                                : spaceToEdit?._id!
+                            )
+                          : selectedSpace
+                      }
+                      onChange={(event: any, newValue: Space) => {
+                        setSelectedSpace(newValue);
+                        console.log(findRoute(newValue));
+                      }}
+                      renderInput={(params: AutocompleteRenderInputParams) => (
+                        <TextFieldMUI
+                          {...params}
+                          label="Espacio/Tópico"
+                          variant="outlined"
+                          fullWidth
+                          autoComplete="on"
+                          required
+                          error={touched.parentSpace && !!errors.parentSpace}
+                          helperText={
+                            touched.parentSpace && errors.parentSpace
+                              ? errors.parentSpace
+                              : ""
+                          }
+                          sx={{
+                            my: 2,
+                          }}
+                        />
+                      )}
+                    />
+                    {routeRef && (
+                      <>
+                        <Typography
+                          sx={{
+                            fontStyle: "italic",
+                            fontSize: "14px",
+                          }}
+                        >
+                          Ruta del espacio seleccionado:
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontStyle: "italic",
+                            fontSize: "14px",
+                            my: 2,
+                          }}
+                        >
+                          {routeRef.current}
+                        </Typography>
+                      </>
+                    )}
+                  </>
+                )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center",
+                    placeSelf: "flex-end",
+                    width: "50%",
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      navigate("/spaces");
+                    }}
+                    sx={{
+                      mt: 2,
+                      mr: 2,
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <LoadingButton
+                    sx={{
+                      mt: 2,
+                    }}
+                    type="submit"
+                    loading={isSubmitting}
+                    loadingIndicator="Procesando..."
+                    variant="contained"
+                    color="primary"
+                  >
+                    Guardar
+                  </LoadingButton>
+                </Box>
+              </Stack>
+            )}
+          </Formik>
         </Box>
       )}
     </Box>
@@ -334,169 +442,3 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
 };
 
 export default SpaceForm;
-
-function Add(spaces: { spaces: Space[] }) {
-  useEffect(() => {}, []);
-
-  // const handleTopicChange = (selectedTopic: SpaceRoute) => {
-  //   const newTopics: SpaceRoute[] = [];
-  //   for (let i = 0; i < spaces.spaces.length; i++) {
-  //     if (spaces.spaces[i].id === selectedTopic.id) {
-  //       for (let j = 0; j < spaces.spaces[i].currentRoute.length; j++) {
-  //         newTopics.push(spaces.spaces[i].currentRoute[j]);
-  //       }
-  //     }
-  //   }
-  //   setTopics(newTopics);
-  // };
-
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ isSubmitting, touched, errors }) => (
-        <Stack component={Form} spacing={2}>
-          <Field
-            component={TextField}
-            name="name"
-            type="text"
-            label="Nombre"
-            variant="outlined"
-            fullWidth
-          />
-          <Field
-            component={TextAreaField}
-            name="description"
-            type="text"
-            label="Descripción"
-            variant="outlined"
-            fullWidth
-          />
-
-          {/* <FieldArray name="topic">
-            {({ push, remove, form }: any) => (
-              <>
-                <Typography gutterBottom>
-                  Ingrese el tópico/espacio al que pertenece el dispositivo
-                </Typography>
-
-                {form.values.topic.map((_: String, index: number) => (
-                  <Stack
-                    key={index}
-                    direction={"row"}
-                    spacing={1}
-                    alignItems={"center"}
-                  >
-                    <Field
-                      name={`topic.${index}`}
-                      component={Autocomplete}
-                      options={topics}
-                      getOptionLabel={(option: SpaceRoute) =>
-                        option.label || ""
-                      }
-                      renderInput={(params: AutocompleteRenderInputParams) => (
-                        <TextFieldMUI
-                          {...params}
-                          name={`topic.${index}`}
-                          label="Tópico/Espacio"
-                          required
-                          variant="outlined"
-                          fullWidth
-                          id="textfieldmui"
-                          error={
-                            touched.topic && Boolean(errors.topic)
-                          }
-                          helperText={
-                            touched.topic && errors.topic
-                          }
-                        />
-                      )}
-                      style={{ width: "100%" }}
-                    />
-                    {form.values.topic.length > 1 && (
-                      <Tooltip title="Eliminar" arrow>
-                        <IconButton
-                          size="large"
-                          onClick={() => {
-
-                            remove(index);
-                          }}
-                        >
-                          <DeleteRounded />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                    {form.values.topic.length === 1 && index === 0 && (
-                      <Tooltip title="Agregar" arrow>
-                        <IconButton
-                          size="large"
-                          onClick={() => {
-                            if (
-                              form.values.topic[0] !== "" &&
-                              form.values.topic[0] !== undefined &&
-                              form.values.topic[0] !== null
-                            ) {
-                              handleTopicChange(form.values.topic[0]);
-                              push(new String());
-                            }
-                          }}
-                        >
-                          <AddRounded />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  </Stack>
-                ))}
-              </>
-            )}
-          </FieldArray> */}
-
-          <Field
-            component={RadioGroup}
-            name="spaceType"
-            label="Tipo de dispositivo"
-          >
-            <FormLabel>¿Este espacio pertenece a otro?</FormLabel>
-            <Typography>
-              Ejemplo:
-              <ul>
-                <li>Laboratorio pertenece a edificio</li>
-                <li>Salón pertenece a piso</li>
-                <li>Piso pertenece a módulo</li>
-              </ul>
-            </Typography>
-            <FormControlLabel
-              value="tempHum"
-              control={<Radio />}
-              label="Si"
-              onSelect={() => {}}
-            />
-            <FormControlLabel
-              value="movimiento"
-              control={<Radio />}
-              label="No"
-              onSelect={() => {}}
-            />
-          </Field>
-        </Stack>
-      )}
-    </Formik>
-  );
-}
-
-function Edit(space: { space: Space }) {}
-
-const onSubmit = async (values: Space, { setSubmitting }: any) => {
-  await Save(false, values);
-  setSubmitting(false);
-};
-
-const Save = async (isAdd: boolean, values: Space) => {
-  if (isAdd) {
-    //  create
-  } else {
-    // update
-  }
-};

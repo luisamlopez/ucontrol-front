@@ -8,7 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Space } from "../api/Space";
+import { Space, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import CardsContainer from "../components/CardsContainer";
 import { AddRounded } from "@mui/icons-material";
@@ -25,233 +25,12 @@ const SpacesPage = (): JSX.Element => {
   const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 1",
-            dvt: ["pie", "bar"],
-            topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 40,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-            history: [
-              {
-                updatedBy: "User 1",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
-                field: ["Cambio 1"],
-              },
-            ],
-          },
-          {
-            id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 2",
-            dvt: ["bar", "line"],
-            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 3",
-            dvt: ["pie"],
-
-            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-        ];
-        const dataSpaces: Space[] = [
-          {
-            id: "1",
-            name: "Space 1",
-            description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 1",
-          },
-
-          {
-            id: "2",
-            name: "Space 2",
-            description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
-            createdBy: "User 1",
-            history: [
-              {
-                field: ["cambio 1"],
-                updatedBy: "userr",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
-              },
-            ],
-            devices: dataDevices,
-          },
-        ];
-        setSpaces(dataSpaces);
-        setDataLoaded(true);
-      }, 2000);
-    };
-
     try {
-      fetchData();
+      getSpaces((allSpaces) => {
+        setSpaces(allSpaces);
+        setDataLoaded(true);
+      });
+      console.log(spaces);
     } catch (error) {
       alert(error);
     } finally {
@@ -314,7 +93,7 @@ const SpacesPage = (): JSX.Element => {
               </Box>
             ) : spaces.length === 0 ? (
               <Typography>
-                Error: no se pudieron cargar los espacios.
+                No hay espacios registrados. Agrega uno nuevo.
               </Typography>
             ) : (
               <Box
@@ -331,8 +110,8 @@ const SpacesPage = (): JSX.Element => {
                       // space.name
                       //   .toLowerCase()
                       //   .includes(searchValue.toLowerCase()) ? (
-                      // <spaceCard key={space.id} {...space} />
-                      <SpaceCard key={space.id} {...space} />
+                      // <spaceCard key={space._id} {...space} />
+                      <SpaceCard key={space._id} {...space} />
                     )
                     // ) : null
                   )}

@@ -31,7 +31,7 @@ const LineChart = ({ id, values }: ChartDataProps): JSX.Element => {
   const [selectedIndex, setSelectedIndex] = useState(1);
   const [boxMarginBottom, setBoxMarginBottom] = useState(0);
   const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]} id: ${id}}`);
+    console.info(`You clicked ${options[selectedIndex]} _id: ${id}}`);
   };
 
   const handleMenuItemClick = (

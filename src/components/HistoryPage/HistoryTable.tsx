@@ -18,6 +18,7 @@ import {
   KeyboardArrowDownRounded,
   KeyboardArrowUpRounded,
 } from "@mui/icons-material";
+import { format } from "date-fns";
 
 interface HistoryProps {
   devices?: Device[];
@@ -48,8 +49,11 @@ function DeviceDetails(object: Device) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? object.history[object.history?.length].updatedOn.toString()
-            : object.createdOn.toString()}
+            ? format(
+                object.history[object.history?.length].updatedOn,
+                "dd/MM/yyyy"
+              )
+            : format(object.createdOn!, "dd/MM/yyyy")}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
@@ -80,12 +84,13 @@ function DeviceDetails(object: Device) {
 
                   <TableBody>
                     {object.history?.map((history) => (
-                      <TableRow key={object.id}>
+                      <TableRow key={object._id}>
                         <TableCell component="th" scope="row" align="center">
-                          {history.updatedOn.toString()}
+                          {format(history.updatedOn, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
-                        <TableCell>{history.field}</TableCell>
+                        <TableCell>{history.name}</TableCell>
+                        <TableCell>{history.description}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -122,8 +127,11 @@ function SpaceDetails(object: Space) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? object.history[object.history?.length].updatedOn.toString()
-            : object.createdOn.toString()}
+            ? format(
+                object.history[object.history?.length].updatedOn,
+                "dd/MM/yyyy"
+              )
+            : object.createdOn!.toISOString()}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
@@ -147,15 +155,17 @@ function SpaceDetails(object: Space) {
                     <TableRow>
                       <TableCell>Fecha del cambio</TableCell>
                       <TableCell>Responsable del cambio</TableCell>
-                      <TableCell>Descripción del cambio</TableCell>
+                      <TableCell>Nombre del espacio</TableCell>
+                      <TableCell>Descripción</TableCell>
+                      <TableCell>Dispositivos!!!</TableCell>
                     </TableRow>
                   </TableHead>
 
                   <TableBody>
                     {object.history?.map((history) => (
-                      <TableRow key={object.id}>
+                      <TableRow key={object._id}>
                         <TableCell component="th" scope="row">
-                          {history.updatedOn.toString()}
+                          {format(history.updatedOn, "dd/MM/yyyy")}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{history.field}</TableCell>
@@ -223,10 +233,10 @@ const HistoryTable = ({ devices, spaces }: HistoryProps): JSX.Element => {
           {/* If it's a device or a space */}
           {devices
             ? devices.map((device) => (
-                <DeviceDetails key={device.id} {...device} />
+                <DeviceDetails key={device._id} {...device} />
               ))
             : spaces?.map((space) => (
-                <SpaceDetails key={space.id} {...space} />
+                <SpaceDetails key={space._id} {...space} />
               ))}
         </TableBody>
       </Table>

@@ -22,13 +22,121 @@ const Home = (): JSX.Element => {
       setTimeout(() => {
         const dataDevices: Device[] = [
           {
-            id: "1",
+            _id: "1",
             name: "Device 1",
             description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
-            dvt: ["pie", "bar"],
-            topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
+            dataVisualizationType: ["pie", "bar"],
+            history: [
+              {
+                name: "Device 1",
+                description: "Description 1",
+                topic: "Topic 1",
+                dataVisualizationType: ["pie", "line"],
+                values: [
+                  {
+                    timestamp: "2021-10-01",
+                    value: 10,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-02",
+                    value: 20,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-03",
+                    value: 30,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                ],
+
+                updatedBy: "User 1.23",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
+              },
+              {
+                name: "Device 1.1",
+                description: "Description 1.1",
+                topic: "Topic 1.1",
+                dataVisualizationType: ["pie", "gauge"],
+                values: [
+                  {
+                    timestamp: "2021-10-01",
+                    value: 10,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-02",
+                    value: 20,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                  {
+                    timestamp: "2021-10-03",
+                    value: 30,
+                    metricsAndUnits: [
+                      {
+                        metric: "Metric 1",
+                        unit: "Unit 1",
+                      },
+                      {
+                        metric: "Metric 2",
+                        unit: "Unit 2",
+                      },
+                    ],
+                  },
+                ],
+                updatedBy: "User 1.5",
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
+              },
+            ],
+            currentTopic: "Topic 1",
+
             values: [
               {
                 timestamp: new Date(2022, 10, 1, 14, 23, 8),
@@ -82,10 +190,10 @@ const Home = (): JSX.Element => {
             ],
           },
           {
-            id: "2",
+            _id: "2",
             name: "Device 2",
             description: "Description 2",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 2",
             dvt: ["bar", "line"],
             topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
@@ -159,10 +267,10 @@ const Home = (): JSX.Element => {
             ],
           },
           {
-            id: "3",
+            _id: "3",
             name: "Device 3",
             description: "Description 3",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 3",
             dvt: ["pie"],
 
@@ -215,24 +323,26 @@ const Home = (): JSX.Element => {
         ];
         const dataSpaces: Space[] = [
           {
-            id: "1",
+            _id: "1",
             name: "Space 1",
             description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
           },
 
           {
-            id: "2",
+            _id: "2",
             name: "Space 2",
             description: "Description 1",
-            createdOn: new Date(2022, 10, 1, 14, 23, 8),
+            createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
+
             history: [
               {
                 field: ["cambio 1"],
                 updatedBy: "userr",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
+                updatedOn: new Date("2022-01-01T00:00:00Z"),
+                route: "ruta",
               },
             ],
             devices: dataDevices,

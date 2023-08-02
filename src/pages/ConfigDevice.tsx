@@ -29,14 +29,72 @@ const ConfigDevice = (): JSX.Element => {
     const fetchData = async () => {
       setTimeout(() => {
         const dataDevice: Device = {
-          id: "1",
+          _id: "1",
           name: "Device 1",
           description:
             "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-          createdOn: new Date(2022, 10, 1, 14, 23, 8),
+          createdOn: new Date("2022-01-01T00:00:00Z"),
           createdBy: "User 1",
           dvt: ["pie", "bar"],
           topic: ["Topic 1.2", "Topic 1.2", "Topic 1.3"],
+
+              updatedBy: "User 1.23",
+              updatedOn: new Date("2022-01-01T00:00:00Z"),
+            },
+            {
+              name: "Device 1.1",
+              description: "Description 1.1",
+              topic: "Topic 1.1",
+              dataVisualizationType: ["pie", "gauge"],
+              values: [
+                {
+                  timestamp: "2021-10-01",
+                  value: 10,
+                  metricsAndUnits: [
+                    {
+                      metric: "Metric 1",
+                      unit: "Unit 1",
+                    },
+                    {
+                      metric: "Metric 2",
+                      unit: "Unit 2",
+                    },
+                  ],
+                },
+                {
+                  timestamp: "2021-10-02",
+                  value: 20,
+                  metricsAndUnits: [
+                    {
+                      metric: "Metric 1",
+                      unit: "Unit 1",
+                    },
+                    {
+                      metric: "Metric 2",
+                      unit: "Unit 2",
+                    },
+                  ],
+                },
+                {
+                  timestamp: "2021-10-03",
+                  value: 30,
+                  metricsAndUnits: [
+                    {
+                      metric: "Metric 1",
+                      unit: "Unit 1",
+                    },
+                    {
+                      metric: "Metric 2",
+                      unit: "Unit 2",
+                    },
+                  ],
+                },
+              ],
+              updatedBy: "User 1.5",
+              updatedOn: new Date("2022-01-01T00:00:00Z"),
+            },
+          ],
+          currentTopic: "Topic 1",
 
           values: [
             {
