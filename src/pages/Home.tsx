@@ -20,44 +20,6 @@ const Home = (): JSX.Element => {
 
     const fetchData = async () => {
       setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            _id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-            dvt: ["pie", "bar"],
-            topic: ["Topic 1.1", "Topic 1.2", "Topic 1.3"],
-
-            history: [
-              {
-                updatedBy: "User 1",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
-                field: ["Cambio 1"],
-              },
-            ],
-          },
-          {
-            _id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 2",
-            dvt: ["bar", "line"],
-            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
-          },
-          {
-            _id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 3",
-            dvt: ["pie"],
-
-            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
-          },
-        ];
         const dataSpaces: Space[] = [
           {
             _id: "1",
@@ -81,10 +43,10 @@ const Home = (): JSX.Element => {
                 updatedOn: new Date("2022-01-01T00:00:00Z"),
               },
             ],
-            devices: dataDevices,
+            devices: ["1", "2"],
           },
         ];
-        setDevices(dataDevices);
+        //  setDevices(dataDevices);
         setSpaces(dataSpaces);
         setDataLoaded(true);
       }, 2000);

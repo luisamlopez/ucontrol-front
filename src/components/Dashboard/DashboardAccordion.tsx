@@ -6,9 +6,14 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import { Device, DeviceValues, MetricAndUnit } from "../../api/Device";
+import {
+  Device,
+  DeviceValues,
+  MetricAndUnit,
+  getDeviceById,
+} from "../../api/Device";
 import { Space } from "../../api/Space";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   EmojiObjectsRounded,
   KeyboardArrowDownRounded,
@@ -20,7 +25,29 @@ export interface AccordionProps {
   spaces: Space[];
 }
 
-function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
+function DevicesDetails({ devices }: { devices: string[] }): JSX.Element {
+  let devicesInfo: Device[] = [];
+
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    try {
+      for (let deviceId of devices) {
+        //Find on the dataBase the device with the id using the function getDeviceById
+        getDeviceById(deviceId, (device) => {
+          devicesInfo.push(device);
+        });
+
+        setDataLoaded(true);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [devices, devicesInfo]);
+
   return (
     <Box
       sx={{
@@ -55,9 +82,28 @@ function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
       >
         Dispositivos conectados
       </Typography>
-
-      {devices ? (
-        devices.map((device) => (
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography>Cargando...</Typography>
+        </Box>
+      ) : !dataLoaded ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography>No hay dispositivos en este espacio</Typography>
+        </Box>
+      ) : devicesInfo ? (
+        devicesInfo.map((device) => (
           <ul>
             <li>
               <Typography textAlign={"left"}>{device.name}</Typography>
@@ -73,7 +119,7 @@ function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
   );
 }
 
-function Summary({ devices }: { devices: Device[] }): JSX.Element {
+function Summary({ devices }: { devices: String[] }): JSX.Element {
   //Get array of the units of each device and another of the values of each device
 
   let values: DeviceValues[] = [];
@@ -126,7 +172,7 @@ function Summary({ devices }: { devices: Device[] }): JSX.Element {
             {devices.map((device, i) => (
               <li key={i}>
                 <Typography textAlign={"left"}>
-                  {device.name}:&nbsp;
+                  {device}:&nbsp;
                   {/* {device.values[device.values.length - 1].value}&nbsp; tomada
                   el&nbsp;
                   {device.values[

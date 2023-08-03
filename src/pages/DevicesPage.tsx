@@ -8,80 +8,44 @@ import {
   TextField,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Device } from "../api/Device";
-import { Space } from "../api/Space";
+import {
+  Device,
+  getAllDevicesBySpace,
+  getAllDevicesByUser,
+} from "../api/Device";
 import { Sidebar } from "../components/Sidebar";
 import CardsContainer from "../components/CardsContainer";
 import DeviceCard from "../components/DevicesPage/DeviceCard";
 import { AddRounded } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { useUser } from "../contexts/authContext";
+import { get } from "http";
 
 const DevicesPage = (): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [allDevices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>("");
 
+  const { user } = useUser();
+
   useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            _id: "1",
-            name: "Sensor luz",
-            description:
-              "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-            dvt: ["pie", "bar"],
-
-            topic: ["Topic 1.1", "Topic 1.2", "Topic 1.3"],
-
-            history: [
-              {
-                updatedBy: "User 1",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
-                field: ["Cambio 1"],
-              },
-            ],
-          },
-          {
-            _id: "2",
-            name: "Sensor de luz oficina del profe Franklin",
-            description:
-              "Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2Description 2",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 2",
-            dvt: ["bar", "line"],
-            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
-          },
-          {
-            _id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 3",
-            dvt: ["pie"],
-
-            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
-          },
-          {
-            _id: "4",
-            name: "Device 4",
-            description: "Description 3",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 3",
-            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
-            dvt: ["pie"],
-          },
-        ];
-        setDevices(dataDevices);
-        setDataLoaded(true);
-      }, 2000);
-    };
-
     try {
-      fetchData();
+      getAllDevicesByUser(user!._id, (devices) => {
+        setDevices(devices);
+        console.log("devices from getAllDevicesByUser:");
+        console.log(devices);
+        setDataLoaded(true);
+      });
+      // getAllDevicesBySpace("64ca9ddfbdbdbc152ae3713d", (devices) => {
+      //      setDevices(devices);
+      //   console.log("devices from getAllDevicesBySpace:");
+      //   console.log(devices);
+      //     setDataLoaded(true);
+      // });
+      console.log("final devices:");
+      console.log(allDevices);
+      setDataLoaded(true);
     } catch (error) {
       alert(error);
     } finally {
@@ -142,9 +106,9 @@ const DevicesPage = (): JSX.Element => {
               >
                 <CircularProgress />
               </Box>
-            ) : devices.length === 0 ? (
+            ) : allDevices.length === 0 ? (
               <Typography>
-                Error: no se pudieron cargar los dispositivos.
+                No hay dispositivos registrados en tu cuenta, agrega uno.
               </Typography>
             ) : (
               <Box
@@ -156,7 +120,7 @@ const DevicesPage = (): JSX.Element => {
                 }}
               >
                 <CardsContainer>
-                  {devices.map(
+                  {allDevices.map(
                     (device) => (
                       // device.name
                       //   .toLowerCase()

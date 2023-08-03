@@ -30,7 +30,7 @@ const SpacesPage = (): JSX.Element => {
         setSpaces(allSpaces);
         setDataLoaded(true);
       });
-      console.log(spaces);
+      //  console.log(spaces);
     } catch (error) {
       alert(error);
     } finally {

@@ -20,6 +20,7 @@ import {
   UnitsConfig,
   accessControl,
   airDVT,
+  getAllDevicesByUser,
   humidityUnits,
   lightDVT,
   movementDVT,
@@ -37,6 +38,9 @@ import * as yup from "yup";
 import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
 import RadioGroupField from "../Fields/RadioGroupField";
+import { useUser } from "../../contexts/authContext";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar, useSnackbar } from "notistack";
 
 interface DeviceFormProps {
   deviceID?: string;
@@ -72,198 +76,32 @@ const validationSchema = yup.object().shape({
 });
 
 const DeviceForm = (props: DeviceFormProps): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [spaces, setSpaces] = useState<Space[]>([]);
+  console.log("final devices:");
+  const [allDevices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-  const device = devices.find((device) => device._id === props.deviceID);
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            _id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-            dvt: ["pie", "bar"],
-            topic: ["Topic 1.1", "Topic 1.2", "Topic 1.3"],
-          },
-          {
-            _id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 2",
-            dvt: ["bar", "line"],
-            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                  {
-                    metric: "Metric 3",
-                    unit: "Unit 3",
-                  },
-                  {
-                    metric: "Metric 4",
-                    unit: "Unit 4",
-                  },
-                  {
-                    metric: "Metric 5",
-                    unit: "Unit 5",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            _id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 3",
-            dvt: ["pie"],
+  //  const device = devices.find((device) => device._id === props.deviceID);
 
-            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
-            values: [
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 10,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 20,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-              {
-                timestamp: new Date(2022, 10, 1, 14, 23, 8),
-                value: 30,
-                metricsAndUnits: [
-                  {
-                    metric: "Metric 1",
-                    unit: "Unit 1",
-                  },
-                  {
-                    metric: "Metric 2",
-                    unit: "Unit 2",
-                  },
-                ],
-              },
-            ],
-          },
-        ];
-        const dataSpaces: Space[] = [
-          {
-            _id: "1",
-            name: "Space 1",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-          },
+  const { user } = useUser();
 
-          {
-            _id: "2",
-            name: "Space 2",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-
-            history: [
-              {
-                field: ["cambio 1"],
-                updatedBy: "userr",
-                updatedOn: new Date("2022-01-01T00:00:00Z"),
-              },
-            ],
-            devices: dataDevices,
-          },
-        ];
-        setDevices(dataDevices);
-        setSpaces(dataSpaces);
-        setDataLoaded(true);
-      }, 2000);
-    };
-
-    try {
-      fetchData();
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     getAllDevicesByUser(user?._id!, (devices) => {
+  //       setDevices(devices);
+  //       console.log("devices from getAllDevicesByUser:");
+  //       console.log(devices);
+  //     });
+  //     console.log("final devices:");
+  //     console.log(allDevices);
+  //     setDataLoaded(false);
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // }, [allDevices, user?._id]);
 
   return (
     <Box display="flex" justifyContent="left" flexDirection="column">
@@ -287,8 +125,10 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         >
           <CircularProgress />
         </Box>
-      ) : devices.length === 0 ? (
-        <Typography>Error: no se pudieron cargar los dispositivos.</Typography>
+      ) : allDevices.length === 0 ? (
+        <Typography>
+          No hay dispositivos registrados en tu cuenta, agrega uno.
+        </Typography>
       ) : (
         <Box
           sx={{
@@ -303,7 +143,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             },
           }}
         >
-          {props.deviceID ? <> {props.deviceID} </> : <Add spaces={spaces} />}
+          {props.deviceID ? <> {props.deviceID} </> : <>add </>}
         </Box>
       )}
     </Box>
@@ -311,280 +151,3 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 };
 
 export default DeviceForm;
-
-function Add(spaces: { spaces: Space[] }) {
-  const [topics, setTopics] = useState<any[]>([]);
-  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
-
-  // const [metricsAndUnits, setMetricsAndUnits] = useState<MetricAndUnit[]>([]);
-  const [metricsAndUnits, setMetricsAndUnits] = useState<UnitsConfig[]>([]);
-  const [deviceType, setDeviceType] = useState<String>();
-
-  const tempAndHum = ["Temperatura", "Humedad"];
-
-  useEffect(() => {
-    const newTopics = spaces.spaces.map((space) => ({
-      _id: space._id!,
-      label: space.name,
-    }));
-    setTopics(newTopics);
-    switch (deviceType) {
-      case "tempHum":
-        setdtv(temperatureAndHumDVT);
-        setMetricsAndUnits(temperatureUnits.concat(humidityUnits));
-        break;
-      case "movimiento":
-        setdtv(movementDVT);
-        setMetricsAndUnits(vibrationsUnits);
-        break;
-      case "luz":
-        setdtv(lightDVT);
-        setMetricsAndUnits([]);
-        break;
-      case "agua":
-        setdtv(waterFlowDVT);
-        setMetricsAndUnits(waterFlowUnits);
-        break;
-      case "humedadTierra":
-        setdtv(temperatureAndHumDVT);
-        setMetricsAndUnits(temperatureUnits.concat(humidityUnits));
-        break;
-      case "aire":
-        setdtv(airDVT);
-        setMetricsAndUnits([]);
-        break;
-      case "controlAcceso":
-        setdtv(accessControl);
-        setMetricsAndUnits([]);
-        break;
-      case "vibraciones":
-        setdtv(vibrationsDVT);
-        setMetricsAndUnits(vibrationsUnits);
-        break;
-
-      default:
-        setdtv([]);
-        setMetricsAndUnits([]);
-        break;
-    }
-  }, []);
-
-  return (
-    // <Formik
-    //   initialValues={initialValues}
-    //   validationSchema={validationSchema}
-    //   onSubmit={onSubmit}
-    // >
-    //   {({ isSubmitting, touched, errors }) => (
-    //     <Stack component={Form} spacing={2}>
-    //       <Field
-    //         component={TextField}
-    //         name="name"
-    //         type="text"
-    //         label="Nombre"
-    //         variant="outlined"
-    //         fullWidth
-    //       />
-    //       <Field
-    //         component={TextAreaField}
-    //         name="description"
-    //         type="text"
-    //         label="Descripción"
-    //         variant="outlined"
-    //         fullWidth
-    //       />
-
-    //       <FieldArray name="topic">
-    //         {({ push, remove, form }: any) => (
-    //           <>
-    //             <Typography gutterBottom>
-    //               Ingrese el tópico/espacio al que pertenece el dispositivo
-    //             </Typography>
-
-    //             {form.values.topic.map((_: String, index: number) => (
-    //               <Stack
-    //                 key={index}
-    //                 direction={"row"}
-    //                 spacing={1}
-    //                 alignItems={"center"}
-    //               >
-    //                 <Field
-    //                   name={`topic.${index}`}
-    //                   component={Autocomplete}
-    //                   options={topics}
-    //                   // getOptionLabel={(option: SpaceRoute) =>
-    //                   //   option.label || ""
-    //                   // }
-    //                   renderInput={(params: AutocompleteRenderInputParams) => (
-    //                     <TextFieldMUI
-    //                       {...params}
-    //                       name={`topic.${index}`}
-    //                       label="Tópico/Espacio"
-    //                       required
-    //                       variant="outlined"
-    //                       fullWidth
-    //                       id="textfieldmui"
-    //                       error={touched.topic && Boolean(errors.topic)}
-    //                       helperText={touched.topic && errors.topic}
-    //                     />
-    //                   )}
-    //                   style={{ width: "100%" }}
-    //                 />
-    //                 {form.values.topic.length > 1 && (
-    //                   <Tooltip title="Eliminar" arrow>
-    //                     <IconButton
-    //                       size="large"
-    //                       onClick={() => {
-    //                         /** If removes, then undo the changes of the topics array */
-
-    //                         remove(index);
-    //                       }}
-    //                     >
-    //                       <DeleteRounded />
-    //                     </IconButton>
-    //                   </Tooltip>
-    //                 )}
-    //                 {form.values.topic.length === 1 && index === 0 && (
-    //                   <Tooltip title="Agregar" arrow>
-    //                     <IconButton
-    //                       size="large"
-    //                       onClick={() => {
-    //                         if (
-    //                           form.values.topic[0] !== "" &&
-    //                           form.values.topic[0] !== undefined &&
-    //                           form.values.topic[0] !== null
-    //                         ) {
-    //                          // handleTopicChange(form.values.topic[0]);
-    //                           push(new String());
-    //                         }
-    //                       }}
-    //                     >
-    //                       <AddRounded />
-    //                     </IconButton>
-    //                   </Tooltip>
-    //                 )}
-    //               </Stack>
-    //             ))}
-    //           </>
-    //         )}
-    //       </FieldArray>
-
-    //       <Field
-    //         component={RadioGroup}
-    //         name="deviceType"
-    //         label="Tipo de dispositivo"
-    //       >
-    //         <FormLabel> Indique el tipo de control del dispositivo </FormLabel>
-    //         <FormControlLabel
-    //           value="tempHum"
-    //           control={<Radio />}
-    //           label="Temperatura y Humedad"
-    //           onSelect={() => {
-    //             setDeviceType("temperatureHumidity");
-    //           }}
-    //         />
-    //         <FormControlLabel
-    //           value="movimiento"
-    //           control={<Radio />}
-    //           label="Movimiento"
-    //           onSelect={() => {
-    //             setDeviceType("movimiento");
-    //           }}
-    //         />
-
-    //         <FormControlLabel
-    //           value="luz"
-    //           control={<Radio />}
-    //           label="Luminarias"
-    //           onSelect={() => {
-    //             setDeviceType("luz");
-    //           }}
-    //         />
-
-    //         <FormControlLabel
-    //           value="agua"
-    //           control={<Radio />}
-    //           label="Flujo de agua"
-    //           onSelect={() => {
-    //             setDeviceType("agua");
-    //           }}
-    //         />
-
-    //         <FormControlLabel
-    //           value="humedadTierra"
-    //           control={<Radio />}
-    //           label="Humedad de la tierra"
-    //           onSelect={() => {
-    //             setDeviceType("humedadTierra");
-    //           }}
-    //         />
-
-    //         <FormControlLabel
-    //           value="aire"
-    //           control={<Radio />}
-    //           label="Aire acondicionado"
-    //           onSelect={() => {
-    //             setDeviceType("aire");
-    //           }}
-    //         />
-
-    //         <FormControlLabel
-    //           value="controlAcceso"
-    //           control={<Radio />}
-    //           label="Control de acceso"
-    //           onSelect={() => {
-    //             setDeviceType("controlAccess");
-    //           }}
-    //         />
-
-    //         <FormControlLabel
-    //           value="vibraciones"
-    //           control={<Radio />}
-    //           label="Vibraciones"
-    //           onSelect={() => {
-    //             setDeviceType("vibraciones");
-    //           }}
-    //         />
-    //       </Field>
-
-    //       {/* <RadioGroupField
-    //         name="deviceType"
-    //         label="Indique el tipo de dispositivo"
-    //         options={[
-    //           { value: "sensor", label: "Sensor" },
-    //           { value: "actuator", label: "Actuador" },
-    //         ]}
-    //       /> */}
-
-    //       {/*
-    //        * ToDo: Add this fieldArray and keep in mind that we need to change again the data structure for the device */}
-    //       <FieldArray name="metricsAndUnits">
-    //         {({ push, remove, form }: any) => (
-    //           <>
-    //             <Typography gutterBottom>
-    //               Ingrese las métricas y unidades del dispositivo
-    //             </Typography>
-    //           </>
-    //         )}
-    //       </FieldArray>
-    //     </Stack>
-    //   )}
-    // </Formik>
-    <></>
-  );
-}
-
-function Edit(device: { device: Device }) {}
-
-const onSubmit = async (values: Device, { setSubmitting }: any) => {
-  await Save(false, values);
-  setSubmitting(false);
-};
-
-const Save = async (isAdd: boolean, values: Device) => {
-  if (isAdd) {
-    //  create
-  } else {
-    // update
-  }
-};

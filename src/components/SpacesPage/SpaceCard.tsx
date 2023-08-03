@@ -15,7 +15,7 @@ import { format } from "date-fns";
 
 const SpaceCard = (space: Space): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
-  console.log(space);
+  // console.log(space);
 
   // Verifica y convierte la propiedad 'createdOn' a tipo Date
   let modifiedSpace = { ...space }; // Crea un nuevo objeto a partir del objeto original
@@ -121,7 +121,7 @@ const SpaceCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} color={"black"}>
                 <ul>
                   {space.devices.map((device) => (
-                    <li key={device._id}>{device.name}</li>
+                    <li key={device}>{device}</li>
                   ))}
                 </ul>
               </Typography>

@@ -5,52 +5,19 @@ import {
   CircularProgress,
   IconButton,
 } from "@mui/material";
-import { useState, useEffect } from "react";
-import { Device } from "../api/Device";
-import { Space } from "../api/Space";
+import { useState } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DeviceForm from "../components/DevicesPage/DeviceForm";
 import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 
 const ConfigDevice = (): JSX.Element => {
-  const [device, setDevice] = useState<Device>();
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  // const { deviceID } = useParams<{ deviceID: string }>();
   const location = useLocation();
   const action = location.pathname.split("/")[2];
   const deviceID = useParams<{ deviceID: string }>().deviceID;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevice: Device = {
-          _id: "1",
-          name: "Device 1",
-          description:
-            "Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1Description 1",
-          createdOn: new Date("2022-01-01T00:00:00Z"),
-          createdBy: "User 1",
-          dvt: ["pie", "bar"],
-          topic: ["topic1", "topic2"],
-        };
-        setDevice(dataDevice);
-        setDataLoaded(true);
-      }, 2000);
-    };
-
-    try {
-      fetchData();
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">

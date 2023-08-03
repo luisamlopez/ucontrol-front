@@ -146,7 +146,7 @@ const Modal = (props: DeviceModalProps) => {
                   {props.space.devices && (
                     <ul>
                       {props.space.devices.map((device) => (
-                        <li>{device.name}</li>
+                        <li>{device}</li>
                       ))}
                     </ul>
                   )}
@@ -187,8 +187,8 @@ const Modal = (props: DeviceModalProps) => {
                 <Typography>
                   {props.device && (
                     <ul>
-                      {props.device.dvt.map((obj) => (
-                        <li>
+                      {props.device.dvt.map((obj, i) => (
+                        <li key={i}>
                           {obj === "pie"
                             ? "Gráfico de pastel"
                             : obj === "bar"

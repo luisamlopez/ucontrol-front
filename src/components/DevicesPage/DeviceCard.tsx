@@ -47,6 +47,8 @@ const DeviceCard = (device: Device): JSX.Element => {
             md: "400px",
             lg: "440px",
           },
+          minWidth: "320px",
+          width: "100%",
           p: 1,
         }}
       >
@@ -105,10 +107,7 @@ const DeviceCard = (device: Device): JSX.Element => {
             title="Conectado desde el"
             value={format(modifiedDevice.createdOn, "dd/MM/yyyy")}
           />
-          <DevicesDetailsText
-            title="Tópico"
-            value={device.topic.flat().join("/")}
-          />
+          <DevicesDetailsText title="Tópico" value={"device.topic.flat()"} />
           <DevicesDetailsText title="Creado por" value={device.createdBy} />
         </CardContent>
         <CardActions

@@ -7,7 +7,7 @@ export interface Space {
   description?: string;
   createdBy: string;
   createdOn?: Date;
-  devices?: Device[];
+  devices?: string[];
   history?: {
     field: string[];
     updatedBy: string;
@@ -19,12 +19,13 @@ export interface Space {
 
 export const createSpace = async (spaceData: Space, userId: string) => {
   try {
-    console.log(spaceData);
+    // console.log(spaceData);
     const response = await fetch(`${url}createSpace`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ space: spaceData, userId: userId }),
     });
+    console.log(response);
     if (response.ok) return true;
   } catch (error) {
     return false;
@@ -50,7 +51,7 @@ export const getSpaces = async (callback: (spaces: Space[]) => void) => {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-
+    //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message);
@@ -58,5 +59,42 @@ export const getSpaces = async (callback: (spaces: Space[]) => void) => {
 
     const data = await response.json();
     callback(data.spaces);
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateSpace = async (spaceData: Space, spaceId: string) => {
+  try {
+    const response = await fetch(`${url}updateSpace`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ spaceUpdate: spaceData, spaceId: spaceId }),
+    });
+    if (response.ok) return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const getSpaceById = async (
+  spaceId: string,
+  callback: (space: Space) => void
+) => {
+  try {
+    const response = await fetch(`${url}getSpaceById/${spaceId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const data = await response.json();
+    //   console.log(data.data);
+    callback(data.data);
+  } catch (error) {
+    console.log(error);
+  }
 };

@@ -79,7 +79,7 @@ const History = (): JSX.Element => {
                 updatedOn: new Date("2022-01-01T00:00:00Z"),
               },
             ],
-            devices: dataDevices,
+            devices: ["1", "2"],
           },
         ];
         setDevices(dataDevices);
