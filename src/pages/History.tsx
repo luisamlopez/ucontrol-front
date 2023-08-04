@@ -26,7 +26,7 @@ const History = (): JSX.Element => {
             createdBy: "User 1",
             dvt: ["pie", "bar"],
 
-            topic: ["Topic 1.1", "Topic 1.2", "Topic 1.3"],
+            topic: "Topic 1.1",
 
             history: [
               {
@@ -43,7 +43,7 @@ const History = (): JSX.Element => {
             createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 2",
             dvt: ["bar", "line"],
-            topic: ["Topic 2.2", "Topic 2.2", "Topic 2.3"],
+            topic: "Topic 2.1",
           },
           {
             _id: "3",
@@ -53,7 +53,7 @@ const History = (): JSX.Element => {
             createdBy: "User 3",
             dvt: ["pie"],
 
-            topic: ["Topic 3.1", "Topic 3.2", "Topic 3.3"],
+            topic: "Topic 3.1",
           },
         ];
         const dataSpaces: Space[] = [

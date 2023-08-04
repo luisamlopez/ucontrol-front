@@ -361,7 +361,7 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
                   <Field
                     component={RadioGroup}
                     name="spaceType"
-                    label="Tipo de dispositivo"
+                    label="Tipo de espacio"
                     required
                   >
                     <FormLabel
@@ -399,8 +399,7 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
                   {spaceType && (
                     <>
                       <Typography gutterBottom>
-                        Ingrese el tópico/espacio al que pertenece el
-                        dispositivo
+                        Ingrese el tópico/espacio al que pertenece el subespacio
                       </Typography>
 
                       <Field

@@ -26,7 +26,7 @@ export interface Device {
   /**
    * @todo change this
    */
-  topic: string[];
+  topic: string;
   values?: DeviceValues[];
 }
 

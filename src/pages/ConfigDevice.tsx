@@ -69,29 +69,7 @@ const ConfigDevice = (): JSX.Element => {
               {action === "add" ? "Nuevo dispositivo" : "Editar dispositivo"}
             </Typography>
           </Box>
-          {loading ? (
-            <>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            </>
-          ) : !dataLoaded ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : action === "add" ? (
+          {action === "add" ? (
             <DeviceForm />
           ) : (
             <DeviceForm deviceID={deviceID!} />
