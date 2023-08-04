@@ -3,11 +3,9 @@ import {
   Typography,
   CircularProgress,
   Button,
-  IconButton,
   Stack,
   TextField as TextFieldMUI,
   AutocompleteRenderInputParams,
-  Tooltip,
   FormControlLabel,
   Radio,
   FormLabel,
@@ -21,14 +19,10 @@ import {
   getSpaces,
   updateSpace,
 } from "../../api/Space";
-import { AddRounded, DeleteRounded } from "@mui/icons-material";
-import { Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
 import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
-import RadioGroupField from "../Fields/RadioGroupField";
-import { Device } from "../../api/Device";
-import { get } from "http";
 import { LoadingButton } from "@mui/lab";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
@@ -409,8 +403,8 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
                         getOptionLabel={(option: Space) => option.name || ""}
                         onChange={(event: any, newValue: Space) => {
                           setSelectedSpace(newValue);
-                          console.log(findRoute(newValue));
                         }}
+                        required
                         renderInput={(
                           params: AutocompleteRenderInputParams
                         ) => (

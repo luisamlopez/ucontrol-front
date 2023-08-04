@@ -44,7 +44,7 @@ function Details(props: { device: Device }): JSX.Element {
 
       <DevicesDetailsText
         title={"Conectado desde el"}
-        value={format(modifiedDevice.createdOn, "dd/MM/yyyy")}
+        value={format(modifiedDevice.createdOn!, "dd/MM/yyyy")}
       />
 
       <DevicesDetailsText title="Tópico" value={props.device.topic} />

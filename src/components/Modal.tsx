@@ -219,7 +219,7 @@ const Modal = (props: DeviceModalProps) => {
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>
                 <Typography>
-                  {format(modifiedDevice!.createdOn, "dd/mm/yyyy")}
+                  {format(modifiedDevice!.createdOn!, "dd/mm/yyyy")}
                 </Typography>
               </Box>
             )}

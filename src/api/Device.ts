@@ -15,9 +15,9 @@ export interface Device {
   _id?: string;
   name: string;
   description: string;
-  dvt: ("line" | "bar" | "pie" | "gauge" | "scatter" | "table" | "value")[];
+  dvt: string[];
   createdBy: string;
-  createdOn: Date;
+  createdOn?: Date;
   history?: {
     updatedBy: string;
     updatedOn: Date;
@@ -78,7 +78,7 @@ export const accessControlDVT: UnitsConfig[] = [
 
 export const createDevice = async (deviceData: Device, spaceId: string) => {
   try {
-    console.log(deviceData);
+    //   console.log(deviceData);
     const response = await fetch(`${url}createDevice`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -167,5 +167,18 @@ export const getAllDevicesByUser = async (
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const updateDevice = async (deviceData: Device, deviceId: string) => {
+  try {
+    const response = await fetch(`${url}updateDevice`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deviceUpdate: deviceData, deviceId: deviceId }),
+    });
+    if (response.ok) return true;
+  } catch (error) {
+    return false;
   }
 };

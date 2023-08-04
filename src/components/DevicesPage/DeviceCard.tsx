@@ -105,7 +105,7 @@ const DeviceCard = (device: Device): JSX.Element => {
 
           <DevicesDetailsText
             title="Conectado desde el"
-            value={format(modifiedDevice.createdOn, "dd/MM/yyyy")}
+            value={format(modifiedDevice.createdOn!, "dd/MM/yyyy")}
           />
           <DevicesDetailsText title="Tópico" value={"device.topic.flat()"} />
           <DevicesDetailsText title="Creado por" value={device.createdBy} />

@@ -17,10 +17,13 @@ import {
   UnitsConfig,
   accessControlDVT,
   airDVT,
+  createDevice,
   getAllDevicesByUser,
+  getDeviceById,
   lightDVT,
   movementDVT,
   temperatureAndHumDVT,
+  updateDevice,
   vibrationsDVT,
   waterFlowDVT,
 } from "../../api/Device";
@@ -90,6 +93,42 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
   const routeRef = useRef<string>(""); // Create a ref to store the route value
 
+  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
+  const [deviceType, setDeviceType] = useState<String>();
+
+  useEffect(() => {
+    switch (deviceType) {
+      case "tempHum":
+        setdtv(temperatureAndHumDVT);
+        break;
+      case "movimiento":
+        setdtv(movementDVT);
+        break;
+      case "luz":
+        setdtv(lightDVT);
+        break;
+      case "agua":
+        setdtv(waterFlowDVT);
+        break;
+      case "humedadTierra":
+        setdtv(temperatureAndHumDVT);
+        break;
+      case "aire":
+        setdtv(airDVT);
+        break;
+      case "controlAcceso":
+        setdtv(accessControlDVT);
+        break;
+      case "vibraciones":
+        setdtv(vibrationsDVT);
+        break;
+
+      default:
+        setdtv([]);
+        break;
+    }
+  }, [deviceType]);
+
   /**
    * @description Get the information of a space given its id
    * @param id
@@ -139,41 +178,77 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     return route;
   };
 
-  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
-  const [deviceType, setDeviceType] = useState<String>();
+  const onSubmit = async (
+    values: FormValues,
+    actions: FormikHelpers<FormValues>
+  ) => {
+    console.log(selectedSpace!._id);
+    try {
+      const deviceData: Device = {
+        name: values.name,
+        description: values.description,
+        dvt: values.dvt,
+        createdBy: user?._id!,
+        topic: selectedSpace!._id!,
+      };
+      const response = await createDevice(deviceData, selectedSpace?._id!);
+      console.log(response);
+      if (response) {
+        enqueueSnackbar("Dispositivo creado con éxito", {
+          variant: "success",
+        });
+        navigate("/devices");
+      }
+      actions.setSubmitting(true);
+    } catch (error) {
+      enqueueSnackbar("Hubo un error", { variant: "error" });
+    } finally {
+      actions.setSubmitting(false);
+    }
+  };
+
+  const onEdit = async (
+    values: FormValues,
+    actions: FormikHelpers<FormValues>
+  ) => {
+    // if (selectedSpace === undefined) {
+    //   alert("Seleccione un espacio");
+    //   return;
+    // } else {
+    try {
+      const deviceData: Device = {
+        _id: values._id,
+        name: values.name,
+        description: values.description,
+        createdBy: values.createdBy,
+        dvt: values.dvt,
+        topic: values.topic,
+      };
+      const response = await updateDevice(deviceData, deviceToEdit?._id!);
+      if (response) {
+        enqueueSnackbar("Dispositivo editado con éxito", {
+          variant: "success",
+        });
+        navigate("/devices");
+      }
+
+      actions.setSubmitting(true);
+    } catch (error) {
+      enqueueSnackbar("Hubo un error", { variant: "error" });
+    } finally {
+      actions.setSubmitting(false);
+    }
+    // }
+  };
 
   useEffect(() => {
-    switch (deviceType) {
-      case "tempHum":
-        setdtv(temperatureAndHumDVT);
-        break;
-      case "movimiento":
-        setdtv(movementDVT);
-        break;
-      case "luz":
-        setdtv(lightDVT);
-        break;
-      case "agua":
-        setdtv(waterFlowDVT);
-        break;
-      case "humedadTierra":
-        setdtv(temperatureAndHumDVT);
-        break;
-      case "aire":
-        setdtv(airDVT);
-        break;
-      case "controlAcceso":
-        setdtv(accessControlDVT);
-        break;
-      case "vibraciones":
-        setdtv(vibrationsDVT);
-        break;
-
-      default:
-        setdtv([]);
-        break;
+    if (selectedSpace) {
+      const route = findRoute(selectedSpace)
+        .map((space) => space.name)
+        .join(" / ");
+      routeRef.current = route; // Update the ref with the new route value
     }
-  }, [deviceType]);
+  }, [findRoute, selectedSpace]);
 
   useEffect(() => {
     try {
@@ -199,116 +274,17 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       alert(error);
     }
   }, [allDevices, user]);
-  const onSubmit = async (
-    values: FormValues,
-    actions: FormikHelpers<FormValues>
-  ) => {
-    //  try {
-    //    if (!spaceType) {
-    //      const spaceData: Space = {
-    //        name: values.name,
-    //        description: values.description,
-    //        createdBy: user?._id!,
-    //      };
-    //      console.log(spaceData);
-    //      const response = await createSpace(spaceData, user?._id!);
-    //      console.log(response);
-    //      if (response) {
-    //        if (props.spaceID) {
-    //          enqueueSnackbar("Espacio editado con éxito", {
-    //            variant: "success",
-    //          });
-    //          navigate("/spaces");
-    //        } else {
-    //          enqueueSnackbar("Espacio creado con éxito", {
-    //            variant: "success",
-    //          });
-    //          navigate("/spaces");
-    //        }
-    //      } else {
-    //        enqueueSnackbar("Hubo un error", { variant: "error" });
-    //      }
-    //      actions.setSubmitting(true);
-    //    } else {
-    //      const spaceData: Space = {
-    //        name: values.name,
-    //        description: values.description,
-    //        parentSpace: values.parentSpace!,
-    //        createdBy: user?._id!,
-    //      };
-    //      const response = await createSubSpace(spaceData, selectedSpace?._id!);
-    //      if (response) {
-    //        if (props.spaceID) {
-    //          enqueueSnackbar("Espacio editado con éxito", {
-    //            variant: "success",
-    //          });
-    //          navigate("/spaces");
-    //        } else {
-    //          enqueueSnackbar("Espacio creado con éxito", {
-    //            variant: "success",
-    //          });
-    //          navigate("/spaces");
-    //        }
-    //      } else {
-    //        enqueueSnackbar("Hubo un error", { variant: "error" });
-    //      }
-    //      actions.setSubmitting(true);
-    //    }
-    //  } catch (error) {
-    //    enqueueSnackbar("Hubo un error", { variant: "error" });
-    //  } finally {
-    //    actions.setSubmitting(false);
-    //  }
-  };
 
-  const onEdit = async (
-    values: FormValues,
-    actions: FormikHelpers<FormValues>
-  ) => {
-    //  try {
-    //    if (!spaceType) {
-    //      const spaceDataParent: Space = {
-    //        _id: values._id,
-    //        name: values.name,
-    //        description: values.description,
-    //        createdBy: values.createdBy,
-    //        createdOn: values.createdOn,
-    //      };
-    //      const response = await updateSpace(spaceDataParent, props.spaceID!);
-    //      if (response) {
-    //        enqueueSnackbar("Espacio editado con éxito", {
-    //          variant: "success",
-    //        });
-    //        navigate("/spaces");
-    //      } else {
-    //        enqueueSnackbar("Hubo un error", { variant: "error" });
-    //      }
-    //    } else if (spaceType) {
-    //      const spaceData: Space = {
-    //        _id: values._id,
-    //        name: values.name,
-    //        description: values.description,
-    //        parentSpace: selectedSpace?._id!,
-    //        createdBy: values.createdBy,
-    //        createdOn: values.createdOn,
-    //      };
-    //      const response = await updateSpace(spaceData, props.spaceID!);
-    //      if (response) {
-    //        enqueueSnackbar("Espacio editado con éxito", {
-    //          variant: "success",
-    //        });
-    //        navigate("/spaces");
-    //      } else {
-    //        enqueueSnackbar("Hubo un error", { variant: "error" });
-    //      }
-    //    }
-    //    actions.setSubmitting(true);
-    //  } catch (error) {
-    //    console.log(error);
-    //  } finally {
-    //    actions.setSubmitting(false);
-    //  }
-  };
+  useEffect(() => {
+    try {
+      getDeviceById(props.deviceID!, (device) => {
+        setDeviceToEdit(device);
+        setDataLoaded(true);
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, [props.deviceID]);
 
   const initialFormValues: FormValues = props.deviceID
     ? {
@@ -368,7 +344,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
               validationSchema={validationSchema}
               onSubmit={props.deviceID ? onEdit : onSubmit}
             >
-              {({ isSubmitting, touched, errors, values }) => (
+              {({ isSubmitting, touched, errors, values, setFieldValue }) => (
                 <Stack component={Form} spacing={2}>
                   <Field
                     component={TextField}
@@ -388,12 +364,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     fullWidth
                     value={values.description}
                   />
-                  <Field
-                    component={RadioGroup}
-                    name=""
-                    label="Tipo de dispositivo"
-                    required
-                  ></Field>
+
                   <Typography gutterBottom>
                     Ingrese el tópico/espacio al que pertenece el dispositivo
                   </Typography>
@@ -403,9 +374,13 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     name="topic"
                     options={spaces}
                     getOptionLabel={(option: Space) => option.name || ""}
-                    onChange={(event: any, newValue: Space) => {
-                      setSelectedSpace(newValue);
-                      console.log(findRoute(newValue));
+                    required
+                    value={selectedSpace?._id}
+                    onChange={(event: any, newValue: Space | null) => {
+                      // Use setFieldValue to update the form field value manually
+                      // newValue will be null if the user clears the selection
+                      setFieldValue("topic", newValue?._id); // Use _id as the value to store in the form field
+                      setSelectedSpace(newValue as Space); // Set the selected space state
                     }}
                     renderInput={(params: AutocompleteRenderInputParams) => (
                       <TextFieldMUI
@@ -451,6 +426,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     component={RadioGroup}
                     name="deviceType"
                     label="Tipo de dispositivo"
+                    required
                   >
                     <FormLabel>
                       Indique el tipo de control del dispositivo
@@ -526,26 +502,29 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       }}
                     />
                   </Field>
-
-                  <FormLabel>
-                    Indique al menos una forma de visualización de datos
-                  </FormLabel>
-                  <FieldArray name="dvt" required>
-                    <div>
-                      {dtv.map((dvt, index) => (
-                        <div key={index}>
-                          <label>
-                            <Field
-                              component={Checkbox}
-                              name={`dvt.${index}`}
-                              value={dvt.value}
-                            />
-                            {dvt.label}
-                          </label>
+                  {deviceType && (
+                    <>
+                      <FormLabel>
+                        Indique al menos una forma de visualización de datos
+                      </FormLabel>
+                      <FieldArray name="dvt" required>
+                        <div>
+                          {dtv.map((dvt, index) => (
+                            <div key={index}>
+                              <label>
+                                <Field
+                                  component={Checkbox}
+                                  name={`dvt.${index}`}
+                                  value={dvt.value}
+                                />
+                                {dvt.label}
+                              </label>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </FieldArray>
+                      </FieldArray>
+                    </>
+                  )}
 
                   <Field
                     component={RadioGroup}
@@ -609,7 +588,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         component={Autocomplete}
                         name="listenerDevice"
                         options={allDevices}
-                        getOptionLabel={(option: Space) => option.name || ""}
+                        getOptionLabel={(option: Device) => option.name || ""}
                         // onChange={(event: any, newValue: Space) => {
                         //   setSelectedSpace(newValue);
                         //   console.log(findRoute(newValue));
@@ -637,9 +616,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       />
                       <Field
                         component={Autocomplete}
-                        name="topic"
-                        options={spaces}
-                        getOptionLabel={(option: Space) => option.name || ""}
+                        name="cond"
+                        options={allDevices}
+                        getOptionLabel={(option: Device) => option.name || ""}
                         // onChange={(event: any, newValue: Space) => {
                         //   setSelectedSpace(newValue);
                         //   console.log(findRoute(newValue));
@@ -667,9 +646,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       />
                       <Field
                         component={Autocomplete}
-                        name="topic"
-                        options={spaces}
-                        getOptionLabel={(option: Space) => option.name || ""}
+                        name="condValue"
+                        options={allDevices}
+                        getOptionLabel={(option: Device) => option.name || ""}
                         // onChange={(event: any, newValue: Space) => {
                         //   setSelectedSpace(newValue);
                         //   console.log(findRoute(newValue));
@@ -708,9 +687,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                   >
                     <Button
                       variant="outlined"
-                      onClick={() => {
-                        navigate("/spaces");
-                      }}
                       sx={{
                         mt: 2,
                         mr: 2,
