@@ -51,7 +51,7 @@ const DevicesPage = (): JSX.Element => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [allDevices, user]);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">

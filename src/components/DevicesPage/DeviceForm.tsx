@@ -1,13 +1,12 @@
 import {
   Box,
+  Checkbox,
   Typography,
   CircularProgress,
   Button,
-  IconButton,
   Stack,
   TextField as TextFieldMUI,
   AutocompleteRenderInputParams,
-  Tooltip,
   FormControlLabel,
   Radio,
   FormLabel,
@@ -15,32 +14,24 @@ import {
 import { useState, useEffect, useRef } from "react";
 import {
   Device,
-  DeviceValues,
-  MetricAndUnit,
   UnitsConfig,
-  accessControl,
+  accessControlDVT,
   airDVT,
   getAllDevicesByUser,
-  humidityUnits,
   lightDVT,
   movementDVT,
   temperatureAndHumDVT,
-  temperatureUnits,
   vibrationsDVT,
-  vibrationsUnits,
   waterFlowDVT,
-  waterFlowUnits,
 } from "../../api/Device";
 import { Space, getSpaces } from "../../api/Space";
-import { AddRounded, DeleteRounded } from "@mui/icons-material";
 import { Field, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
 import { Autocomplete, RadioGroup, TextField } from "formik-mui";
 import TextAreaField from "../Fields/TextAreaField";
-import RadioGroupField from "../Fields/RadioGroupField";
 import { useUser } from "../../contexts/authContext";
 import { useNavigate } from "react-router-dom";
-import { enqueueSnackbar, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { LoadingButton } from "@mui/lab";
 
 interface DeviceFormProps {
@@ -83,7 +74,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [deviceToEdit, setDeviceToEdit] = useState<Device | undefined>(
     undefined
   );
-  const [instructions, setInstructions] = useState<boolean>(false);
+  const [conditions, setConditions] = useState<boolean>(false);
   const { user } = useUser();
   const [selectedSpace, setSelectedSpace] = useState<Space | undefined>({
     _id: "",
@@ -148,6 +139,42 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     return route;
   };
 
+  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
+  const [deviceType, setDeviceType] = useState<String>();
+
+  useEffect(() => {
+    switch (deviceType) {
+      case "tempHum":
+        setdtv(temperatureAndHumDVT);
+        break;
+      case "movimiento":
+        setdtv(movementDVT);
+        break;
+      case "luz":
+        setdtv(lightDVT);
+        break;
+      case "agua":
+        setdtv(waterFlowDVT);
+        break;
+      case "humedadTierra":
+        setdtv(temperatureAndHumDVT);
+        break;
+      case "aire":
+        setdtv(airDVT);
+        break;
+      case "controlAcceso":
+        setdtv(accessControlDVT);
+        break;
+      case "vibraciones":
+        setdtv(vibrationsDVT);
+        break;
+
+      default:
+        setdtv([]);
+        break;
+    }
+  }, [deviceType]);
+
   useEffect(() => {
     try {
       getSpaces((allSpaces) => {
@@ -162,21 +189,16 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     if (props.deviceID && deviceToEdit) setDataLoaded(false);
   }, [props.deviceID, deviceToEdit]);
 
-  // useEffect(() => {
-  //   try {
-  //     getAllDevicesByUser(user?._id!, (devices) => {
-  //       setDevices(devices);
-  //       console.log("devices from getAllDevicesByUser:");
-  //       console.log(devices);
-  //     });
-  //     console.log("final devices:");
-  //     console.log(allDevices);
-  //     setDataLoaded(false);
-  //   } catch (error) {
-  //     alert(error);
-  //   }
-  // }, [allDevices, user?._id]);
-
+  useEffect(() => {
+    try {
+      getAllDevicesByUser(user!._id, (devices) => {
+        setDevices(devices);
+        setDataLoaded(true);
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, [allDevices, user]);
   const onSubmit = async (
     values: FormValues,
     actions: FormikHelpers<FormValues>
@@ -366,95 +388,171 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     fullWidth
                     value={values.description}
                   />
+                  <Field
+                    component={RadioGroup}
+                    name=""
+                    label="Tipo de dispositivo"
+                    required
+                  ></Field>
+                  <Typography gutterBottom>
+                    Ingrese el tópico/espacio al que pertenece el dispositivo
+                  </Typography>
+
+                  <Field
+                    component={Autocomplete}
+                    name="topic"
+                    options={spaces}
+                    getOptionLabel={(option: Space) => option.name || ""}
+                    onChange={(event: any, newValue: Space) => {
+                      setSelectedSpace(newValue);
+                      console.log(findRoute(newValue));
+                    }}
+                    renderInput={(params: AutocompleteRenderInputParams) => (
+                      <TextFieldMUI
+                        {...params}
+                        label="Espacio/Tópico"
+                        variant="outlined"
+                        fullWidth
+                        autoComplete="on"
+                        required
+                        error={touched.topic && !!errors.topic}
+                        helperText={
+                          touched.topic && errors.topic ? errors.topic : ""
+                        }
+                        sx={{
+                          my: 2,
+                        }}
+                      />
+                    )}
+                  />
+                  {routeRef && (
+                    <>
+                      <Typography
+                        sx={{
+                          fontStyle: "italic",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Ruta del espacio seleccionado:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          fontStyle: "italic",
+                          fontSize: "14px",
+                          my: 2,
+                        }}
+                      >
+                        {routeRef.current}
+                      </Typography>
+                    </>
+                  )}
 
                   <Field
                     component={RadioGroup}
-                    name="instructions"
+                    name="deviceType"
                     label="Tipo de dispositivo"
+                  >
+                    <FormLabel>
+                      Indique el tipo de control del dispositivo
+                    </FormLabel>
+                    <FormControlLabel
+                      value="tempHum"
+                      control={<Radio />}
+                      label="Temperatura y Humedad"
+                      onChange={() => {
+                        setDeviceType("tempHum");
+                      }}
+                    />
+                    <FormControlLabel
+                      value="movimiento"
+                      control={<Radio />}
+                      label="Movimiento"
+                      onChange={() => {
+                        setDeviceType("movimiento");
+                      }}
+                    />
+
+                    <FormControlLabel
+                      value="luz"
+                      control={<Radio />}
+                      label="Luminarias"
+                      onChange={() => {
+                        setDeviceType("luz");
+                      }}
+                    />
+
+                    <FormControlLabel
+                      value="agua"
+                      control={<Radio />}
+                      label="Flujo de agua"
+                      onChange={() => {
+                        setDeviceType("agua");
+                      }}
+                    />
+
+                    <FormControlLabel
+                      value="humedadTierra"
+                      control={<Radio />}
+                      label="Humedad de la tierra"
+                      onChange={() => {
+                        setDeviceType("humedadTierra");
+                      }}
+                    />
+
+                    <FormControlLabel
+                      value="aire"
+                      control={<Radio />}
+                      label="Aire acondicionado"
+                      onChange={() => {
+                        setDeviceType("aire");
+                      }}
+                    />
+
+                    <FormControlLabel
+                      value="controlAcceso"
+                      control={<Radio />}
+                      label="Control de acceso"
+                      onChange={() => {
+                        setDeviceType("controlAcceso");
+                      }}
+                    />
+
+                    <FormControlLabel
+                      value="vibraciones"
+                      control={<Radio />}
+                      label="Vibraciones"
+                      onChange={() => {
+                        setDeviceType("vibraciones");
+                      }}
+                    />
+                  </Field>
+
+                  <FormLabel>
+                    Indique al menos una forma de visualización de datos
+                  </FormLabel>
+                  <FieldArray name="dvt" required>
+                    <div>
+                      {dtv.map((dvt, index) => (
+                        <div key={index}>
+                          <label>
+                            <Field
+                              component={Checkbox}
+                              name={`dvt.${index}`}
+                              value={dvt.value}
+                            />
+                            {dvt.label}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </FieldArray>
+
+                  <Field
+                    component={RadioGroup}
+                    name="conditions"
+                    label="¿Desea agregar una condición?"
                     required
                   >
-                    <Typography gutterBottom>
-                      Ingrese el tópico/espacio al que pertenece el dispositivo
-                    </Typography>
-
-                    <Field
-                      component={Autocomplete}
-                      name="topic"
-                      options={spaces}
-                      getOptionLabel={(option: Space) => option.name || ""}
-                      onChange={(event: any, newValue: Space) => {
-                        setSelectedSpace(newValue);
-                        console.log(findRoute(newValue));
-                      }}
-                      renderInput={(params: AutocompleteRenderInputParams) => (
-                        <TextFieldMUI
-                          {...params}
-                          label="Espacio/Tópico"
-                          variant="outlined"
-                          fullWidth
-                          autoComplete="on"
-                          required
-                          error={touched.topic && !!errors.topic}
-                          helperText={
-                            touched.topic && errors.topic ? errors.topic : ""
-                          }
-                          sx={{
-                            my: 2,
-                          }}
-                        />
-                      )}
-                    />
-                    {routeRef && (
-                      <>
-                        <Typography
-                          sx={{
-                            fontStyle: "italic",
-                            fontSize: "14px",
-                          }}
-                        >
-                          Ruta del espacio seleccionado:
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontStyle: "italic",
-                            fontSize: "14px",
-                            my: 2,
-                          }}
-                        >
-                          {routeRef.current}
-                        </Typography>
-                      </>
-                    )}
-                    <FormLabel
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: 600,
-                        fontSize: "18px",
-                      }}
-                    >
-                      Indique el tipo de dispositivo
-                    </FormLabel>
-
-                    <FormLabel
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: 600,
-                        fontSize: "18px",
-                      }}
-                    >
-                      Indique la métrica y su unidades
-                    </FormLabel>
-
-                    <FormLabel
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: 600,
-                        fontSize: "18px",
-                      }}
-                    >
-                      Indique al menos una forma de visualización de datos
-                    </FormLabel>
-
                     <FormLabel
                       sx={{
                         color: "primary.main",
@@ -464,13 +562,12 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     >
                       ¿Desea agregar una condición?
                     </FormLabel>
-
                     <FormControlLabel
                       value={true}
                       control={<Radio />}
                       label="Si"
                       onChange={() => {
-                        setInstructions(true);
+                        setConditions(true);
                       }}
                     />
                     <FormControlLabel
@@ -478,11 +575,128 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       control={<Radio />}
                       label="No"
                       onChange={() => {
-                        setInstructions(false);
+                        setConditions(false);
                       }}
                     />
                   </Field>
-                  {instructions && <></>}
+
+                  {conditions && allDevices.length === 0 && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: {
+                          lg: "row",
+                          md: "row",
+                          sm: "column",
+                          xs: "column",
+                        },
+                        alignItems: {
+                          lg: "center",
+                          md: "center",
+                          sm: "flex-start",
+                          xs: "flex-start",
+                        },
+                        justifyContent: "space-between",
+                        gap: {
+                          lg: 2,
+                          md: 2,
+                          sm: 0,
+                          xs: 0,
+                        },
+                      }}
+                    >
+                      <Field
+                        component={Autocomplete}
+                        name="listenerDevice"
+                        options={allDevices}
+                        getOptionLabel={(option: Space) => option.name || ""}
+                        // onChange={(event: any, newValue: Space) => {
+                        //   setSelectedSpace(newValue);
+                        //   console.log(findRoute(newValue));
+                        // }}
+                        fullWidth
+                        renderInput={(
+                          params: AutocompleteRenderInputParams
+                        ) => (
+                          <TextFieldMUI
+                            {...params}
+                            label="Dispositivo a escuchar"
+                            variant="outlined"
+                            fullWidth
+                            autoComplete="on"
+                            required
+                            error={touched.topic && !!errors.topic}
+                            helperText={
+                              touched.topic && errors.topic ? errors.topic : ""
+                            }
+                            sx={{
+                              my: 2,
+                            }}
+                          />
+                        )}
+                      />
+                      <Field
+                        component={Autocomplete}
+                        name="topic"
+                        options={spaces}
+                        getOptionLabel={(option: Space) => option.name || ""}
+                        // onChange={(event: any, newValue: Space) => {
+                        //   setSelectedSpace(newValue);
+                        //   console.log(findRoute(newValue));
+                        // }}
+                        fullWidth
+                        renderInput={(
+                          params: AutocompleteRenderInputParams
+                        ) => (
+                          <TextFieldMUI
+                            {...params}
+                            label="Condición"
+                            variant="outlined"
+                            fullWidth
+                            autoComplete="on"
+                            required
+                            error={touched.topic && !!errors.topic}
+                            helperText={
+                              touched.topic && errors.topic ? errors.topic : ""
+                            }
+                            sx={{
+                              my: 2,
+                            }}
+                          />
+                        )}
+                      />
+                      <Field
+                        component={Autocomplete}
+                        name="topic"
+                        options={spaces}
+                        getOptionLabel={(option: Space) => option.name || ""}
+                        // onChange={(event: any, newValue: Space) => {
+                        //   setSelectedSpace(newValue);
+                        //   console.log(findRoute(newValue));
+                        // }}
+                        fullWidth
+                        renderInput={(
+                          params: AutocompleteRenderInputParams
+                        ) => (
+                          <TextFieldMUI
+                            {...params}
+                            label="Valor"
+                            variant="outlined"
+                            fullWidth
+                            autoComplete="on"
+                            required
+                            error={touched.topic && !!errors.topic}
+                            helperText={
+                              touched.topic && errors.topic ? errors.topic : ""
+                            }
+                            sx={{
+                              my: 2,
+                            }}
+                          />
+                        )}
+                      />
+                    </Box>
+                  )}
                   <Box
                     sx={{
                       display: "flex",
