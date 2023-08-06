@@ -25,7 +25,7 @@ const History = (): JSX.Element => {
             createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 1",
             dvt: ["pie", "bar"],
-
+            type: "type 1",
             topic: "Topic 1.1",
 
             history: [
@@ -44,6 +44,7 @@ const History = (): JSX.Element => {
             createdBy: "User 2",
             dvt: ["bar", "line"],
             topic: "Topic 2.1",
+            type: "type 2",
           },
           {
             _id: "3",
@@ -52,7 +53,7 @@ const History = (): JSX.Element => {
             createdOn: new Date("2022-01-01T00:00:00Z"),
             createdBy: "User 3",
             dvt: ["pie"],
-
+            type: "type 3",
             topic: "Topic 3.1",
           },
         ];

@@ -47,9 +47,10 @@ const DeviceCard = (device: Device): JSX.Element => {
             md: "400px",
             lg: "440px",
           },
-          minWidth: "320px",
-          width: "100%",
           p: 1,
+          width: "100%",
+          maxWidth: "300px",
+          m: " 0 auto",
         }}
       >
         <CardContent

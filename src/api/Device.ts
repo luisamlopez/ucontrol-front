@@ -18,6 +18,7 @@ export interface Device {
   dvt: string[];
   createdBy: string;
   createdOn?: Date;
+  type: string;
   history?: {
     updatedBy: string;
     updatedOn: Date;
@@ -26,7 +27,7 @@ export interface Device {
   /**
    * @todo change this
    */
-  topic: string;
+  topic?: string;
   values?: DeviceValues[];
 }
 
@@ -82,8 +83,9 @@ export const createDevice = async (deviceData: Device, spaceId: string) => {
     const response = await fetch(`${url}createDevice`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ device: deviceData, spaceId: spaceId }),
+      body: JSON.stringify({ deviceData: deviceData, spaceId: spaceId }),
     });
+
     if (response.ok) return true;
   } catch (error) {
     return false;
@@ -100,14 +102,13 @@ export const getAllDevicesBySpace = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ spaceId }), // Send spaceId in the request body
     });
-
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message);
     }
 
     const data = await response.json();
-    console.log(data.devices);
+
     callback(data.devices);
   } catch (error) {
     console.log(error);
@@ -122,16 +123,16 @@ export const getDeviceById = async (
     const response = await fetch(`${url}getDeviceById`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deviceId: deviceId }),
+      body: JSON.stringify({ id: deviceId }),
     });
-
+    if (response.ok) {
+      const data = await response.json();
+      callback(data);
+    }
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message);
     }
-
-    const data = await response.json();
-    callback(data.device);
   } catch (error) {
     console.log(error);
   }
@@ -158,11 +159,8 @@ export const getAllDevicesByUser = async (
     // console.log(data.data);
     // Check if 'data' object has a 'devices' property before accessing it
     if (data && data.data) {
-      console.log("Devices found for the user.");
-      console.log(data.data);
       callback(data.data);
     } else {
-      console.log("No devices found for the user.");
       callback([]);
     }
   } catch (error) {
@@ -170,12 +168,32 @@ export const getAllDevicesByUser = async (
   }
 };
 
-export const updateDevice = async (deviceData: Device, deviceId: string) => {
+export const updateDevice = async (deviceData: Device, id: string) => {
   try {
     const response = await fetch(`${url}updateDevice`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deviceUpdate: deviceData, deviceId: deviceId }),
+      body: JSON.stringify({
+        id: id,
+        name: deviceData.name,
+        description: deviceData.description,
+        dvt: deviceData.dvt,
+        type: deviceData.type,
+      }),
+    });
+
+    if (response.ok) return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const deleteDevice = async (deviceId: string) => {
+  try {
+    const response = await fetch(`${url}deleteDevice`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: deviceId }),
     });
     if (response.ok) return true;
   } catch (error) {

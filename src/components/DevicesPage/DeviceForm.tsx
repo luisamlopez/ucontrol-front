@@ -48,7 +48,7 @@ interface FormValues {
   dvt: string[];
   createdBy: string;
   createdOn: Date;
-  topic: string;
+  type: string;
 }
 
 const initialValues = {
@@ -58,12 +58,11 @@ const initialValues = {
   dvt: ["value"],
   createdBy: "",
   createdOn: new Date(),
-  topic: "",
+  type: "",
 };
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Por favor, ingrese un nombre"),
-  description: yup.string().required("Por favor, ingrese una descripción"),
   topic: yup.string().required("Por favor, ingrese un tópico/espacio"),
   dvt: yup
     .array()
@@ -87,46 +86,46 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     createdBy: "",
     createdOn: new Date(),
   });
-
+  const [initialFormValues, setInitialFormValues] =
+    useState<FormValues>(initialValues);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const routeRef = useRef<string>(""); // Create a ref to store the route value
 
-  const [dtv, setdtv] = useState<UnitsConfig[]>([]);
+  const [dvt, setDvt] = useState<UnitsConfig[]>([]);
   const [deviceType, setDeviceType] = useState<String>();
 
   useEffect(() => {
     switch (deviceType) {
       case "tempHum":
-        setdtv(temperatureAndHumDVT);
+        setDvt(temperatureAndHumDVT);
         break;
       case "movimiento":
-        setdtv(movementDVT);
+        setDvt(movementDVT);
         break;
       case "luz":
-        setdtv(lightDVT);
+        setDvt(lightDVT);
         break;
       case "agua":
-        setdtv(waterFlowDVT);
+        setDvt(waterFlowDVT);
         break;
-      case "humedadTierra":
-        setdtv(temperatureAndHumDVT);
+      case "hum":
+        setDvt(temperatureAndHumDVT);
         break;
       case "aire":
-        setdtv(airDVT);
+        setDvt(airDVT);
         break;
       case "controlAcceso":
-        setdtv(accessControlDVT);
+        setDvt(accessControlDVT);
         break;
       case "vibraciones":
-        setdtv(vibrationsDVT);
+        setDvt(vibrationsDVT);
         break;
-
       default:
-        setdtv([]);
-        break;
+        setDvt([]); // Clear the dvt array for unrecognized device types
     }
+    console.log(dvt);
   }, [deviceType]);
 
   /**
@@ -182,22 +181,23 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
-    console.log(selectedSpace!._id);
     try {
       const deviceData: Device = {
         name: values.name,
         description: values.description,
         dvt: values.dvt,
         createdBy: user?._id!,
-        topic: selectedSpace!._id!,
+        type: values.type,
       };
       const response = await createDevice(deviceData, selectedSpace?._id!);
-      console.log(response);
+      // console.log(response);
       if (response) {
         enqueueSnackbar("Dispositivo creado con éxito", {
           variant: "success",
         });
         navigate("/devices");
+      } else {
+        enqueueSnackbar("Hubo un error", { variant: "error" });
       }
       actions.setSubmitting(true);
     } catch (error) {
@@ -211,25 +211,24 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
-    // if (selectedSpace === undefined) {
-    //   alert("Seleccione un espacio");
-    //   return;
-    // } else {
     try {
       const deviceData: Device = {
-        _id: values._id,
+        _id: props.deviceID!,
         name: values.name,
         description: values.description,
         createdBy: values.createdBy,
         dvt: values.dvt,
-        topic: values.topic,
+        type: values.type,
       };
-      const response = await updateDevice(deviceData, deviceToEdit?._id!);
+
+      const response = await updateDevice(deviceData, props.deviceID!);
       if (response) {
         enqueueSnackbar("Dispositivo editado con éxito", {
           variant: "success",
         });
         navigate("/devices");
+      } else {
+        enqueueSnackbar("Hubo un error", { variant: "error" });
       }
 
       actions.setSubmitting(true);
@@ -268,35 +267,41 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     try {
       getAllDevicesByUser(user!._id, (devices) => {
         setDevices(devices);
-        setDataLoaded(true);
       });
     } catch (error) {
       alert(error);
     }
-  }, [allDevices, user]);
+  }, [user]);
 
   useEffect(() => {
-    try {
-      getDeviceById(props.deviceID!, (device) => {
-        setDeviceToEdit(device);
-        setDataLoaded(true);
-      });
-    } catch (error) {
-      alert(error);
+    if (props.deviceID) {
+      try {
+        getDeviceById(props.deviceID!, (device) => {
+          setDeviceToEdit(device);
+          setSelectedSpace(getSpaceInfo(device.topic!));
+          setDeviceType(device.type);
+          // setDataLoaded(false);
+        });
+      } catch (error) {
+        alert(error);
+      }
     }
   }, [props.deviceID]);
 
-  const initialFormValues: FormValues = props.deviceID
-    ? {
-        _id: deviceToEdit?._id!,
-        name: deviceToEdit?.name!,
-        description: deviceToEdit?.description!,
-        dvt: deviceToEdit?.dvt!,
-        createdBy: deviceToEdit?.createdBy!,
-        createdOn: deviceToEdit?.createdOn!,
-        topic: deviceToEdit?.topic!,
-      }
-    : initialValues;
+  useEffect(() => {
+    if (deviceToEdit) {
+      const initialFormValues: FormValues = {
+        _id: deviceToEdit._id!,
+        name: deviceToEdit.name,
+        description: deviceToEdit.description || "",
+        dvt: deviceToEdit.dvt || [],
+        createdBy: deviceToEdit.createdBy || "",
+        createdOn: deviceToEdit.createdOn || new Date(),
+        type: deviceToEdit.type || "",
+      };
+      setInitialFormValues(initialFormValues);
+    }
+  }, [deviceToEdit]);
 
   return (
     <Box display="flex" justifyContent="left" flexDirection="column">
@@ -375,7 +380,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     options={spaces}
                     getOptionLabel={(option: Space) => option.name || ""}
                     required
-                    value={selectedSpace?._id}
+                    // value={selectedSpace?._id}
                     onChange={(event: any, newValue: Space | null) => {
                       // Use setFieldValue to update the form field value manually
                       // newValue will be null if the user clears the selection
@@ -390,10 +395,10 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         fullWidth
                         autoComplete="on"
                         required
-                        error={touched.topic && !!errors.topic}
-                        helperText={
-                          touched.topic && errors.topic ? errors.topic : ""
-                        }
+                        // error={touched.topic && !!errors.topic}
+                        // helperText={
+                        //   touched.topic && errors.topic ? errors.topic : ""
+                        // }
                         sx={{
                           my: 2,
                         }}
@@ -424,7 +429,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
                   <Field
                     component={RadioGroup}
-                    name="deviceType"
+                    name="type"
                     label="Tipo de dispositivo"
                     required
                   >
@@ -467,11 +472,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     />
 
                     <FormControlLabel
-                      value="humedadTierra"
+                      value="hum"
                       control={<Radio />}
                       label="Humedad de la tierra"
                       onChange={() => {
-                        setDeviceType("humedadTierra");
+                        setDeviceType("hum");
                       }}
                     />
 
@@ -507,20 +512,38 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       <FormLabel>
                         Indique al menos una forma de visualización de datos
                       </FormLabel>
-                      <FieldArray name="dvt" required>
+                      <FieldArray name="dvt">
                         <div>
-                          {dtv.map((dvt, index) => (
-                            <div key={index}>
-                              <label>
-                                <Field
-                                  component={Checkbox}
-                                  name={`dvt.${index}`}
-                                  value={dvt.value}
-                                />
-                                {dvt.label}
-                              </label>
-                            </div>
-                          ))}
+                          {dvt.map((dvt, index) => {
+                            const isChecked = values.dvt.includes(dvt.value);
+
+                            return (
+                              <div key={index}>
+                                <label>
+                                  <Field
+                                    component={Checkbox}
+                                    name={`dvt.${index}`}
+                                    value={dvt.value}
+                                    checked={isChecked}
+                                    onChange={(
+                                      event: React.ChangeEvent<HTMLInputElement>
+                                    ) => {
+                                      const value = event.target.value;
+                                      const newValue = values.dvt.includes(
+                                        value
+                                      )
+                                        ? values.dvt.filter(
+                                            (dvt) => dvt !== value
+                                          )
+                                        : [...values.dvt, value];
+                                      setFieldValue("dvt", newValue);
+                                    }}
+                                  />
+                                  {dvt.label}
+                                </label>
+                              </div>
+                            );
+                          })}
                         </div>
                       </FieldArray>
                     </>
@@ -604,10 +627,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                             fullWidth
                             autoComplete="on"
                             required
-                            error={touched.topic && !!errors.topic}
-                            helperText={
-                              touched.topic && errors.topic ? errors.topic : ""
-                            }
                             sx={{
                               my: 2,
                             }}
@@ -634,10 +653,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                             fullWidth
                             autoComplete="on"
                             required
-                            error={touched.topic && !!errors.topic}
-                            helperText={
-                              touched.topic && errors.topic ? errors.topic : ""
-                            }
                             sx={{
                               my: 2,
                             }}
@@ -664,10 +679,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                             fullWidth
                             autoComplete="on"
                             required
-                            error={touched.topic && !!errors.topic}
-                            helperText={
-                              touched.topic && errors.topic ? errors.topic : ""
-                            }
                             sx={{
                               my: 2,
                             }}

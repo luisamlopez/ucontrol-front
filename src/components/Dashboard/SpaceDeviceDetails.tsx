@@ -47,7 +47,7 @@ function Details(props: { device: Device }): JSX.Element {
         value={format(modifiedDevice.createdOn!, "dd/MM/yyyy")}
       />
 
-      <DevicesDetailsText title="Tópico" value={props.device.topic} />
+      <DevicesDetailsText title="Tópico" value={props.device.topic!} />
 
       <DevicesDetailsText
         title={"Instrucciones"}

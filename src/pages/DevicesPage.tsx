@@ -33,25 +33,14 @@ const DevicesPage = (): JSX.Element => {
     try {
       getAllDevicesByUser(user!._id, (devices) => {
         setDevices(devices);
-        console.log("devices from getAllDevicesByUser:");
-        console.log(devices);
-        setDataLoaded(true);
       });
-      // getAllDevicesBySpace("64ca9ddfbdbdbc152ae3713d", (devices) => {
-      //      setDevices(devices);
-      //   console.log("devices from getAllDevicesBySpace:");
-      //   console.log(devices);
-      //     setDataLoaded(true);
-      // });
-      console.log("final devices:");
-      console.log(allDevices);
-      setDataLoaded(true);
     } catch (error) {
       alert(error);
     } finally {
+      setDataLoaded(true);
       setLoading(false);
     }
-  }, [allDevices, user]);
+  }, [user]);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">

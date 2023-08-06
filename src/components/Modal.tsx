@@ -8,13 +8,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Device } from "../api/Device";
+import { Device, deleteDevice } from "../api/Device";
 import { CloseRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { Space } from "../api/Space";
+import { Space, deleteSpace } from "../api/Space";
 import { format } from "date-fns";
 import { useEffect } from "react";
 import { useUser } from "../contexts/authContext";
+import { useSnackbar } from "notistack";
 
 interface DeviceModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ interface DeviceModalProps {
 
 const Modal = (props: DeviceModalProps) => {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
 
   let modifiedDevice: Device; // Crea un nuevo objeto a partir del objeto original
@@ -42,25 +44,40 @@ const Modal = (props: DeviceModalProps) => {
     }
   }
 
-  let hasMetricsAndUnits = false;
-  if (props.device) {
-    // for (let i = 0; i < props.device.values.length; i++) {
-    //   if (props.device.values[i].metricsAndUnits) {
-    //     hasMetricsAndUnits = true;
-    //   }
-    // }
-  }
-
-  const handleDeleteDevice = () => {
-    alert("Eliminando dispositivo");
+  const handleDeleteDevice = async () => {
+    try {
+      if (await deleteDevice(props.device!._id!)) {
+        enqueueSnackbar("Dispositivo eliminado", { variant: "success" });
+        window.location.reload();
+      } else {
+        enqueueSnackbar("Error al eliminar el dispositivo", {
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      enqueueSnackbar("Error al eliminar el dispositivo", { variant: "error" });
+    }
   };
 
   const handleEditDevice = () => {
     navigate(`/devices/edit/${props.device!._id}`);
   };
 
-  const handleDeleteSpace = () => {
-    alert("Eliminando espacio");
+  const handleDeleteSpace = async () => {
+    try {
+      if (await deleteSpace(props.space!._id!)) {
+        enqueueSnackbar("Espacio eliminado", { variant: "success" });
+        window.location.reload();
+      } else {
+        enqueueSnackbar("Error al eliminar el espacio", {
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      enqueueSnackbar("Error al eliminar el espacio", {
+        variant: "error",
+      });
+    }
   };
 
   const handleEditSpace = () => {
@@ -131,14 +148,12 @@ const Modal = (props: DeviceModalProps) => {
                 <Typography>{props.space.description}</Typography>
               )}
             </Box>
-
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>Tópico:</Typography>
                 <Typography>{props.device.topic}</Typography>
               </Box>
             )}
-
             {props.space && (
               <Box>
                 <Typography fontWeight={"bold"}>Dispositivos:</Typography>
@@ -160,28 +175,6 @@ const Modal = (props: DeviceModalProps) => {
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>
-                  Métricas y unidades:
-                </Typography>
-                <Typography>
-                  {/* <ul>
-                    {props.device.values.map((value) => (
-                      <>
-                        {value.metricsAndUnits &&
-                          value.metricsAndUnits.map((metricAndUnit) => (
-                            <li>
-                              {metricAndUnit.metric} - {metricAndUnit.unit}
-                            </li>
-                          ))}
-                      </>
-                    ))}
-                  </ul> */}
-                </Typography>
-              </Box>
-            )}
-
-            {props.device && (
-              <Box>
-                <Typography fontWeight={"bold"}>
                   Visualización de datos:
                 </Typography>
                 <Typography>
@@ -195,7 +188,13 @@ const Modal = (props: DeviceModalProps) => {
                             ? "Gráfico de barras"
                             : obj === "line"
                             ? "Gráfico de líneas"
-                            : "Gauge"}
+                            : obj === "gauge"
+                            ? "Gauge"
+                            : obj === "value"
+                            ? "Solo valor"
+                            : obj === "table"
+                            ? "Tabla"
+                            : "Diagrama de dispersión"}
                         </li>
                       ))}
                     </ul>
@@ -209,10 +208,10 @@ const Modal = (props: DeviceModalProps) => {
                 <Typography>{props.device.createdBy}</Typography>
               </Box>
             )}
-            {props.device && (
+            {props.space && (
               <Box>
                 <Typography fontWeight={"bold"}>Creado por:</Typography>
-                <Typography>{props.device.createdBy}</Typography>
+                <Typography>{props.space.createdBy}</Typography>
               </Box>
             )}
             {props.device && (
@@ -223,7 +222,6 @@ const Modal = (props: DeviceModalProps) => {
                 </Typography>
               </Box>
             )}
-
             {props.space && (
               <Box>
                 <Typography fontWeight={"bold"}>Ubicación:</Typography>
@@ -236,7 +234,6 @@ const Modal = (props: DeviceModalProps) => {
                 </Typography>
               </Box>
             )}
-
             {props.space && (
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>

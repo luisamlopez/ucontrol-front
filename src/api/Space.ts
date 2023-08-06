@@ -98,3 +98,16 @@ export const getSpaceById = async (
     console.log(error);
   }
 };
+
+export const deleteSpace = async (spaceId: string) => {
+  try {
+    const response = await fetch(`${url}deleteSpace`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ spaceId: spaceId }),
+    });
+    if (response.ok) return true;
+  } catch (error) {
+    return false;
+  }
+};
