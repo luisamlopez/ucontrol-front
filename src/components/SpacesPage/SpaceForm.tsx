@@ -351,45 +351,47 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
                     fullWidth
                     value={values.description}
                   />
-
-                  <Field
-                    component={RadioGroup}
-                    name="spaceType"
-                    label="Tipo de espacio"
-                    required
-                  >
-                    <FormLabel
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: 600,
-                        fontSize: "18px",
-                      }}
+                  {!props.spaceID && (
+                    <Field
+                      component={RadioGroup}
+                      name="spaceType"
+                      label="Tipo de espacio"
+                      required
                     >
-                      ¿Este espacio pertenece a otro espacio?
-                    </FormLabel>
-                    <Typography>
-                      Ejemplo: <br />
-                      Laboratorio pertenece a edificio
-                      <br /> Salón pertenece a Piso <br />
-                      Piso pertenece a módulo
-                    </Typography>
-                    <FormControlLabel
-                      value={true}
-                      control={<Radio />}
-                      label="Si"
-                      onChange={() => {
-                        setSpaceType(true);
-                      }}
-                    />
-                    <FormControlLabel
-                      value={false}
-                      control={<Radio />}
-                      label="No"
-                      onChange={() => {
-                        setSpaceType(false);
-                      }}
-                    />
-                  </Field>
+                      <FormLabel
+                        sx={{
+                          color: "primary.main",
+                          fontWeight: 600,
+                          fontSize: "18px",
+                        }}
+                      >
+                        ¿Este espacio pertenece a otro espacio?
+                      </FormLabel>
+                      <Typography>
+                        Ejemplo: <br />
+                        Laboratorio pertenece a edificio
+                        <br /> Salón pertenece a Piso <br />
+                        Piso pertenece a módulo
+                      </Typography>
+                      <FormControlLabel
+                        value={true}
+                        control={<Radio />}
+                        label="Si"
+                        onChange={() => {
+                          setSpaceType(true);
+                        }}
+                      />
+                      <FormControlLabel
+                        value={false}
+                        control={<Radio />}
+                        label="No"
+                        onChange={() => {
+                          setSpaceType(false);
+                        }}
+                      />
+                    </Field>
+                  )}
+
                   {spaceType && (
                     <>
                       <Typography gutterBottom>

@@ -1,4 +1,4 @@
-import { Device } from "../../api/Device";
+import { Device, getSpaceFromDeviceId } from "../../api/Device";
 import {
   Box,
   Button,
@@ -18,6 +18,7 @@ import { Space, getSpaceById } from "../../api/Space";
 const DeviceCard = (device: Device): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useState<User>();
+  const [spaceId, setSpaceId] = useState<string>("");
 
   const routeRef = useRef<string>(""); // Create a ref to store the route value
 
@@ -44,57 +45,22 @@ const DeviceCard = (device: Device): JSX.Element => {
     setModalOpen(false);
   };
 
-  // /**
-  //  * @description Recursive function to find the "route" of the space, i.e. the parent spaces that it belongs to, if any (e.g. a room belongs to a floor, which belongs to a building, etc.)
-  //  * @param space The space to find the route of
-  //  */
-  // const findRoute = (spaceId: string): Space[] => {
-  //   let route: Space[] = [];
-  //   let currentSpace: Space | undefined;
+  useEffect(() => {
+    try {
+      getSpaceFromDeviceId(device._id!, (space) => {
+        setSpaceId(space);
+      });
+    } catch (error) {}
+  }, [device._id]);
 
-  //   try {
-  //     getSpaceById(spaceId, (space) => {
-  //       currentSpace = space;
-  //     });
-  //   } catch (error) {}
-
-  //   while (currentSpace) {
-  //     route.unshift(currentSpace); // Add current space to the beginning of the route array
-  //     const parentSpaceId = currentSpace.parentSpace;
-
-  //     if (parentSpaceId) {
-  //       let parentSpace: Space | undefined;
-  //       // Find the parent space based on its ID
-  //       try {
-  //         getSpaceById(parentSpaceId, (space) => {
-  //           parentSpace = space;
-  //         });
-  //       } catch (error) {}
-
-  //       if (parentSpace) {
-  //         currentSpace = parentSpace;
-  //       } else {
-  //         // If parent space is not found, stop the loop
-  //         currentSpace = undefined;
-  //         console.error(`Parent space with ID ${parentSpaceId} not found.`);
-  //       }
-  //     } else {
-  //       // If there is no parent space, stop the loop
-  //       currentSpace = undefined;
-  //     }
-  //   }
-  //   return route;
-  // };
-  // useEffect(() => {
-  //   if (device.topic) {
-  //     const route = findRoute(device.topic)
-  //       .map((device) => device.name)
-  //       .join(" / ");
-  //     routeRef.current = route; // Update the ref with the new route value
-  //     console.log(routeRef.current);
-  //   }
-  //   console.log("no");
-  // }, [device.topic]);
+  useEffect(() => {
+    if (spaceId) {
+      getSpaceById(spaceId, (space: Space) => {
+        routeRef.current = space.name;
+      });
+    }
+    // console.log("no");
+  }, [spaceId]);
 
   return (
     <>
@@ -115,7 +81,7 @@ const DeviceCard = (device: Device): JSX.Element => {
           },
           p: 1,
           width: "100%",
-          maxWidth: "300px",
+          minWidth: "300px",
           m: " 0 auto",
         }}
       >
@@ -171,15 +137,12 @@ const DeviceCard = (device: Device): JSX.Element => {
               />
             </Box>
           )}
-
           <DevicesDetailsText
             title="Conectado desde el"
             value={format(modifiedDevice.createdOn!, "dd/MM/yyyy")}
           />
-          <DevicesDetailsText
-            title="Espacio/Tópico"
-            value={"device.topic.flat()"}
-          />
+          <DevicesDetailsText title="Ubicación" value={routeRef.current} />
+          <DevicesDetailsText title="Tópico" value={device.topic!} />
           <DevicesDetailsText title="Creado por" value={user?.name!} />
         </CardContent>
         <CardActions

@@ -20,6 +20,7 @@ import {
   createDevice,
   getAllDevicesByUser,
   getDeviceById,
+  getSpaceFromDeviceId,
   lightDVT,
   movementDVT,
   temperatureAndHumDVT,
@@ -63,7 +64,7 @@ const initialValues = {
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Por favor, ingrese un nombre"),
-  topic: yup.string().required("Por favor, ingrese un tópico/espacio"),
+  // topic: yup.string().required("Por favor, ingrese un tópico/espacio"),
   dvt: yup
     .array()
     .required("Por favor, seleccione al menos un tipo de visualización"),
@@ -125,7 +126,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       default:
         setDvt([]); // Clear the dvt array for unrecognized device types
     }
-    console.log(dvt);
   }, [deviceType]);
 
   /**
@@ -188,6 +188,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         dvt: values.dvt,
         createdBy: user?._id!,
         type: values.type,
+        topic: routeRef.current + " / " + values.name,
       };
       const response = await createDevice(deviceData, selectedSpace?._id!);
       // console.log(response);
@@ -219,8 +220,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         createdBy: values.createdBy,
         dvt: values.dvt,
         type: values.type,
+        topic: routeRef.current + " / " + values.name,
       };
-
+      console.log(deviceData);
       const response = await updateDevice(deviceData, props.deviceID!);
       if (response) {
         enqueueSnackbar("Dispositivo editado con éxito", {
@@ -228,7 +230,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         });
         navigate("/devices");
       } else {
-        enqueueSnackbar("Hubo un error", { variant: "error" });
+        enqueueSnackbar("Hubo un error", {
+          variant: "error",
+        });
       }
 
       actions.setSubmitting(true);
@@ -241,46 +245,13 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   };
 
   useEffect(() => {
-    if (selectedSpace) {
-      const route = findRoute(selectedSpace)
-        .map((space) => space.name)
-        .join(" / ");
-      routeRef.current = route; // Update the ref with the new route value
-    }
-  }, [findRoute, selectedSpace]);
-
-  useEffect(() => {
-    try {
-      getSpaces((allSpaces) => {
-        setSpaces(allSpaces);
-        // console.log(allSpaces);
-      });
-      // console.log(spaces);
-      setDataLoaded(false);
-    } catch (error) {
-      alert(error);
-    }
-    if (props.deviceID && deviceToEdit) setDataLoaded(false);
-  }, [props.deviceID, deviceToEdit]);
-
-  useEffect(() => {
-    try {
-      getAllDevicesByUser(user!._id, (devices) => {
-        setDevices(devices);
-      });
-    } catch (error) {
-      alert(error);
-    }
-  }, [user]);
-
-  useEffect(() => {
     if (props.deviceID) {
       try {
         getDeviceById(props.deviceID!, (device) => {
           setDeviceToEdit(device);
           setSelectedSpace(getSpaceInfo(device.topic!));
           setDeviceType(device.type);
-          // setDataLoaded(false);
+          setDataLoaded(false);
         });
       } catch (error) {
         alert(error);
@@ -302,6 +273,44 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       setInitialFormValues(initialFormValues);
     }
   }, [deviceToEdit]);
+
+  useEffect(() => {
+    if (selectedSpace) {
+      const route = findRoute(selectedSpace)
+        .map((space) => space.name)
+        .join(" / ");
+      routeRef.current = route; // Update the ref with the new route value
+    }
+  }, [findRoute, selectedSpace]);
+
+  useEffect(() => {
+    if (props.deviceID) {
+      getSpaceFromDeviceId(props.deviceID, (space) => {
+        setSelectedSpace(getSpaceInfo(space));
+      });
+    }
+  }, [getSpaceInfo, props.deviceID]);
+
+  useEffect(() => {
+    try {
+      getSpaces((allSpaces) => {
+        setSpaces(allSpaces);
+      });
+      setDataLoaded(false);
+    } catch (error) {
+      alert(error);
+    }
+  }, [props.deviceID, deviceToEdit]);
+
+  useEffect(() => {
+    try {
+      getAllDevicesByUser(user!._id, (devices) => {
+        setDevices(devices);
+      });
+    } catch (error) {
+      alert(error);
+    }
+  }, [user]);
 
   return (
     <Box display="flex" justifyContent="left" flexDirection="column">
@@ -369,42 +378,49 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     fullWidth
                     value={values.description}
                   />
+                  {!props.deviceID && (
+                    <>
+                      <Typography gutterBottom>
+                        Ingrese el tópico/espacio al que pertenece el
+                        dispositivo
+                      </Typography>
 
-                  <Typography gutterBottom>
-                    Ingrese el tópico/espacio al que pertenece el dispositivo
-                  </Typography>
-
-                  <Field
-                    component={Autocomplete}
-                    name="topic"
-                    options={spaces}
-                    getOptionLabel={(option: Space) => option.name || ""}
-                    required
-                    // value={selectedSpace?._id}
-                    onChange={(event: any, newValue: Space | null) => {
-                      // Use setFieldValue to update the form field value manually
-                      // newValue will be null if the user clears the selection
-                      setFieldValue("topic", newValue?._id); // Use _id as the value to store in the form field
-                      setSelectedSpace(newValue as Space); // Set the selected space state
-                    }}
-                    renderInput={(params: AutocompleteRenderInputParams) => (
-                      <TextFieldMUI
-                        {...params}
-                        label="Espacio/Tópico"
-                        variant="outlined"
-                        fullWidth
-                        autoComplete="on"
+                      <Field
+                        component={Autocomplete}
+                        name="topic"
+                        options={spaces}
+                        getOptionLabel={(option: Space) => option.name || ""}
                         required
-                        // error={touched.topic && !!errors.topic}
-                        // helperText={
-                        //   touched.topic && errors.topic ? errors.topic : ""
-                        // }
-                        sx={{
-                          my: 2,
+                        // value={selectedSpace?._id}
+                        onChange={(event: any, newValue: Space | null) => {
+                          // Use setFieldValue to update the form field value manually
+                          // newValue will be null if the user clears the selection
+                          setFieldValue("topic", newValue?._id); // Use _id as the value to store in the form field
+                          setSelectedSpace(newValue as Space); // Set the selected space state
                         }}
+                        renderInput={(
+                          params: AutocompleteRenderInputParams
+                        ) => (
+                          <TextFieldMUI
+                            {...params}
+                            label="Espacio/Tópico"
+                            variant="outlined"
+                            fullWidth
+                            autoComplete="on"
+                            required
+                            // error={touched.topic && !!errors.topic}
+                            // helperText={
+                            //   touched.topic && errors.topic ? errors.topic : ""
+                            // }
+                            sx={{
+                              my: 2,
+                            }}
+                          />
+                        )}
                       />
-                    )}
-                  />
+                    </>
+                  )}
+
                   {routeRef && (
                     <>
                       <Typography
@@ -426,87 +442,88 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       </Typography>
                     </>
                   )}
+                  {!props.deviceID && (
+                    <Field
+                      component={RadioGroup}
+                      name="type"
+                      label="Tipo de dispositivo"
+                      required
+                    >
+                      <FormLabel>
+                        Indique el tipo de control del dispositivo
+                      </FormLabel>
+                      <FormControlLabel
+                        value="tempHum"
+                        control={<Radio />}
+                        label="Temperatura y Humedad"
+                        onChange={() => {
+                          setDeviceType("tempHum");
+                        }}
+                      />
+                      <FormControlLabel
+                        value="movimiento"
+                        control={<Radio />}
+                        label="Movimiento"
+                        onChange={() => {
+                          setDeviceType("movimiento");
+                        }}
+                      />
 
-                  <Field
-                    component={RadioGroup}
-                    name="type"
-                    label="Tipo de dispositivo"
-                    required
-                  >
-                    <FormLabel>
-                      Indique el tipo de control del dispositivo
-                    </FormLabel>
-                    <FormControlLabel
-                      value="tempHum"
-                      control={<Radio />}
-                      label="Temperatura y Humedad"
-                      onChange={() => {
-                        setDeviceType("tempHum");
-                      }}
-                    />
-                    <FormControlLabel
-                      value="movimiento"
-                      control={<Radio />}
-                      label="Movimiento"
-                      onChange={() => {
-                        setDeviceType("movimiento");
-                      }}
-                    />
+                      <FormControlLabel
+                        value="luz"
+                        control={<Radio />}
+                        label="Luminarias"
+                        onChange={() => {
+                          setDeviceType("luz");
+                        }}
+                      />
 
-                    <FormControlLabel
-                      value="luz"
-                      control={<Radio />}
-                      label="Luminarias"
-                      onChange={() => {
-                        setDeviceType("luz");
-                      }}
-                    />
+                      <FormControlLabel
+                        value="agua"
+                        control={<Radio />}
+                        label="Flujo de agua"
+                        onChange={() => {
+                          setDeviceType("agua");
+                        }}
+                      />
 
-                    <FormControlLabel
-                      value="agua"
-                      control={<Radio />}
-                      label="Flujo de agua"
-                      onChange={() => {
-                        setDeviceType("agua");
-                      }}
-                    />
+                      <FormControlLabel
+                        value="hum"
+                        control={<Radio />}
+                        label="Humedad de la tierra"
+                        onChange={() => {
+                          setDeviceType("hum");
+                        }}
+                      />
 
-                    <FormControlLabel
-                      value="hum"
-                      control={<Radio />}
-                      label="Humedad de la tierra"
-                      onChange={() => {
-                        setDeviceType("hum");
-                      }}
-                    />
+                      <FormControlLabel
+                        value="aire"
+                        control={<Radio />}
+                        label="Aire acondicionado"
+                        onChange={() => {
+                          setDeviceType("aire");
+                        }}
+                      />
 
-                    <FormControlLabel
-                      value="aire"
-                      control={<Radio />}
-                      label="Aire acondicionado"
-                      onChange={() => {
-                        setDeviceType("aire");
-                      }}
-                    />
+                      <FormControlLabel
+                        value="controlAcceso"
+                        control={<Radio />}
+                        label="Control de acceso"
+                        onChange={() => {
+                          setDeviceType("controlAcceso");
+                        }}
+                      />
 
-                    <FormControlLabel
-                      value="controlAcceso"
-                      control={<Radio />}
-                      label="Control de acceso"
-                      onChange={() => {
-                        setDeviceType("controlAcceso");
-                      }}
-                    />
-
-                    <FormControlLabel
-                      value="vibraciones"
-                      control={<Radio />}
-                      label="Vibraciones"
-                      onChange={() => {
-                        setDeviceType("vibraciones");
-                      }}
-                    />
-                  </Field>
+                      <FormControlLabel
+                        value="vibraciones"
+                        control={<Radio />}
+                        label="Vibraciones"
+                        onChange={() => {
+                          setDeviceType("vibraciones");
+                        }}
+                      />
+                    </Field>
+                  )}
                   {deviceType && (
                     <>
                       <FormLabel>

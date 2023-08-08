@@ -8,12 +8,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Device, deleteDevice } from "../api/Device";
+import { Device, deleteDevice, getSpaceFromDeviceId } from "../api/Device";
 import { CloseRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { Space, deleteSpace } from "../api/Space";
+import { Space, deleteSpace, getSpaceById } from "../api/Space";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "../contexts/authContext";
 import { useSnackbar } from "notistack";
 import { User, getUserById } from "../api/User";
@@ -31,6 +31,8 @@ const Modal = (props: DeviceModalProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
   const [userId, setUser] = useState<User>();
+  const [spaceId, setSpaceId] = useState<string>("");
+  const routeRef = useRef<string>(""); // Create a ref to store the route value
 
   let modifiedDevice: Device; // Crea un nuevo objeto a partir del objeto original
   let modifiedSpace: Space;
@@ -98,6 +100,27 @@ const Modal = (props: DeviceModalProps) => {
     } catch (error) {}
   }, [props.device, props.space?.createdBy]);
 
+  useEffect(() => {
+    if (props.device) {
+      try {
+        getSpaceFromDeviceId(props.device._id!, (space) => {
+          setSpaceId(space);
+        });
+      } catch (error) {}
+    }
+  }, [props.device]);
+
+  useEffect(() => {
+    if (props.device) {
+      if (spaceId) {
+        getSpaceById(spaceId, (space: Space) => {
+          routeRef.current = space.name;
+        });
+      }
+    }
+    // console.log("no");
+  }, [props.device, spaceId]);
+
   return (
     <Dialog
       open={props.isOpen}
@@ -164,8 +187,14 @@ const Modal = (props: DeviceModalProps) => {
             </Box>
             {props.device && (
               <Box>
+                <Typography fontWeight={"bold"}>Ubicación:</Typography>
+                <Typography>{routeRef.current}</Typography>
+              </Box>
+            )}
+            {props.device && (
+              <Box>
                 <Typography fontWeight={"bold"}>Tópico:</Typography>
-                <Typography>{props.device.topic}</Typography>
+                <Typography>{props.device.topic!}</Typography>
               </Box>
             )}
             {props.space && (
@@ -185,7 +214,6 @@ const Modal = (props: DeviceModalProps) => {
                 </Typography>
               </Box>
             )}
-
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>
@@ -216,12 +244,10 @@ const Modal = (props: DeviceModalProps) => {
                 </Typography>
               </Box>
             )}
-
             <Box>
               <Typography fontWeight={"bold"}>Creado por:</Typography>
               <Typography>{userId?.name!}</Typography>
             </Box>
-
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>

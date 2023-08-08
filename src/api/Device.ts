@@ -88,6 +88,7 @@ export const createDevice = async (deviceData: Device, spaceId: string) => {
 
     if (response.ok) return true;
   } catch (error) {
+    console.log(error);
     return false;
   }
 };
@@ -179,7 +180,7 @@ export const updateDevice = async (deviceData: Device, id: string) => {
         name: deviceData.name,
         description: deviceData.description,
         dvt: deviceData.dvt,
-        type: deviceData.type,
+        topic: deviceData.topic,
       }),
     });
 
@@ -200,4 +201,27 @@ export const deleteDevice = async (deviceId: string) => {
   } catch (error) {
     return false;
   }
+};
+
+export const getSpaceFromDeviceId = async (
+  deviceId: string,
+  callback: (spaceId: string) => void
+) => {
+  try {
+    const response = await fetch(`${url}getSpaceByDeviceId/${deviceId}`, {
+      method: "get",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    // console.log(response);
+    if (response.ok) {
+      const data = await response.json();
+      //  console.log(data.spaceId);
+      callback(data.spaceId);
+    }
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+  } catch (error) {}
 };
