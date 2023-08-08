@@ -286,7 +286,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         alert(error);
       }
     }
-  }, [props.deviceID]);
+  }, [getSpaceInfo, props.deviceID]);
 
   useEffect(() => {
     if (deviceToEdit) {

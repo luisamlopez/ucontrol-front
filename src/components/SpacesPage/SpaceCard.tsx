@@ -10,18 +10,51 @@ import {
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { Device, getDeviceById } from "../../api/Device";
+import { User, getUserById } from "../../api/User";
 
 const SpaceCard = (space: Space): JSX.Element => {
   const [isModalOpen, setModalOpen] = useState(false);
-  // console.log(space);
-
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [devicesLoaded, setDevicesLoaded] = useState(false);
+  const [user, setUser] = useState<User>();
   // Verifica y convierte la propiedad 'createdOn' a tipo Date
   let modifiedSpace = { ...space }; // Crea un nuevo objeto a partir del objeto original
   if (modifiedSpace.createdOn && !(modifiedSpace.createdOn instanceof Date)) {
     modifiedSpace.createdOn = new Date(modifiedSpace.createdOn);
   }
+
+  useEffect(() => {
+    if (space.devices && space.devices.length > 0) {
+      try {
+        const dev: Device[] = [];
+        for (let i = 0; i < space.devices.length; i++) {
+          getDeviceById(space.devices[i], (device) => {
+            dev.push(device);
+          });
+        }
+        setDevices(dev);
+        console.log(devices);
+        setDevicesLoaded(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      getUserById(space.createdBy, (user) => {
+        setUser(user);
+      });
+      space.createdBy = user?.name!;
+      if (user?.name) {
+        console.log("CREADO POR " + user?.name!);
+      }
+    } catch (error) {}
+  }, [space, space.createdBy, user?.name]);
 
   const handleOpenModal = () => {
     setModalOpen(true);
@@ -43,9 +76,9 @@ const SpaceCard = (space: Space): JSX.Element => {
           backgroundColor: "#ECEEEF",
           borderRadius: "8px",
           height: {
-            xs: "340px",
-            sm: "340px",
-            md: "400px",
+            xs: "380px",
+            sm: "380px",
+            md: "440px",
             lg: "440px",
           },
           p: 1,
@@ -89,22 +122,25 @@ const SpaceCard = (space: Space): JSX.Element => {
           >
             {space.name}
           </Typography>
-          <Box
-            sx={{
-              minHeight: "auto",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "wrap",
-              wordBreak: "break-word",
-              minWidth: "100%",
-            }}
-          >
-            <DevicesDetailsText
-              title="Descripción"
-              value={space.description ? space.description : "N/A"}
-            />
-          </Box>
-          {space.devices && (
+          {space.description && (
+            <Box
+              sx={{
+                minHeight: "auto",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "wrap",
+                wordBreak: "break-word",
+                minWidth: "100%",
+              }}
+            >
+              <DevicesDetailsText
+                title="Descripción"
+                value={space.description!}
+              />
+            </Box>
+          )}
+
+          {devicesLoaded && (
             <Box
               sx={{
                 minHeight: "auto",
@@ -120,8 +156,8 @@ const SpaceCard = (space: Space): JSX.Element => {
               </Typography>
               <Typography textAlign={"left"} color={"black"}>
                 <ul>
-                  {space.devices.map((device) => (
-                    <li key={device}>{device}</li>
+                  {devices.map((device) => (
+                    <li key={device._id}>{device.name}</li>
                   ))}
                 </ul>
               </Typography>
@@ -130,12 +166,9 @@ const SpaceCard = (space: Space): JSX.Element => {
 
           <DevicesDetailsText
             title="Creado el"
-            value={
-              space.createdOn
-                ? format(modifiedSpace.createdOn!, "dd/MM/yyyy")
-                : "N/A"
-            }
+            value={format(modifiedSpace.createdOn!, "dd/MM/yyyy")}
           />
+          <DevicesDetailsText title="Creado por" value={user?.name!} />
         </CardContent>
         <CardActions
           sx={{
@@ -149,10 +182,12 @@ const SpaceCard = (space: Space): JSX.Element => {
           </Button>
         </CardActions>
       </Card>
+
       <Modal
         space={space}
         isOpen={isModalOpen}
         closeDialog={handleCloseModal}
+        spaceDevices={devices}
       />
     </>
   );

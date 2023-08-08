@@ -103,13 +103,13 @@ function DevicesDetails({ devices }: { devices: string[] }): JSX.Element {
           <Typography>No hay dispositivos en este espacio</Typography>
         </Box>
       ) : devicesInfo ? (
-        devicesInfo.map((device) => (
-          <ul>
-            <li>
+        <ul>
+          {devicesInfo.map((device, i) => (
+            <li key={i}>
               <Typography textAlign={"left"}>{device.name}</Typography>
             </li>
-          </ul>
-        ))
+          ))}
+        </ul>
       ) : (
         <Typography textAlign={"left"}>
           No hay dispositivos en este espacio

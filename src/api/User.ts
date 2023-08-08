@@ -88,3 +88,25 @@ export const signUp = async (signUpData: Log) => {
     } else return { success: false, message: "Hubo un error desconocido" };
   }
 };
+
+export const getUserById = async (
+  id: string,
+  callback: (user: User) => void
+) => {
+  try {
+    const response = await fetch(`${url}getUserById/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const data = await response.json();
+
+    callback(data.data);
+  } catch (error) {
+    console.log(error);
+  }
+};

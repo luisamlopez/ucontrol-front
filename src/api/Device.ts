@@ -127,7 +127,8 @@ export const getDeviceById = async (
     });
     if (response.ok) {
       const data = await response.json();
-      callback(data);
+
+      callback(data.data);
     }
     if (!response.ok) {
       const error = await response.json();

@@ -87,7 +87,7 @@ function DeviceDetails(device: Device) {
               justifyContent: "center",
             }}
           >
-            {device.history.map((history) => (
+            {device.history.map((history, i) => (
               <Box
                 sx={{
                   width: "90%",
@@ -95,6 +95,7 @@ function DeviceDetails(device: Device) {
                   borderColor: "secondary.main",
                   mb: 2,
                 }}
+                key={i}
               >
                 <Box display={"flex"} justifyContent={"space-between"}>
                   <Typography color={"primary.main"} fontWeight={"medium"}>
@@ -258,9 +259,10 @@ function SpaceDetails(space: Space) {
 const HistoryAccordion = ({ devices, spaces }: HistoryProps): JSX.Element => {
   return (
     <div>
-      {devices && devices?.map((device) => <DeviceDetails {...device} />)}
+      {devices &&
+        devices?.map((device, i) => <DeviceDetails key={i} {...device} />)}
 
-      {spaces && spaces?.map((space) => <SpaceDetails {...space} />)}
+      {spaces && spaces?.map((space, i) => <SpaceDetails key={i} {...space} />)}
     </div>
   );
 };

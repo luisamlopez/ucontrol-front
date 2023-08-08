@@ -13,21 +13,24 @@ import { CloseRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Space, deleteSpace } from "../api/Space";
 import { format } from "date-fns";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../contexts/authContext";
 import { useSnackbar } from "notistack";
+import { User, getUserById } from "../api/User";
 
 interface DeviceModalProps {
   isOpen: boolean;
   closeDialog: () => void;
   device?: Device;
   space?: Space;
+  spaceDevices?: Device[];
 }
 
 const Modal = (props: DeviceModalProps) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
+  const [userId, setUser] = useState<User>();
 
   let modifiedDevice: Device; // Crea un nuevo objeto a partir del objeto original
   let modifiedSpace: Space;
@@ -83,6 +86,17 @@ const Modal = (props: DeviceModalProps) => {
   const handleEditSpace = () => {
     navigate(`/spaces/edit/${props.space!._id}`);
   };
+
+  useEffect(() => {
+    try {
+      getUserById(
+        props.device ? props.device?.createdBy! : props.space?.createdBy!,
+        (user) => {
+          setUser(user);
+        }
+      );
+    } catch (error) {}
+  }, [props.device, props.space?.createdBy]);
 
   return (
     <Dialog
@@ -158,14 +172,14 @@ const Modal = (props: DeviceModalProps) => {
               <Box>
                 <Typography fontWeight={"bold"}>Dispositivos:</Typography>
                 <Typography>
-                  {props.space.devices && (
+                  {props.spaceDevices && (
                     <ul>
-                      {props.space.devices.map((device) => (
-                        <li>{device}</li>
+                      {props.spaceDevices.map((device, i) => (
+                        <li key={i}>{device.name}</li>
                       ))}
                     </ul>
                   )}
-                  {!props.space.devices && (
+                  {!props.spaceDevices && (
                     <>No hay dispositivos en este espacio.</>
                   )}
                 </Typography>
@@ -202,18 +216,12 @@ const Modal = (props: DeviceModalProps) => {
                 </Typography>
               </Box>
             )}
-            {props.device && (
-              <Box>
-                <Typography fontWeight={"bold"}>Creado por:</Typography>
-                <Typography>{props.device.createdBy}</Typography>
-              </Box>
-            )}
-            {props.space && (
-              <Box>
-                <Typography fontWeight={"bold"}>Creado por:</Typography>
-                <Typography>{props.space.createdBy}</Typography>
-              </Box>
-            )}
+
+            <Box>
+              <Typography fontWeight={"bold"}>Creado por:</Typography>
+              <Typography>{userId?.name!}</Typography>
+            </Box>
+
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>
