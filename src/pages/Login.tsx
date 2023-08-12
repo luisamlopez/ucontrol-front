@@ -56,7 +56,6 @@ const Login = (): JSX.Element => {
   };
   return (
     <Box
-      m={-1}
       display="flex"
       alignItems="center"
       justifyContent="center"

@@ -213,29 +213,36 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     actions: FormikHelpers<FormValues>
   ) => {
     try {
-      const deviceData: Device = {
-        _id: props.deviceID!,
-        name: values.name,
-        description: values.description,
-        createdBy: values.createdBy,
-        dvt: values.dvt,
-        type: values.type,
-        topic: routeRef.current + " / " + values.name,
-      };
-      console.log(deviceData);
-      const response = await updateDevice(deviceData, props.deviceID!);
-      if (response) {
-        enqueueSnackbar("Dispositivo editado con éxito", {
-          variant: "success",
-        });
-        navigate("/devices");
-      } else {
-        enqueueSnackbar("Hubo un error", {
+      if (!values.dvt || values.dvt.length! === 0) {
+        enqueueSnackbar("Debe seleccionar al menos un tipo de visualización", {
           variant: "error",
         });
-      }
+        return;
+      } else {
+        const deviceData: Device = {
+          _id: props.deviceID!,
+          name: values.name,
+          description: values.description,
+          createdBy: values.createdBy,
+          dvt: values.dvt,
+          type: values.type,
+          topic: routeRef.current + " / " + values.name,
+        };
+        console.log(deviceData);
+        const response = await updateDevice(deviceData, props.deviceID!);
+        if (response) {
+          enqueueSnackbar("Dispositivo editado con éxito", {
+            variant: "success",
+          });
+          navigate("/devices");
+        } else {
+          enqueueSnackbar("Hubo un error", {
+            variant: "error",
+          });
+        }
 
-      actions.setSubmitting(true);
+        actions.setSubmitting(true);
+      }
     } catch (error) {
       enqueueSnackbar("Hubo un error", { variant: "error" });
     } finally {
@@ -455,53 +462,59 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       <FormControlLabel
                         value="tempHum"
                         control={<Radio />}
-                        label="Temperatura y Humedad"
+                        label="Sensor de temperatura y humedad del aire"
                         onChange={() => {
                           setDeviceType("tempHum");
+                          values.dvt = [];
                         }}
                       />
                       <FormControlLabel
                         value="movimiento"
                         control={<Radio />}
-                        label="Movimiento"
+                        label="Sensor de movimiento"
                         onChange={() => {
                           setDeviceType("movimiento");
+                          values.dvt = [];
                         }}
                       />
 
                       <FormControlLabel
                         value="luz"
                         control={<Radio />}
-                        label="Luminarias"
+                        label="Control de luminaria"
                         onChange={() => {
                           setDeviceType("luz");
+                          values.dvt = [];
                         }}
                       />
 
                       <FormControlLabel
                         value="agua"
                         control={<Radio />}
-                        label="Flujo de agua"
+                        label="Sensor de presencia de agua"
                         onChange={() => {
                           setDeviceType("agua");
+                          values.dvt = [];
                         }}
                       />
 
                       <FormControlLabel
                         value="hum"
                         control={<Radio />}
-                        label="Humedad de la tierra"
+                        label="Sensor de humedad de la tierra"
                         onChange={() => {
                           setDeviceType("hum");
+                          values.dvt = [];
                         }}
                       />
 
                       <FormControlLabel
                         value="aire"
                         control={<Radio />}
-                        label="Aire acondicionado"
+                        label="Control de aire acondicionado"
                         onChange={() => {
                           setDeviceType("aire");
+                          values.dvt = [];
                         }}
                       />
 
@@ -511,15 +524,17 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         label="Control de acceso"
                         onChange={() => {
                           setDeviceType("controlAcceso");
+                          values.dvt = [];
                         }}
                       />
 
                       <FormControlLabel
                         value="vibraciones"
                         control={<Radio />}
-                        label="Vibraciones"
+                        label="Sensor de vibraciones"
                         onChange={() => {
                           setDeviceType("vibraciones");
+                          values.dvt = [];
                         }}
                       />
                     </Field>
@@ -566,38 +581,40 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     </>
                   )}
 
-                  <Field
-                    component={RadioGroup}
-                    name="conditions"
-                    label="¿Desea agregar una condición?"
-                    required
-                  >
-                    <FormLabel
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: 600,
-                        fontSize: "18px",
-                      }}
+                  {(deviceType === "luz" || deviceType === "aire") && (
+                    <Field
+                      component={RadioGroup}
+                      name="conditions"
+                      label="¿Desea agregar una condición?"
+                      required
                     >
-                      ¿Desea agregar una condición?
-                    </FormLabel>
-                    <FormControlLabel
-                      value={true}
-                      control={<Radio />}
-                      label="Si"
-                      onChange={() => {
-                        setConditions(true);
-                      }}
-                    />
-                    <FormControlLabel
-                      value={false}
-                      control={<Radio />}
-                      label="No"
-                      onChange={() => {
-                        setConditions(false);
-                      }}
-                    />
-                  </Field>
+                      <FormLabel
+                        sx={{
+                          color: "primary.main",
+                          fontWeight: 600,
+                          fontSize: "18px",
+                        }}
+                      >
+                        ¿Desea agregar una condición?
+                      </FormLabel>
+                      <FormControlLabel
+                        value={true}
+                        control={<Radio />}
+                        label="Si"
+                        onChange={() => {
+                          setConditions(true);
+                        }}
+                      />
+                      <FormControlLabel
+                        value={false}
+                        control={<Radio />}
+                        label="No"
+                        onChange={() => {
+                          setConditions(false);
+                        }}
+                      />
+                    </Field>
+                  )}
 
                   {conditions && allDevices.length === 0 && (
                     <Box

@@ -187,6 +187,30 @@ const Modal = (props: DeviceModalProps) => {
             </Box>
             {props.device && (
               <Box>
+                <Typography fontWeight={"bold"}>
+                  Tipo de dispositivo:
+                </Typography>
+                <Typography>
+                  {props.device.type === "tempHum"
+                    ? "Sensor de temperatura y humedad del aire"
+                    : props.device.type === "hum"
+                    ? "Sensor de humedad de tierra"
+                    : props.device.type === "luz"
+                    ? "Control de luminaria"
+                    : props.device.type === "movimiento"
+                    ? "Sensor de movimiento"
+                    : props.device.type === "vibraciones"
+                    ? "Sensor de vibraciones"
+                    : props.device.type === "controlAcceso"
+                    ? "Control de acceso"
+                    : props.device.type === "aire"
+                    ? "Control de aire acondicionado"
+                    : "Flujo de agua"}
+                </Typography>
+              </Box>
+            )}
+            {props.device && (
+              <Box>
                 <Typography fontWeight={"bold"}>Ubicación:</Typography>
                 <Typography>{routeRef.current}</Typography>
               </Box>

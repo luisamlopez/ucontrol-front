@@ -81,7 +81,7 @@ const DeviceCard = (device: Device): JSX.Element => {
           },
           p: 1,
           width: "100%",
-          minWidth: "300px",
+          maxWidth: "350px",
           m: " 0 auto",
         }}
       >
@@ -120,6 +120,27 @@ const DeviceCard = (device: Device): JSX.Element => {
           >
             {device.name}
           </Typography>
+          <DevicesDetailsText
+            title="Tipo de dispositivo"
+            value={
+              device.type === "tempHum"
+                ? "Sensor de temperatura y humedad del aire"
+                : device.type === "hum"
+                ? "Sensor de humedad de tierra"
+                : device.type === "luz"
+                ? "Control de luminaria"
+                : device.type === "movimiento"
+                ? "Sensor de movimiento"
+                : device.type === "vibraciones"
+                ? "Sensor de vibraciones"
+                : device.type === "controlAcceso"
+                ? "Control de acceso"
+                : device.type === "aire"
+                ? "Control de aire acondicionado"
+                : "Flujo de agua"
+            }
+          />
+
           {device.description && (
             <Box
               sx={{
