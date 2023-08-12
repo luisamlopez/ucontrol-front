@@ -72,7 +72,7 @@ const validationSchema = yup.object().shape({
 
 const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>([]);
-  const [allDevices, setDevices] = useState<Device[]>([]);
+  const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(true);
   const [deviceToEdit, setDeviceToEdit] = useState<Device | undefined>(
     undefined
@@ -96,6 +96,12 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
   const [dvt, setDvt] = useState<UnitsConfig[]>([]);
   const [deviceType, setDeviceType] = useState<String>();
+  const [conditionsOptions, setConditionsOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [condValueOptions, setCondValueOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   useEffect(() => {
     switch (deviceType) {
@@ -312,7 +318,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   useEffect(() => {
     try {
       getAllDevicesByUser(user!._id, (devices) => {
-        setDevices(devices);
+        setAllDevices(devices);
       });
     } catch (error) {
       alert(error);
@@ -616,7 +622,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     </Field>
                   )}
 
-                  {conditions && allDevices.length === 0 && (
+                  {conditions && allDevices.length > 0 && (
                     <Box
                       sx={{
                         display: "flex",
@@ -670,8 +676,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       <Field
                         component={Autocomplete}
                         name="cond"
-                        options={allDevices}
-                        getOptionLabel={(option: Device) => option.name || ""}
+                        options={conditionsOptions}
+                        getOptionLabel={(option: any) => option.label || ""}
                         // onChange={(event: any, newValue: Space) => {
                         //   setSelectedSpace(newValue);
                         //   console.log(findRoute(newValue));
@@ -696,8 +702,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       <Field
                         component={Autocomplete}
                         name="condValue"
-                        options={allDevices}
-                        getOptionLabel={(option: Device) => option.name || ""}
+                        options={condValueOptions}
+                        getOptionLabel={(option: any) => option.label || ""}
                         // onChange={(event: any, newValue: Space) => {
                         //   setSelectedSpace(newValue);
                         //   console.log(findRoute(newValue));
