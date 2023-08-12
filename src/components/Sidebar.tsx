@@ -21,6 +21,7 @@ import {
   DeviceHubRounded,
   LogoutRounded,
   SettingsRounded,
+  VpnKeyRounded,
 } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
@@ -83,6 +84,11 @@ export const Sidebar = (props: Props) => {
       name: "Historial",
       icon: <HistoryRounded />,
       link: "/history",
+    },
+    {
+      name: "Control de acceso",
+      icon: <VpnKeyRounded />,
+      link: "/controlAccess",
     },
   ];
 

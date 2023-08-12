@@ -12,6 +12,8 @@ import ConfigDevice from "./pages/ConfigDevice";
 import SpacesPage from "./pages/SpacesPage";
 import ConfigSpace from "./pages/ConfigSpace";
 import SettingsPage from "./pages/Settings";
+import ControlAccessSpaces from "./pages/ControlAccessSpaces";
+import ControlAccessDevices from "./pages/ControlAccessDevices";
 
 const App = (): JSX.Element => {
   return (
@@ -50,6 +52,11 @@ const App = (): JSX.Element => {
             <Route path="/spaces" element={<SpacesPage />} />
             <Route path="/spaces/:action/:spaceID?" element={<ConfigSpace />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/controlAccess" element={<ControlAccessSpaces />} />
+            <Route
+              path="/controlAccess/:spaceId"
+              element={<ControlAccessDevices />}
+            />
             {/*
        
         <Route path="/help" element={<Help />} />
