@@ -44,7 +44,11 @@ function Details(props: { device: Device }): JSX.Element {
 
       <DevicesDetailsText
         title={"Conectado desde el"}
-        value={format(modifiedDevice.createdOn!, "dd/MM/yyyy")}
+        value={new Date(props.device.createdOn!).toLocaleString("es-VE", {
+          hour12: false,
+          dateStyle: "short",
+          timeStyle: "short",
+        })}
       />
 
       <DevicesDetailsText title="Tópico" value={props.device.topic!} />

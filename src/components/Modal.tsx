@@ -276,7 +276,11 @@ const Modal = (props: DeviceModalProps) => {
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>
                 <Typography>
-                  {format(modifiedDevice!.createdOn!, "dd/mm/yyyy")}
+                  {new Date(props.device.createdOn!).toLocaleString("es-VE", {
+                    hour12: false,
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}
                 </Typography>
               </Box>
             )}
@@ -296,7 +300,11 @@ const Modal = (props: DeviceModalProps) => {
               <Box>
                 <Typography fontWeight={"bold"}>Creado el:</Typography>
                 <Typography>
-                  {format(modifiedSpace!.createdOn!, "dd/mm/yyyy")}
+                  {new Date(props.space.createdOn!).toLocaleString("es-VE", {
+                    hour12: false,
+                    dateStyle: "short",
+                    timeStyle: "short",
+                  })}
                 </Typography>
               </Box>
             )}

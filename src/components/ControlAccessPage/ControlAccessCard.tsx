@@ -150,7 +150,11 @@ const ControlAccessCard = (space: Space): JSX.Element => {
 
           <DevicesDetailsText
             title="Creado el"
-            value={format(modifiedSpace.createdOn!, "dd/MM/yyyy")}
+            value={new Date(space.createdOn!).toLocaleString("es-VE", {
+              hour12: false,
+              dateStyle: "short",
+              timeStyle: "short",
+            })}
           />
           <DevicesDetailsText title="Creado por" value={user?.name!} />
         </CardContent>

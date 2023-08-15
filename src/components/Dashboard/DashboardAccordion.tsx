@@ -26,63 +26,33 @@ export interface AccordionProps {
 }
 
 function DevicesDetails({ devices }: { devices: string[] }): JSX.Element {
-  let devicesInfo: Device[] = [];
+  const [devicesInfo, setDevicesInfo] = useState<Device[]>([]);
 
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     try {
+      const fetchedDevices: Device[] = [];
       for (let deviceId of devices) {
         //Find on the dataBase the device with the id using the function getDeviceById
         getDeviceById(deviceId, (device) => {
-          devicesInfo.push(device);
+          fetchedDevices.push(device);
         });
-
+        setDevicesInfo(fetchedDevices);
         setDataLoaded(true);
       }
     } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+      //console.log(error);
     }
-  }, [devices, devicesInfo]);
+  }, [devices]);
+
+  useEffect(() => {
+    console.log(devicesInfo);
+  }, [devicesInfo]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "#fff",
-        width: {
-          lg: "25%",
-          md: "25%",
-          xs: "100%",
-          sm: "100%",
-        },
-        borderRadius: "4px",
-        p: 1,
-        mr: {
-          lg: 2,
-          md: 2,
-        },
-        mb: {
-          lg: 0,
-          md: 0,
-          xs: 2,
-          sm: 2,
-        },
-      }}
-    >
-      <Typography
-        fontWeight={"bold"}
-        textAlign={"left"}
-        fontSize={{ xs: 14, sm: 18, lg: 18 }}
-        color={"primary.main"}
-      >
-        Dispositivos conectados
-      </Typography>
-      {loading ? (
+    <>
+      {!dataLoaded ? (
         <Box
           sx={{
             display: "flex",
@@ -92,30 +62,51 @@ function DevicesDetails({ devices }: { devices: string[] }): JSX.Element {
         >
           <Typography>Cargando...</Typography>
         </Box>
-      ) : !dataLoaded ? (
+      ) : (
         <Box
           sx={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            flexDirection: "column",
+            backgroundColor: "#fff",
+            width: {
+              lg: "25%",
+              md: "25%",
+              xs: "100%",
+              sm: "100%",
+            },
+            borderRadius: "4px",
+            p: 1,
+            mr: {
+              lg: 2,
+              md: 2,
+            },
+            mb: {
+              lg: 0,
+              md: 0,
+              xs: 2,
+              sm: 2,
+            },
           }}
         >
-          <Typography>No hay dispositivos en este espacio</Typography>
+          <Typography
+            fontWeight={"bold"}
+            textAlign={"left"}
+            fontSize={{ xs: 14, sm: 18, lg: 18 }}
+            color={"primary.main"}
+          >
+            Dispositivos conectados
+          </Typography>
+
+          <ul>
+            {devicesInfo.map((device, i) => (
+              <li key={i}>
+                <Typography textAlign={"left"}>{device.name}</Typography>
+              </li>
+            ))}
+          </ul>
         </Box>
-      ) : devicesInfo ? (
-        <ul>
-          {devicesInfo.map((device, i) => (
-            <li key={i}>
-              <Typography textAlign={"left"}>{device.name}</Typography>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <Typography textAlign={"left"}>
-          No hay dispositivos en este espacio
-        </Typography>
       )}
-    </Box>
+    </>
   );
 }
 
@@ -245,7 +236,7 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {space.devices ? (
+            {space.devices && (
               <Box
                 sx={{
                   display: "flex",
@@ -293,8 +284,6 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
                   </Link>
                 </Button>
               </Box>
-            ) : (
-              <Typography> No hay dispositivos en este espacio</Typography>
             )}
           </AccordionDetails>
         </Accordion>

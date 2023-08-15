@@ -49,11 +49,18 @@ function DeviceDetails(object: Device) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? format(
-                object.history[object.history?.length].updatedOn,
-                "dd/MM/yyyy"
-              )
-            : format(object.createdOn!, "dd/MM/yyyy")}
+            ? new Date(
+                object.history[object.history?.length].updatedOn
+              ).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })
+            : new Date(object.createdOn!).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
@@ -86,7 +93,11 @@ function DeviceDetails(object: Device) {
                     {object.history?.map((history) => (
                       <TableRow key={object._id}>
                         <TableCell component="th" scope="row" align="center">
-                          {format(history.updatedOn, "dd/MM/yyyy")}
+                          {new Date(history.updatedOn).toLocaleString("es-VE", {
+                            hour12: false,
+                            dateStyle: "short",
+                            timeStyle: "short",
+                          })}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{history.field}</TableCell>
@@ -126,11 +137,18 @@ function SpaceDetails(object: Space) {
         </TableCell>
         <TableCell align="center">
           {object.history?.length === 0
-            ? format(
-                object.history[object.history?.length].updatedOn,
-                "dd/MM/yyyy"
-              )
-            : object.createdOn!.toISOString()}
+            ? new Date(
+                object.history[object.history?.length].updatedOn
+              ).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })
+            : new Date(object.createdOn!).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
         </TableCell>
         <TableCell align="center">
           {object.history && object.history.length > 0
@@ -163,7 +181,11 @@ function SpaceDetails(object: Space) {
                     {object.history?.map((history) => (
                       <TableRow key={object._id}>
                         <TableCell component="th" scope="row">
-                          {format(history.updatedOn, "dd/MM/yyyy")}
+                          {new Date(history.updatedOn).toLocaleString("es-VE", {
+                            hour12: false,
+                            dateStyle: "short",
+                            timeStyle: "short",
+                          })}
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{object.name}</TableCell>

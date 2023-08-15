@@ -53,11 +53,18 @@ function DeviceDetails(device: Device) {
           }}
         >
           {device.history?.length === 0
-            ? format(
-                device.history[device.history?.length].updatedOn,
-                "dd/MM/yyyy"
-              )
-            : format(device.createdOn!, "dd/MM/yyyy")}
+            ? new Date(
+                device.history[device.history?.length].updatedOn
+              ).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })
+            : new Date(device.createdOn!).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
         </Typography>
 
         <Typography
@@ -102,7 +109,11 @@ function DeviceDetails(device: Device) {
                     Fecha del cambio:
                   </Typography>
                   <Typography>
-                    {format(history.updatedOn, "dd/mm/yyyy")}
+                    {new Date(history.updatedOn).toLocaleString("es-VE", {
+                      hour12: false,
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })}
                   </Typography>
                 </Box>
 
