@@ -89,37 +89,78 @@ const Modal = (props: DeviceModalProps) => {
     navigate(`/spaces/edit/${props.space!._id}`);
   };
 
+  /**
+   * Get the user name from the user id to use for devices and spaces (createdBy)
+   */
   useEffect(() => {
-    try {
-      getUserById(
-        props.device ? props.device?.createdBy! : props.space?.createdBy!,
-        (user) => {
-          setUser(user);
-        }
-      );
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getUserById(
+          props.device ? props.device?.createdBy! : props.space?.createdBy!,
+          (user) => {
+            setUser(user);
+          }
+        );
+      } catch (error) {}
+    };
+    fetch();
   }, [props.device, props.space?.createdBy]);
 
+  /**
+   * Get the space id from the device id to use for devices
+   */
   useEffect(() => {
-    if (props.device) {
-      try {
-        getSpaceFromDeviceId(props.device._id!, (space) => {
-          setSpaceId(space);
-        });
-      } catch (error) {}
-    }
+    const fetch = async () => {
+      if (props.device) {
+        try {
+          await getSpaceFromDeviceId(props.device._id!, (space) => {
+            setSpaceId(space);
+          });
+        } catch (error) {}
+      }
+    };
+    fetch();
   }, [props.device]);
 
+  /**
+   * Get the space name from the space id to use for devices
+   */
   useEffect(() => {
-    if (props.device) {
-      if (spaceId) {
-        getSpaceById(spaceId, (space: Space) => {
-          routeRef.current = space.name;
-        });
+    const fetch = async () => {
+      try {
+        if (props.device) {
+          if (spaceId) {
+            await getSpaceById(spaceId, (space: Space) => {
+              routeRef.current = space.name;
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
-    }
-    // console.log("no");
+    };
+    fetch();
   }, [props.device, spaceId]);
+
+  /**
+   * Get the space name from the space id to use for spaces (parent space)
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        if (props.space) {
+          if (props.space.parentSpace) {
+            await getSpaceById(props.space.parentSpace, (space: Space) => {
+              routeRef.current = space.name;
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetch();
+  }, [props.space]);
 
   return (
     <Dialog
@@ -175,16 +216,17 @@ const Modal = (props: DeviceModalProps) => {
               gap: "5px",
             }}
           >
-            <Box>
-              <Typography fontWeight={"bold"}>Descripción:</Typography>
-              {props.device && (
-                <Typography>{props.device.description}</Typography>
-              )}
+            {(props.device?.description || props.space?.description) && (
+              <Box>
+                <Typography fontWeight={"bold"}>Descripción:</Typography>
+                <Typography>
+                  {props.device
+                    ? props.device.description
+                    : props.space?.description}
+                </Typography>
+              </Box>
+            )}
 
-              {props.space && (
-                <Typography>{props.space.description}</Typography>
-              )}
-            </Box>
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>
@@ -221,23 +263,27 @@ const Modal = (props: DeviceModalProps) => {
                 <Typography>{props.device.topic!}</Typography>
               </Box>
             )}
-            {props.space && (
-              <Box>
-                <Typography fontWeight={"bold"}>Dispositivos:</Typography>
-                <Typography>
-                  {props.spaceDevices && (
+            {props.space &&
+              props.spaceDevices &&
+              props.spaceDevices.length > 0 && (
+                <Box>
+                  <Typography fontWeight={"bold"}>Dispositivos:</Typography>
+                  <Typography>
                     <ul>
                       {props.spaceDevices.map((device, i) => (
                         <li key={i}>{device.name}</li>
                       ))}
                     </ul>
-                  )}
-                  {!props.spaceDevices && (
-                    <>No hay dispositivos en este espacio.</>
-                  )}
-                </Typography>
-              </Box>
-            )}
+
+                    {(!props.spaceDevices ||
+                      props.spaceDevices.length === 0) && (
+                      <Typography>
+                        No hay dispositivos en este espacio.
+                      </Typography>
+                    )}
+                  </Typography>
+                </Box>
+              )}
             {props.device && (
               <Box>
                 <Typography fontWeight={"bold"}>
@@ -284,16 +330,10 @@ const Modal = (props: DeviceModalProps) => {
                 </Typography>
               </Box>
             )}
-            {props.space && (
+            {props.space && props.space.parentSpace && (
               <Box>
                 <Typography fontWeight={"bold"}>Ubicación:</Typography>
-                <Typography>
-                  {props.space.parentSpace
-                    ? props.space.parentSpace
-                    : props.space.subSpaces
-                    ? props.space.subSpaces.flatMap((obj) => obj).join("/")
-                    : "No hay ubicación"}
-                </Typography>
+                <Typography>{routeRef.current}</Typography>
               </Box>
             )}
             {props.space && (

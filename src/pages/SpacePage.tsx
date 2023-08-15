@@ -1,6 +1,6 @@
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Device } from "../api/Device";
+import { Device, getAllDevicesBySpace } from "../api/Device";
 import { Space, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
@@ -15,18 +15,19 @@ const SpacePage = (): JSX.Element => {
 
   const { spaceID } = useParams<{ spaceID: string }>();
 
-  useEffect(() => {
-    try {
-      getSpaces((allSpaces) => {
-        setSpaces(allSpaces);
-      });
-      console.log(spaces);
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     getAllDevicesBySpace(spaceID!, (devices) => {
+  //       setDevices(devices!);
+  //       setDataLoaded(true);
+  //     });
+  //     console.log(spaces);
+  //   } catch (error) {
+  //     alert(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [spaceID, spaces]);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
