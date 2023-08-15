@@ -1,14 +1,14 @@
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device, getAllDevicesBySpace } from "../api/Device";
-import { Space, getSpaces } from "../api/Space";
+import { Space, getSpaceById, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
 import SpaceDeviceDetails from "../components/Dashboard/SpaceDeviceDetails";
 
 const SpacePage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [space, setSpace] = useState<Space>();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
@@ -29,56 +29,92 @@ const SpacePage = (): JSX.Element => {
   //   }
   // }, [spaceID, spaces]);
 
+  /**
+   * Get space info from DB by ID
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        await getSpaceById(spaceID!, (space) => {
+          setSpace(space);
+          setLoading(false);
+          setDataLoaded(true);
+        });
+      } catch (error) {
+        alert(error);
+      }
+    };
+    fetch();
+  }, [spaceID]);
+
+  /**
+   * Get devices from the space using spaceID
+   */
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        await getAllDevicesBySpace(spaceID!, (devices) => {
+          setDevices(devices!);
+          setLoading(false);
+          setDataLoaded(true);
+        });
+      } catch (error) {
+        alert(error);
+      }
+    };
+    fetch();
+  }, [spaceID]);
+
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
       <Sidebar />
       <Container sx={{ m: 0, p: 0 }}>
-        <Box
-          display={"flex"}
-          flexDirection="column"
-          sx={{
-            p: 2,
-          }}
-        >
-          <Typography
-            color="primary"
-            textAlign="left"
-            fontSize={{ xs: 24, sm: 48, lg: 48 }}
-            fontWeight={600}
-            p={0}
-            mt={{ xs: 6, sm: 0, lg: 0 }}
-            mb={2}
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            Dispositivos del espacio {spaceID} (buscar en BD)
+            <CircularProgress />
+          </Box>
+        ) : !dataLoaded ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : !space ? (
+          <Typography>
+            Error: no se pudo cargar la información del espacio {spaceID}
           </Typography>
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+        ) : (
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            sx={{
+              p: 2,
+            }}
+          >
+            <Typography
+              color="primary"
+              textAlign="left"
+              fontSize={{ xs: 24, sm: 48, lg: 48 }}
+              fontWeight={600}
+              p={0}
+              mt={{ xs: 6, sm: 0, lg: 0 }}
+              mb={2}
             >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : devices.length === 0 ? (
-            <Typography>
-              Error: no se pudieron cargar los dispositivos.
+              Dispositivos del espacio: {space.name}
             </Typography>
-          ) : (
             <SpaceDeviceDetails devices={devices} />
-          )}
-        </Box>
+          </Box>
+        )}
       </Container>
     </Box>
   );

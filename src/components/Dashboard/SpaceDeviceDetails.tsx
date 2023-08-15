@@ -4,6 +4,10 @@ import DevicesDetailsText from "../DeviceDetailsText";
 import ChartCarousel from "../Charts/ChartCarousel";
 import { format } from "date-fns";
 
+interface Props {
+  devices: Device[];
+}
+
 /**
  *
  * @param props recibe un dispositivo
@@ -103,67 +107,6 @@ function Graph(props: { device: Device }): JSX.Element {
   );
 }
 
-/**
- *
- * @param props recibe un dispositivo para mostrar sus detalles
- * @returns  un componente que muestra los detalles de un dispositivo: nombre, descripcion, fecha de creacion, topico y instrucciones con su grupo de gráficos
- */
-function DeviceDetails(props: { device: Device }): JSX.Element {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        backgroundColor: "#ECEEEF",
-        borderRadius: "8px",
-        p: 1,
-        mb: 1,
-      }}
-    >
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography
-          fontWeight={"bold"}
-          textAlign={"left"}
-          fontSize={{ xs: 14, sm: 18, lg: 18 }}
-        >
-          {props.device.name}
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexDirection: {
-            xs: "column",
-            sm: "column",
-            md: "row",
-            lg: "row",
-          },
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Details device={props.device} />
-        <Graph device={props.device} />
-      </Box>
-    </Box>
-  );
-}
-
-interface Props {
-  devices: Device[];
-}
-
 const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
   return (
     <Box
@@ -177,7 +120,54 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
       }}
     >
       {devices.map((device, index) => (
-        <DeviceDetails device={device} key={index} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            backgroundColor: "#ECEEEF",
+            borderRadius: "8px",
+            p: 1,
+            mb: 1,
+          }}
+        >
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              fontWeight={"bold"}
+              textAlign={"left"}
+              fontSize={{ xs: 14, sm: 18, lg: 18 }}
+            >
+              {device.name}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: {
+                xs: "column",
+                sm: "column",
+                md: "row",
+                lg: "row",
+              },
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Details device={device} />
+            {(device.type === "luz" || device.type === "aire") && <>switch</>}
+            <Graph device={device} />
+          </Box>
+        </Box>
       ))}
     </Box>
   );

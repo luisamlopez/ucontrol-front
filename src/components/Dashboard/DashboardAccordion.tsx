@@ -180,13 +180,16 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
 
       for (let space of spaces) {
         const devices: Device[] = [];
-
+        console.log(space.name);
         for (let deviceId of space.devices!) {
-          await getDeviceById(deviceId!, (device) => {
-            devices.push(device);
-          });
+          try {
+            await getDeviceById(deviceId!, (device) => {
+              devices.push(device);
+            });
+          } catch (error) {
+            console.log("error");
+          }
         }
-
         newData.push({
           spaceId: space._id!,
           spaceName: space.name,
@@ -262,7 +265,7 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
                   }}
                 >
                   <Link
-                    to={`/spaceID/${space.spaceId}`}
+                    to={`/dashboard/${space.spaceId}`}
                     style={{
                       textDecoration: "none",
                       color: "#042F3E",

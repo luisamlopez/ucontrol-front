@@ -1,40 +1,11 @@
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
+import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
-import DashboardAccordion from "../components/Dashboard/DashboardAccordion";
-import { Space, getSpaces } from "../api/Space";
-import { useEffect, useState } from "react";
-import { useUser } from "../contexts/authContext";
+import { useState } from "react";
 
-const Home = (): JSX.Element => {
-  const [spaces, setSpaces] = useState<Space[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-
-  /**
-   * Get spaces from API but only save spaces with devices
-   */
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        await getSpaces((allSpaces) => {
-          //Get spaces with devices only
-          allSpaces = allSpaces.filter(
-            (space) => space.devices && space.devices.length > 0
-          );
-
-          setSpaces(allSpaces);
-          setDataLoaded(true);
-        });
-        //  console.log(spaces);
-      } catch (error) {
-        alert(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, []);
-
+const HelpPage = (): JSX.Element => {
+  const [loading, setLoading] = useState(true);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [spaces, setSpaces] = useState([]);
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
       <Sidebar />
@@ -55,7 +26,7 @@ const Home = (): JSX.Element => {
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
           >
-            Dashboard
+            Centro de ayuda
           </Typography>
 
           {loading ? (
@@ -91,7 +62,8 @@ const Home = (): JSX.Element => {
               No hay ningún espacio cargado. Por favor, cree uno.
             </Typography>
           ) : (
-            <DashboardAccordion spaces={spaces} />
+            //<DashboardAccordion spaces={spaces} />
+            <>Manual de usuario</>
           )}
         </Box>
       </Container>
@@ -99,4 +71,4 @@ const Home = (): JSX.Element => {
   );
 };
 
-export default Home;
+export default HelpPage;

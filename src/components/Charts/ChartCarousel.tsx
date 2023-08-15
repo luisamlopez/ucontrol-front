@@ -12,24 +12,42 @@ import LineChart from "./LineChart";
 
 type ChartCarouselProps = {
   device: Device;
+  type?: string;
 };
 
-const ChartCarousel: React.FC<ChartCarouselProps> = ({
-  device,
-}: ChartCarouselProps) => {
+const NumericChart = ({ device, type }: ChartCarouselProps): JSX.Element => {
+  return (
+    <Box>
+      {device._id!}
+      {type === "bar" && <Box>bar</Box>}
+      {type === "line" && <Box>line</Box>}
+      {type === "gauge" && (
+        // <Gauge id={device._id} values={device.values} />
+        <Box>Gauge</Box>
+      )}
+
+      {type === "value" && (
+        // <Value id={device._id} values={device.values} />
+        <Box>Value</Box>
+      )}
+    </Box>
+  );
+};
+
+const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const types = device.dvt;
+  const dvtTypes = device.dvt;
 
   const handlePrevClick = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === 0 ? types.length - 1 : prevIndex - 1
+      prevIndex === 0 ? dvtTypes.length - 1 : prevIndex - 1
     );
   };
 
   const handleNextClick = () => {
     setActiveIndex((prevIndex) =>
-      prevIndex === types.length - 1 ? 0 : prevIndex + 1
+      prevIndex === dvtTypes.length - 1 ? 0 : prevIndex + 1
     );
   };
 
@@ -45,7 +63,7 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
           height: "100%",
         }}
       >
-        {types.map((type, index) => (
+        {dvtTypes.map((type, index) => (
           <Box
             key={index}
             sx={{
@@ -54,21 +72,37 @@ const ChartCarousel: React.FC<ChartCarouselProps> = ({
               height: "100%",
             }}
           >
-            {type === "bar" && (
-              // <BarChart id={device.id} values={device.values} />
-              <Box>Bar</Box>
+            {(device.type === "tempHum" || device.type === "hum") && (
+              <NumericChart device={device} type={type} />
             )}
-            {type === "pie" && (
-              // <PieChart id={device.id} values={device.values} />
-              <Box>Pie</Box>
-            )}
-            {type === "line" && (
-              //  <LineChart id={device.id} values={device.values} />
-              <Box>Line</Box>
-            )}
-            {type === "gauge" && (
-              // <Gauge id={device._id} values={device.values} />
-              <Box>Gauge</Box>
+            {device.type !== "tempHum" && device.type !== "hum" && (
+              <>
+                {type === "bar" && (
+                  // <BarChart id={device.id} values={device.values} />
+
+                  <Box>Bar</Box>
+                )}
+                {type === "pie" && (
+                  // <PieChart id={device.id} values={device.values} />
+                  <Box>Pie</Box>
+                )}
+                {type === "line" && (
+                  //  <LineChart id={device.id} values={device.values} />
+                  <Box>Line</Box>
+                )}
+                {type === "gauge" && (
+                  // <Gauge id={device._id} values={device.values} />
+                  <Box>Gauge</Box>
+                )}
+                {type === "table" && (
+                  // <Table id={device._id} values={device.values} />
+                  <Box>Table</Box>
+                )}
+                {type === "value" && (
+                  // <Value id={device._id} values={device.values} />
+                  <Box>Value</Box>
+                )}
+              </>
             )}
           </Box>
         ))}

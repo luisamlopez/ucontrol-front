@@ -39,11 +39,9 @@ export interface UnitsConfig {
 /**
  * Data visualization types
  */
-export const movementDVT: UnitsConfig[] = [
-  { label: "Diagrama de dispersión", value: "scatter" },
-  { label: "Solo valor", value: "value" },
-];
 
+//same for temperature and humidity and soil moisture
+//numeric values
 export const temperatureAndHumDVT: UnitsConfig[] = [
   { label: "Gráfico de barras", value: "bar" },
   { label: "Gráfico de líneas", value: "line" },
@@ -51,28 +49,39 @@ export const temperatureAndHumDVT: UnitsConfig[] = [
   { label: "Solo valor", value: "value" },
 ];
 
+//number of movements detected and if it detected movement or not
+export const movementDVT: UnitsConfig[] = [
+  { label: "Gráfico de barras", value: "bar" },
+  { label: "Solo valor", value: "value" },
+];
+
+// on/off values  and timestamp
+export const lightDVT: UnitsConfig[] = [
+  { label: "Tabla de valores de encendido/apagado", value: "table" },
+];
+
+// number of times water has been detected and if it detected water or not
 export const waterFlowDVT: UnitsConfig[] = [
   { label: "Gráfico de barras", value: "bar" },
   { label: "Gráfico de líneas", value: "line" },
   { label: "Solo valor", value: "value" },
 ];
 
-export const vibrationsDVT: UnitsConfig[] = [
-  { label: "Gráfico de barras", value: "bar" },
-  { label: "Gráfico de líneas", value: "line" },
-];
-
-export const lightDVT: UnitsConfig[] = [
-  { label: "Gráfico de barras", value: "bar" },
-  { label: "Gráfico de pastel", value: "pie" },
-];
-
+// on/off values and timestamp
 export const airDVT: UnitsConfig[] = [
   { label: "Tabla de valores de encendido/apagado", value: "table" },
 ];
 
+// number of people on a day
 export const accessControlDVT: UnitsConfig[] = [
   { label: "Gráfico de barras", value: "bar" },
+];
+
+// number of times vibrations have been detected and if it detected vibrations or not
+export const vibrationsDVT: UnitsConfig[] = [
+  { label: "Gráfico de barras", value: "bar" },
+  { label: "Gráfico de líneas", value: "line" },
+  { label: "Solo valor", value: "value" },
 ];
 
 // API calls
@@ -110,7 +119,7 @@ export const getAllDevicesBySpace = async (
 
     const data = await response.json();
 
-    callback(data.devices);
+    callback(data.data);
   } catch (error) {
     console.log(error);
   }
@@ -133,11 +142,9 @@ export const getDeviceById = async (
     }
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(deviceId);
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const getAllDevicesByUser = async (

@@ -8,3 +8,12 @@ export interface ChartDataProps {
     value: number;
   }[];
 }
+
+export interface THChartProps {
+  spaceId: string;
+  deviceId: string;
+  values: {
+    value: number;
+    timestamp: string;
+  }[];
+}
