@@ -100,6 +100,7 @@ function Graph(props: { device: Device }): JSX.Element {
         mt: 1,
         ml: 1,
         borderRadius: "4px",
+        height: "200rem",
       }}
     >
       <ChartCarousel device={props.device} />

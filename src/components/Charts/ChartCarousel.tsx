@@ -6,9 +6,11 @@ import {
 import { useState, useEffect } from "react";
 import { Device } from "../../api/Device";
 import { ChartDataProps } from "../../api/ChartData";
-import BarChart from "./BarChart";
+
 import PieChart from "./PieChart";
 import LineChart from "./LineChart";
+import BarChart from "./TempHumCharts/BarChart";
+import { useParams } from "react-router-dom";
 
 type ChartCarouselProps = {
   device: Device;
@@ -16,10 +18,32 @@ type ChartCarouselProps = {
 };
 
 const NumericChart = ({ device, type }: ChartCarouselProps): JSX.Element => {
+  const spaceID = useParams<{ spaceID: string }>().spaceID;
+  const values = [
+    {
+      argument: "a",
+      valueT: 1,
+      valueH: 10,
+      timestamp: "1",
+    },
+    {
+      argument: "b",
+      valueT: 2,
+      valueH: 20,
+      timestamp: "2",
+    },
+    {
+      argument: "c",
+      valueT: 3,
+      valueH: 30,
+      timestamp: "3",
+    },
+  ];
   return (
     <Box>
-      {device._id!}
-      {type === "bar" && <Box>bar</Box>}
+      {type === "bar" && (
+        <BarChart deviceId={device._id!} values={values} spaceId={spaceID!} />
+      )}
       {type === "line" && <Box>line</Box>}
       {type === "gauge" && (
         // <Gauge id={device._id} values={device.values} />

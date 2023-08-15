@@ -10,10 +10,29 @@ import {
   Paper,
   Popper,
 } from "@mui/material";
-
-import { useState, useRef } from "react";
-
+import { useState, useRef, useEffect } from "react";
 import { THChartProps } from "../../../api/ChartData";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { Space, getSpaceById } from "../../../api/Space";
+import { Device, getDeviceById } from "../../../api/Device";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const downloadOptions = ["Descargar CSV", "Descargar PDF"];
 
@@ -22,6 +41,56 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
   const [boxMarginBottom, setBoxMarginBottom] = useState(0);
+  const [space, setSpace] = useState<Space>();
+  const [device, setDevice] = useState<Device>();
+
+  useEffect(() => {
+    const fetch = async () => {
+      await getSpaceById(spaceId, (space) => {
+        setSpace(space);
+      });
+    };
+    fetch();
+  }, [spaceId]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      await getDeviceById(deviceId, (device) => {
+        setDevice(device);
+      });
+    };
+    fetch();
+  }, [deviceId]);
+
+  const options = {
+    responsive: true,
+    //maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: `Gráfico de barras de ${device?.name} en ${space?.name}`,
+      },
+    },
+  };
+  const labels = [];
+  for (let i = 0; i < values.length; i++) {
+    labels.push(values[i].argument);
+  }
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Temperatura",
+        data: values.map((value) => value.valueT),
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+      {
+        label: "Humedad",
+        data: values.map((value) => value.valueH),
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
 
   const handleClick = () => {
     console.info(`You clicked ${downloadOptions[selectedIndex]}`);
@@ -52,8 +121,6 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
 
     setOpen(false);
   };
-
-  let finalData: { tiempo: Date; valor: number }[] = [];
 
   return (
     <Box
@@ -130,13 +197,18 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
           </Grow>
         )}
       </Popper>
-
+      {/* Chart */}
       <Paper
         sx={{
           mb: 2,
           zIndex: 0,
+          whiteSpace: "nowrap",
+          width: "100%",
+          placeSelf: "center",
         }}
-      ></Paper>
+      >
+        <Bar data={data} options={options} updateMode="resize" />
+      </Paper>
     </Box>
   );
 };
