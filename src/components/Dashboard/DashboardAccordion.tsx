@@ -25,102 +25,62 @@ export interface AccordionProps {
   spaces: Space[];
 }
 
-function DevicesDetails({ devices }: { devices: string[] }): JSX.Element {
-  const [devicesInfo, setDevicesInfo] = useState<Device[]>([]);
+interface Data {
+  spaceId: string;
+  spaceName: string;
+  devices: Device[];
+}
 
-  const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    try {
-      const fetchedDevices: Device[] = [];
-      for (let deviceId of devices) {
-        //Find on the dataBase the device with the id using the function getDeviceById
-        getDeviceById(deviceId, (device) => {
-          fetchedDevices.push(device);
-        });
-        setDevicesInfo(fetchedDevices);
-        setDataLoaded(true);
-      }
-    } catch (error) {
-      //console.log(error);
-    }
-  }, [devices]);
-
-  useEffect(() => {
-    console.log(devicesInfo);
-  }, [devicesInfo]);
-
+function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
   return (
     <>
-      {!dataLoaded ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#fff",
+          width: {
+            lg: "25%",
+            md: "25%",
+            xs: "100%",
+            sm: "100%",
+          },
+          borderRadius: "4px",
+          p: 1,
+          mr: {
+            lg: 2,
+            md: 2,
+          },
+          mb: {
+            lg: 0,
+            md: 0,
+            xs: 2,
+            sm: 2,
+          },
+        }}
+      >
+        <Typography
+          fontWeight={"bold"}
+          textAlign={"left"}
+          fontSize={{ xs: 14, sm: 18, lg: 18 }}
+          color={"primary.main"}
         >
-          <Typography>Cargando...</Typography>
-        </Box>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "#fff",
-            width: {
-              lg: "25%",
-              md: "25%",
-              xs: "100%",
-              sm: "100%",
-            },
-            borderRadius: "4px",
-            p: 1,
-            mr: {
-              lg: 2,
-              md: 2,
-            },
-            mb: {
-              lg: 0,
-              md: 0,
-              xs: 2,
-              sm: 2,
-            },
-          }}
-        >
-          <Typography
-            fontWeight={"bold"}
-            textAlign={"left"}
-            fontSize={{ xs: 14, sm: 18, lg: 18 }}
-            color={"primary.main"}
-          >
-            Dispositivos conectados
-          </Typography>
+          Dispositivos conectados
+        </Typography>
 
-          <ul>
-            {devicesInfo.map((device, i) => (
-              <li key={i}>
-                <Typography textAlign={"left"}>{device.name}</Typography>
-              </li>
-            ))}
-          </ul>
-        </Box>
-      )}
+        <ul>
+          {devices.map((device, i) => (
+            <li key={i}>
+              <Typography textAlign={"left"}>{device.name}</Typography>
+            </li>
+          ))}
+        </ul>
+      </Box>
     </>
   );
 }
 
-function Summary({ devices }: { devices: String[] }): JSX.Element {
-  //Get array of the units of each device and another of the values of each device
-
-  let values: DeviceValues[] = [];
-
-  // devices.map((device) => {
-  //   for (let metric of device.values) {
-  //     values.push(metric);
-  //   }
-  // });
-
+function Summary({ devices }: { devices: Device[] }): JSX.Element {
   return (
     <Box
       sx={{
@@ -163,7 +123,7 @@ function Summary({ devices }: { devices: String[] }): JSX.Element {
             {devices.map((device, i) => (
               <li key={i}>
                 <Typography textAlign={"left"}>
-                  {device}:&nbsp;
+                  {device.name}:&nbsp;
                   {/* {device.values[device.values.length - 1].value}&nbsp; tomada
                   el&nbsp;
                   {device.values[
@@ -212,9 +172,37 @@ function Summary({ devices }: { devices: String[] }): JSX.Element {
 }
 
 const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
+  const [data, setData] = useState<Data[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const newData: Data[] = [];
+
+      for (let space of spaces) {
+        const devices: Device[] = [];
+
+        for (let deviceId of space.devices!) {
+          await getDeviceById(deviceId!, (device) => {
+            devices.push(device);
+          });
+        }
+
+        newData.push({
+          spaceId: space._id!,
+          spaceName: space.name,
+          devices: devices,
+        });
+      }
+
+      setData(newData);
+    };
+
+    fetchData();
+  }, [spaces]);
+
   return (
     <>
-      {spaces.map((space, i) => (
+      {data.map((space, i) => (
         <Accordion
           sx={{
             backgroundColor: "#ECEEEF",
@@ -232,7 +220,7 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
               textAlign={"left"}
               fontSize={{ xs: 14, sm: 18, lg: 18 }}
             >
-              {space.name}
+              {space.spaceName}
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -274,7 +262,7 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
                   }}
                 >
                   <Link
-                    to={`/spaceID/${space._id}`}
+                    to={`/spaceID/${space.spaceId}`}
                     style={{
                       textDecoration: "none",
                       color: "#042F3E",
