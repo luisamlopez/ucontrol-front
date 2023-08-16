@@ -7,10 +7,10 @@ import { useState, useEffect } from "react";
 import { Device } from "../../api/Device";
 import { ChartDataProps } from "../../api/ChartData";
 
-import PieChart from "./PieChart";
-import LineChart from "./LineChart";
 import BarChart from "./TempHumCharts/BarChart";
 import { useParams } from "react-router-dom";
+import LineChart from "./TempHumCharts/LineChart";
+import Gauge from "./TempHumCharts/Gauge";
 
 type ChartCarouselProps = {
   device: Device;
@@ -21,22 +21,19 @@ const NumericChart = ({ device, type }: ChartCarouselProps): JSX.Element => {
   const spaceID = useParams<{ spaceID: string }>().spaceID;
   const values = [
     {
-      argument: "a",
-      valueT: 1,
-      valueH: 10,
-      timestamp: "1",
+      valueT: 28,
+      valueH: 23,
+      timestamp: new Date("2023-08-02T18:18:07.434Z"),
     },
     {
-      argument: "b",
-      valueT: 2,
-      valueH: 20,
-      timestamp: "2",
+      valueT: 29,
+      valueH: 24,
+      timestamp: new Date("2023-08-02T18:18:07.434Z"),
     },
     {
-      argument: "c",
-      valueT: 3,
-      valueH: 30,
-      timestamp: "3",
+      valueT: 32,
+      valueH: 43,
+      timestamp: new Date("2023-08-02T18:18:07.434Z"),
     },
   ];
   return (
@@ -44,14 +41,16 @@ const NumericChart = ({ device, type }: ChartCarouselProps): JSX.Element => {
       {type === "bar" && (
         <BarChart deviceId={device._id!} values={values} spaceId={spaceID!} />
       )}
-      {type === "line" && <Box>line</Box>}
+      {type === "line" && (
+        <LineChart deviceId={device._id!} values={values} spaceId={spaceID!} />
+      )}
       {type === "gauge" && (
-        // <Gauge id={device._id} values={device.values} />
-        <Box>Gauge</Box>
+        <Gauge deviceId={device._id!} values={values} spaceId={spaceID!} />
+        //   <Box>Gauge</Box>
       )}
 
       {type === "value" && (
-        // <Value id={device._id} values={device.values} />
+        // <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
         <Box>Value</Box>
       )}
     </Box>
@@ -137,6 +136,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
           left: "0px",
           top: "50%",
           transform: "translateY(-50%)",
+          color: "primary.main",
         }}
         onClick={handlePrevClick}
       >
@@ -148,6 +148,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
           right: "0px",
           top: "50%",
           transform: "translateY(-50%)",
+          color: "primary.main",
         }}
         onClick={handleNextClick}
       >

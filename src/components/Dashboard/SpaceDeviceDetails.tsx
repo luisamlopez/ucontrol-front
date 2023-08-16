@@ -72,18 +72,6 @@ function Details(props: { device: Device }): JSX.Element {
  */
 
 function Graph(props: { device: Device }): JSX.Element {
-  // let chartData: ChartDataProps = {
-  //   _id: props.device._id,
-  //   data: [],
-  // };
-
-  // props.device.metricsAndUnits.forEach((metric) => {
-  //   chartData.data.push({
-  //     argument: metric.metric,
-  //     value: metric.value,
-  //   });
-  // });
-
   return (
     <Box
       sx={{
@@ -100,7 +88,7 @@ function Graph(props: { device: Device }): JSX.Element {
         mt: 1,
         ml: 1,
         borderRadius: "4px",
-        height: "200rem",
+        height: "28rem",
       }}
     >
       <ChartCarousel device={props.device} />
@@ -131,6 +119,7 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
             p: 1,
             mb: 1,
           }}
+          key={index}
         >
           <Box
             sx={{

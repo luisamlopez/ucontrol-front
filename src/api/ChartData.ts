@@ -13,9 +13,8 @@ export interface THChartProps {
   spaceId: string;
   deviceId: string;
   values: {
-    argument: string;
     valueT: number;
     valueH: number;
-    timestamp: string;
+    timestamp: Date;
   }[];
 }

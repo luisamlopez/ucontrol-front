@@ -16,19 +16,21 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
@@ -36,7 +38,11 @@ ChartJS.register(
 
 const downloadOptions = ["Descargar CSV", "Descargar PDF"];
 
-const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
+const LineChart = ({
+  spaceId,
+  deviceId,
+  values,
+}: THChartProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -71,7 +77,7 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     plugins: {
       title: {
         display: true,
-        text: `Gráfico de barras de ${device?.name} en ${space?.name}`,
+        text: `Gráfico de línea de ${device?.name} en ${space?.name}`,
       },
     },
   };
@@ -85,11 +91,13 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
       {
         label: "Temperatura",
         data: values.map((value) => value.valueT),
+        borderColor: "rgb(255, 99, 132)",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
       {
         label: "Humedad",
         data: values.map((value) => value.valueH),
+        borderColor: "rgb(53, 162, 235)",
         backgroundColor: "rgba(53, 162, 235, 0.5)",
       },
     ],
@@ -210,7 +218,7 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
           placeSelf: "center",
         }}
       >
-        <Bar
+        <Line
           data={data}
           options={options}
           updateMode="resize"
@@ -222,4 +230,4 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   );
 };
 
-export default BarChart;
+export default LineChart;

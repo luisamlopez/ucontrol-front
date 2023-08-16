@@ -16,27 +16,22 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
 const downloadOptions = ["Descargar CSV", "Descargar PDF"];
 
-const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
+const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -62,7 +57,7 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     fetch();
   }, [deviceId]);
 
-  const options = {
+  const temperatureOptions = {
     responsive: true,
     // Establecer el tamaño deseado para el gráfico
     maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
@@ -71,26 +66,90 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     plugins: {
       title: {
         display: true,
-        text: `Gráfico de barras de ${device?.name} en ${space?.name}`,
+        text: `Temperatura de ${device?.name} en ${space?.name}`,
       },
     },
   };
-  const labels = [];
+
+  const humidityOptions = {
+    responsive: true,
+    // Establecer el tamaño deseado para el gráfico
+    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
+    width: 700, // Ancho en píxeles
+    height: 400, // Alto en píxeles
+    plugins: {
+      title: {
+        display: true,
+        text: `Humedad de ${device?.name} en ${space?.name}`,
+      },
+    },
+  };
+
+  const temperatureLabels = [];
   for (let i = 0; i < values.length; i++) {
-    labels.push(values[i].timestamp.toLocaleString());
+    temperatureLabels.push(values[i].timestamp.toLocaleString());
   }
-  const data = {
-    labels,
+
+  function getGradient(chart: any) {
+    const {
+      ctx,
+      chartArea: { top, bottom, left, right },
+    } = chart;
+    const gradientSegment = ctx.createLinearGradient(left, 0, right, 0);
+    gradientSegment.addColorStop(0, "#FF0000"); //red
+    gradientSegment.addColorStop(0.5, "#FFC526"); //yellow
+    gradientSegment.addColorStop(1, "#047732"); //green
+    return gradientSegment;
+  }
+
+  const temperatureData = {
+    //temperatureLabels,
     datasets: [
       {
         label: "Temperatura",
         data: values.map((value) => value.valueT),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        circumference: 180,
+        rotation: 270,
+        backgroundColor: (context: any) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            // This case happens on initial chart load
+            return null;
+          }
+          if (context.datsIndex === 0) {
+            return getGradient(chart);
+          }
+        },
       },
+
+      //   {
+      //     label: "Humedad",
+      //     data: values.map((value) => value.valueH),
+      //     borderColor: "rgb(53, 162, 235)",
+      //     backgroundColor: "rgba(53, 162, 235, 0.5)",
+      //   },
+    ],
+  };
+  const humidityData = {
+    //temperatureLabels,
+    datasets: [
       {
         label: "Humedad",
         data: values.map((value) => value.valueH),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        circumference: 180,
+        rotation: 270,
+        backgroundColor: (context: any) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) {
+            // This case happens on initial chart load
+            return null;
+          }
+          if (context.datsIndex === 0) {
+            return getGradient(chart);
+          }
+        },
       },
     ],
   };
@@ -123,6 +182,45 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     }
 
     setOpen(false);
+  };
+  const temperatureValue = {
+    id: `temperatureValue-${spaceId}-${deviceId}`,
+    beforeDatasetDraw(chart: any, args: any, pluginOptions: any) {
+      const {
+        ctx,
+        chartArea: { left, top, width, height },
+      } = chart;
+      ctx.save();
+      ctx.fillStyle = "primary.main";
+      ctx.font = "bold 50px";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        values[values.length - 1].valueT + "°C",
+        left + width / 2,
+        top + height - 10
+      );
+      ctx.restore();
+    },
+  };
+
+  const humidityValue = {
+    id: `humidityValue-${spaceId}-${deviceId}`,
+    beforeDatasetDraw(chart: any, args: any, pluginOptions: any) {
+      const {
+        ctx,
+        chartArea: { left, top, width, height },
+      } = chart;
+      ctx.save();
+      ctx.fillStyle = "primary.main";
+      ctx.font = "bold 50px";
+      ctx.textAlign = "center";
+      ctx.fillText(
+        values[values.length - 1].valueH + "%",
+        left + width / 2,
+        top + height - 10
+      );
+      ctx.restore();
+    },
   };
 
   return (
@@ -207,19 +305,36 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
           zIndex: 0,
           whiteSpace: "nowrap",
           width: "90%",
-          placeSelf: "center",
+          display: "flex",
+          flexDirection: {
+            lg: "column",
+            md: "row",
+            xs: "row",
+            sm: "row",
+          },
         }}
       >
-        <Bar
-          data={data}
-          options={options}
+        {/* <Doughnut
+          data={temperatureData}
+          options={temperatureOptions}
           updateMode="resize"
           width={700}
           height={400}
+          plugins={[temperatureValue]}
+        /> */}
+        que se vea en uno solo pero con dos arcos uno para temperatura y otro
+        para humedad
+        <Doughnut
+          data={humidityData}
+          options={humidityOptions}
+          updateMode="resize"
+          width={700}
+          height={400}
+          plugins={[humidityValue]}
         />
       </Paper>
     </Box>
   );
 };
 
-export default BarChart;
+export default Gauge;
