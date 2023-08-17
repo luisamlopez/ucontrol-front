@@ -219,7 +219,7 @@ const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
             mb: 2,
             zIndex: 0,
             whiteSpace: "nowrap",
-            width: "90%",
+            width: "80%",
             placeSelf: "center",
             height: "20rem",
           }}

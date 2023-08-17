@@ -1,36 +1,11 @@
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { THChartProps } from "../../../api/ChartData";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "../DownloadDataModal";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-const LineChart = ({
-  spaceId,
-  deviceId,
-  values,
-}: THChartProps): JSX.Element => {
+const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   const [space, setSpace] = useState<Space>();
   const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
@@ -61,44 +36,13 @@ const LineChart = ({
     setOpenModal(true);
   };
 
-  const options = {
-    responsive: true,
-    // Establecer el tamaño deseado para el gráfico
-    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
-    width: 700, // Ancho en píxeles
-    height: 400, // Alto en píxeles
-    plugins: {
-      title: {
-        display: true,
-        text: `Gráfico de línea de ${device?.name} en ${space?.name}`,
-      },
-    },
-  };
   const labels = [];
   for (let i = 0; i < values.length; i++) {
     labels.push(values[i].timestamp.toLocaleString());
   }
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "Temperatura",
-        data: values.map((value) => value.valueT),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
-        label: "Humedad",
-        data: values.map((value) => value.valueH),
-        borderColor: "rgb(53, 162, 235)",
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
 
   return (
     <>
-      {" "}
       <Box
         sx={{
           display: "flex",
@@ -134,6 +78,7 @@ const LineChart = ({
         >
           Descargar
         </Button>
+
         <Paper
           sx={{
             mb: 2,
@@ -142,15 +87,27 @@ const LineChart = ({
             width: "80%",
             placeSelf: "center",
             height: "20rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: {
+              lg: "row",
+              md: "row",
+              xs: "column",
+              sm: "column",
+            },
           }}
         >
-          <Line
-            data={data}
-            options={options}
-            updateMode="resize"
-            width={700}
-            height={400}
-          />
+          <Box>
+            <Typography fontWeight={600} fontSize={24}>
+              Temperatura: {values[values.length - 1].valueT} °C &nbsp;
+            </Typography>
+          </Box>
+          <Box>
+            <Typography fontWeight={600} fontSize={24}>
+              Humedad: {values[values.length - 1].valueH} %
+            </Typography>
+          </Box>
         </Paper>
       </Box>
       <DownloadDataModal
@@ -166,4 +123,4 @@ const LineChart = ({
   );
 };
 
-export default LineChart;
+export default Value;

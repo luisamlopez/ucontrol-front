@@ -11,6 +11,7 @@ import BarChart from "./TempHumCharts/BarChart";
 import { useParams } from "react-router-dom";
 import LineChart from "./TempHumCharts/LineChart";
 import Gauge from "./TempHumCharts/Gauge";
+import Value from "./TempHumCharts/Value";
 
 type ChartCarouselProps = {
   device: Device;
@@ -23,17 +24,17 @@ const NumericChart = ({ device, type }: ChartCarouselProps): JSX.Element => {
     {
       valueT: 28,
       valueH: 23,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
+      timestamp: new Date("2023-07-02T18:18:07.434Z"),
     },
     {
-      valueT: 29,
+      valueT: 29.3,
       valueH: 24,
       timestamp: new Date("2023-08-02T18:18:07.434Z"),
     },
     {
       valueT: 32,
-      valueH: 43,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
+      valueH: 43.1,
+      timestamp: new Date("2023-08-12T18:18:07.434Z"),
     },
   ];
   return (
@@ -50,8 +51,7 @@ const NumericChart = ({ device, type }: ChartCarouselProps): JSX.Element => {
       )}
 
       {type === "value" && (
-        // <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
-        <Box>Value</Box>
+        <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
       )}
     </Box>
   );
@@ -95,9 +95,10 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
               height: "100%",
             }}
           >
-            {(device.type === "tempHum" || device.type === "hum") && (
+            {device.type === "tempHum" && (
               <NumericChart device={device} type={type} />
             )}
+            {device.type === "hum" && <></>}
             {device.type !== "tempHum" && device.type !== "hum" && (
               <>
                 {type === "bar" && (

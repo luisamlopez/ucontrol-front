@@ -175,6 +175,7 @@ const Modal = (props: DeviceModalProps) => {
         justifyContent: "center",
         m: 2,
       }}
+      fullScreen
     >
       <Tooltip title="Cerrar">
         <IconButton

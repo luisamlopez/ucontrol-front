@@ -14,12 +14,6 @@ interface Props {
  * @returns  un componente con los detalles del dispositivo
  */
 function Details(props: { device: Device }): JSX.Element {
-  // Verifica y convierte la propiedad 'createdOn' a tipo Date
-  let modifiedDevice = { ...props.device }; // Crea un nuevo objeto a partir del objeto original
-  if (modifiedDevice.createdOn && !(modifiedDevice.createdOn instanceof Date)) {
-    modifiedDevice.createdOn = new Date(modifiedDevice.createdOn);
-  }
-
   return (
     <Box
       sx={{

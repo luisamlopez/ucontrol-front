@@ -1,5 +1,4 @@
 import { CloseRounded } from "@mui/icons-material";
-import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
@@ -17,11 +16,12 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
 
 interface DownloadDataModalProps {
   show: boolean;
   handleClose: () => void;
-  data?: any[];
+  data: any[];
   startDate: Date;
   endDate: Date;
   deviceName: string;
@@ -33,10 +33,35 @@ const DownloadDataModal = ({
   handleClose,
   deviceName,
   spaceName,
-  startDate,
-  endDate,
+  startDate: initialStartDate,
+  endDate: initialEndDate,
   data,
 }: DownloadDataModalProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
+  const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
+
+  const handleStartDateChange = (date: Date | null) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Date | null) => {
+    setEndDate(date);
+  };
+
+  const [filteredData, setFilteredData] = useState(data);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      const filtered = data.filter((value) => {
+        const timestamp = value.timestamp;
+        return timestamp >= startDate && timestamp <= endDate;
+      });
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data);
+    }
+  }, [startDate, endDate, data]);
+
   return (
     <Dialog
       open={show}
@@ -99,42 +124,28 @@ const DownloadDataModal = ({
             <DatePicker
               label="Desde"
               value={startDate}
-              onChange={(newValue: any) => {
-                //data.setStartDate(newValue);
-              }}
-              //   renderInput={(params) => <TextField {...params} />}
+              onChange={handleStartDateChange}
             />
             <DatePicker
               label="Hasta"
               value={endDate}
-              onChange={(newValue: any) => {
-                // data.setEndDate(newValue);
-              }}
-              //   renderInput={(params) => <TextField {...params} />}
+              onChange={handleEndDateChange}
             />
           </LocalizationProvider>
         </Box>
         <DataGrid
-          rows={[
-            {
-              id: 1,
-              timestamp: "2021-10-10 10:00:00",
-              temperature: 20,
-              humidity: 50,
-            },
-            {
-              id: 2,
-              timestamp: "2021-10-10 10:00:00",
-              temperature: 20,
-              humidity: 50,
-            },
-            {
-              id: 3,
-              timestamp: "2021-10-10 10:00:00",
-              temperature: 20,
-              humidity: 50,
-            },
-          ]}
+          // rows={filteredData.map((value, index) => ({
+          //   id: index,
+          //   timestamp: value.timestamp,
+          //   temperature: value.valueT,
+          //   humidity: value.valueH,
+          // }))}
+          rows={filteredData.map((value, index) => ({
+            id: index,
+            timestamp: value.timestamp,
+            temperature: value.valueT,
+            humidity: value.valueH,
+          }))}
           columns={[
             { field: "timestamp", headerName: "Fecha", width: 200 },
             { field: "temperature", headerName: "Temperatura", width: 200 },
@@ -145,8 +156,8 @@ const DownloadDataModal = ({
               <CustomToolbar
                 deviceName={deviceName}
                 spaceName={spaceName}
-                startDate={startDate}
-                endDate={endDate}
+                startDate={startDate!}
+                endDate={endDate!}
               />
             ),
           }}

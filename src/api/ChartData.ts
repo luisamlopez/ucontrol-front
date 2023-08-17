@@ -18,3 +18,12 @@ export interface THChartProps {
     timestamp: Date;
   }[];
 }
+
+export interface HChartProps {
+  spaceId: string;
+  deviceId: string;
+  values: {
+    value: number;
+    timestamp: Date;
+  }[];
+}
