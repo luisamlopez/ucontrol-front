@@ -195,45 +195,41 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
+    const field: string[] = [];
+    if (values.name !== spaceToEdit?.name) {
+      field.push(
+        "Cambio de nombre: " + spaceToEdit?.name + " -> " + values.name
+      );
+    }
+    if (values.description !== spaceToEdit?.description) {
+      field.push(
+        "Cambio en la descripción: " +
+          spaceToEdit?.description +
+          " -> " +
+          values.description
+      );
+    }
+    const spaceUpdate: Space = {
+      name: values.name,
+      description: values.description,
+      createdBy: values.createdBy,
+    };
     try {
-      if (!spaceType) {
-        const spaceDataParent: Space = {
-          _id: values._id,
-          name: values.name,
-          description: values.description,
-
-          createdBy: values.createdBy,
-          createdOn: values.createdOn,
-        };
-        const response = await updateSpace(spaceDataParent, props.spaceID!);
-        if (response) {
-          enqueueSnackbar("Espacio editado con éxito", {
-            variant: "success",
-          });
-          navigate("/spaces");
-        } else {
-          enqueueSnackbar("Hubo un error", { variant: "error" });
-        }
-      } else if (spaceType) {
-        const spaceData: Space = {
-          _id: values._id,
-          name: values.name,
-          description: values.description,
-          parentSpace: selectedSpace?._id!,
-          createdBy: values.createdBy,
-          createdOn: values.createdOn,
-        };
-
-        const response = await updateSpace(spaceData, props.spaceID!);
-        if (response) {
-          enqueueSnackbar("Espacio editado con éxito", {
-            variant: "success",
-          });
-          navigate("/spaces");
-        } else {
-          enqueueSnackbar("Hubo un error", { variant: "error" });
-        }
+      const response = await updateSpace(
+        field,
+        props.spaceID!,
+        user?.name!,
+        spaceUpdate
+      );
+      if (response) {
+        enqueueSnackbar("Espacio editado con éxito", {
+          variant: "success",
+        });
+        navigate("/spaces");
+      } else {
+        enqueueSnackbar("Hubo un error", { variant: "error" });
       }
+
       actions.setSubmitting(true);
     } catch (error) {
       console.log(error);

@@ -64,13 +64,26 @@ export const getSpaces = async (callback: (spaces: Space[]) => void) => {
   }
 };
 
-export const updateSpace = async (spaceData: Space, spaceId: string) => {
+export const updateSpace = async (
+  fields: string[],
+  spaceId: string,
+  username: string,
+  spaceUpdate: Space
+) => {
+  console.log(spaceUpdate);
+
   try {
     const response = await fetch(`${url}updateSpace`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ spaceUpdate: spaceData, spaceId: spaceId }),
+      body: JSON.stringify({
+        fields: fields,
+        spaceId: spaceId,
+        userName: username,
+        spaceUpdate: spaceUpdate,
+      }),
     });
+    console.log(response);
     if (response.ok) return true;
   } catch (error) {
     return false;
