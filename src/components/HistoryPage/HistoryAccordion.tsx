@@ -9,7 +9,6 @@ import { Device } from "../../api/Device";
 import { Space } from "../../api/Space";
 import { useState } from "react";
 import { KeyboardArrowDownRounded } from "@mui/icons-material";
-import { format } from "date-fns";
 
 interface HistoryProps {
   devices?: Device[];
@@ -145,7 +144,6 @@ function DeviceDetails(device: Device) {
 
 function SpaceDetails(space: Space) {
   const [expanded, setExpanded] = useState<string | false>(false);
-  const formattedCreatedOn = format(space.createdOn!, "dd/MM/yyyy");
   // const formattedUpdatedOn = space.history![space.history!.length - 1].updatedOn
   //   ? format(space.history![space.history!.length - 1].updatedOn, "dd/MM/yyyy")
   //   : formattedCreatedOn;
@@ -195,16 +193,16 @@ function SpaceDetails(space: Space) {
             fontWeight: "bold",
           }}
         >
-          {/* " {space.history && space.history.length > 0
+          {space.history && space.history.length > 0
             ? space.history[space.history.length - 1].updatedBy
-            : space.createdBy}" */}
+            : space.createdBy}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Typography mb={2} fontWeight={"bold"}>
           Historial de Cambios
         </Typography>
-        {/* {space && space.history && space.history.length > 0 ? (
+        {space && space.history && space.history.length > 0 ? (
           <Box
             sx={{
               width: "100%",
@@ -228,7 +226,11 @@ function SpaceDetails(space: Space) {
                     Fecha del cambio:
                   </Typography>
                   <Typography>
-                    {format(history.updatedOn, "dd/mm/yyyy")}
+                    {new Date(history.updatedOn).toLocaleString("es-VE", {
+                      hour12: false,
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })}
                   </Typography>
                 </Box>
 
@@ -243,17 +245,8 @@ function SpaceDetails(space: Space) {
                   <Typography color={"primary.main"} fontWeight={"medium"}>
                     Nombre del dispositivo:
                   </Typography>
-                  <Typography>{history.field}</Typography>
-                </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <Typography color={"primary.main"} fontWeight={"medium"}>
-                    Dispositivos:
-                  </Typography>
-                  <Typography mb={2}>
-                    {space.devices && space.devices.length > 0
-                      ? space.devices.map((space) => space.name).join(", ")
-                      : "No hay dispositivos asociados"}
+                  <Typography>
+                    {history.field.flatMap((obj) => obj).join("\n")}
                   </Typography>
                 </Box>
               </Box>
@@ -261,7 +254,7 @@ function SpaceDetails(space: Space) {
           </Box>
         ) : (
           <Typography>No hay historial de cambios</Typography>
-        )} */}
+        )}
       </AccordionDetails>
     </Accordion>
   );

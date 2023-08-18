@@ -15,20 +15,6 @@ const SpacePage = (): JSX.Element => {
 
   const { spaceID } = useParams<{ spaceID: string }>();
 
-  // useEffect(() => {
-  //   try {
-  //     getAllDevicesBySpace(spaceID!, (devices) => {
-  //       setDevices(devices!);
-  //       setDataLoaded(true);
-  //     });
-  //     console.log(spaces);
-  //   } catch (error) {
-  //     alert(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [spaceID, spaces]);
-
   /**
    * Get space info from DB by ID
    */

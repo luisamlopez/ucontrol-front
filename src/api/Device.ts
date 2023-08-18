@@ -86,13 +86,21 @@ export const vibrationsDVT: UnitsConfig[] = [
 
 // API calls
 
-export const createDevice = async (deviceData: Device, spaceId: string) => {
+export const createDevice = async (
+  deviceData: Device,
+  spaceId: string,
+  userName: string
+) => {
   try {
     //   console.log(deviceData);
     const response = await fetch(`${url}createDevice`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ deviceData: deviceData, spaceId: spaceId }),
+      body: JSON.stringify({
+        deviceData: deviceData,
+        spaceId: spaceId,
+        userName: userName,
+      }),
     });
 
     if (response.ok) return true;
@@ -177,7 +185,12 @@ export const getAllDevicesByUser = async (
   }
 };
 
-export const updateDevice = async (deviceData: Device, id: string) => {
+export const updateDevice = async (
+  deviceData: Device,
+  id: string,
+  fields: string[],
+  username: string
+) => {
   try {
     const response = await fetch(`${url}updateDevice`, {
       method: "PATCH",
@@ -188,6 +201,8 @@ export const updateDevice = async (deviceData: Device, id: string) => {
         description: deviceData.description,
         dvt: deviceData.dvt,
         topic: deviceData.topic,
+        fields: fields,
+        userName: username,
       }),
     });
 
@@ -197,12 +212,12 @@ export const updateDevice = async (deviceData: Device, id: string) => {
   }
 };
 
-export const deleteDevice = async (deviceId: string) => {
+export const deleteDevice = async (deviceId: string, userName: string) => {
   try {
     const response = await fetch(`${url}deleteDevice`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: deviceId }),
+      body: JSON.stringify({ id: deviceId, userName: userName }),
     });
     if (response.ok) return true;
   } catch (error) {

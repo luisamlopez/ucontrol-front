@@ -8,10 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import DevicesDetailsText from "../DeviceDetailsText";
-import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import { useEffect, useRef, useState } from "react";
-import { format } from "date-fns";
 import { User, getUserById } from "../../api/User";
 import { Space, getSpaceById } from "../../api/Space";
 
@@ -21,12 +19,6 @@ const DeviceCard = (device: Device): JSX.Element => {
   const [spaceId, setSpaceId] = useState<string>("");
 
   const routeRef = useRef<string>(""); // Create a ref to store the route value
-
-  // Verifica y convierte la propiedad 'createdOn' a tipo Date
-  let modifiedDevice = { ...device }; // Crea un nuevo objeto a partir del objeto original
-  if (modifiedDevice.createdOn && !(modifiedDevice.createdOn instanceof Date)) {
-    modifiedDevice.createdOn = new Date(modifiedDevice.createdOn);
-  }
 
   useEffect(() => {
     try {
@@ -115,7 +107,7 @@ const DeviceCard = (device: Device): JSX.Element => {
             color={"primary.main"}
             mb={1}
             sx={{
-              minHeight: { xs: "50px", sm: "50px", md: "50px", lg: "auto" },
+              minHeight: "50px",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "wrap",

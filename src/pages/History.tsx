@@ -1,104 +1,63 @@
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
-import { Device } from "../api/Device";
+import { Device, getAllDevicesByUser } from "../api/Device";
 import { useEffect, useState } from "react";
 import HistoryTable from "../components/HistoryPage/HistoryTable";
 import HistoryAccordion from "../components/HistoryPage/HistoryAccordion";
-import { Space } from "../api/Space";
+import { Space, getSpaces } from "../api/Space";
+import { useUser } from "../contexts/authContext";
 
 const History = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
-  const [loading, setLoading] = useState<boolean>(true);
+  const { user } = useUser();
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
+  /**
+   * Get all spaces from API but only keep the ones with history
+   */
+
   useEffect(() => {
-    const fetchData = async () => {
-      setTimeout(() => {
-        const dataDevices: Device[] = [
-          {
-            _id: "1",
-            name: "Device 1",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-            dvt: ["pie", "bar"],
-            type: "type 1",
-            topic: "Topic 1.1",
+    const fetch = async () => {
+      try {
+        await getSpaces((allSpaces) => {
+          //Get spaces with devices only
+          allSpaces = allSpaces.filter(
+            (space) => space.history && space.history.length > 0
+          );
+          setSpaces(allSpaces);
+        });
 
-            history: [
-              {
-                updatedBy: "User 1",
-                updatedOn: new Date(2022, 10, 1, 14, 23, 8),
-                field: ["Cambio 1"],
-              },
-            ],
-          },
-          {
-            _id: "2",
-            name: "Device 2",
-            description: "Description 2",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 2",
-            dvt: ["bar", "line"],
-            topic: "Topic 2.1",
-            type: "type 2",
-          },
-          {
-            _id: "3",
-            name: "Device 3",
-            description: "Description 3",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 3",
-            dvt: ["pie"],
-            type: "type 3",
-            topic: "Topic 3.1",
-          },
-        ];
-        const dataSpaces: Space[] = [
-          {
-            _id: "1",
-            name: "Space 1",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-          },
+        await getAllDevicesByUser(user!._id!, (allDevices) => {
+          //Get devices with history only
+          allDevices = allDevices.filter(
+            (device) => device.history && device.history.length > 0
+          );
+          setDevices(allDevices);
+        });
 
-          {
-            _id: "2",
-            name: "Space 2",
-            description: "Description 1",
-            createdOn: new Date("2022-01-01T00:00:00Z"),
-            createdBy: "User 1",
-
-            history: [
-              {
-                field: ["cambio 1"],
-                updatedBy: "userr",
-                updatedOn: new Date("2022-01-01T00:00:00Z"),
-              },
-            ],
-            devices: ["1", "2"],
-          },
-        ];
-        setDevices(dataDevices);
-        setSpaces(dataSpaces);
         setDataLoaded(true);
-      }, 2000);
+        //  console.log(spaces);
+      } catch (error) {
+        alert(error);
+      }
+    };
+    fetch();
+  }, [user]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
     };
 
-    const handleResize = () => setWindowWidth(window.innerWidth);
+    // Add event listener for window resize
     window.addEventListener("resize", handleResize);
-    try {
-      fetchData();
-    } catch (error) {
-      alert(error);
-    } finally {
-      //  window.removeEventListener("resize", handleResize);
-      setLoading(false);
-    }
+
+    // Clean up event listener on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
@@ -123,17 +82,7 @@ const History = (): JSX.Element => {
           >
             Historial de dispositivos
           </Typography>
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
+          {!dataLoaded ? (
             <Box
               sx={{
                 display: "flex",
@@ -168,17 +117,7 @@ const History = (): JSX.Element => {
           >
             Historial de espacios
           </Typography>
-          {loading ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : !dataLoaded ? (
+          {!dataLoaded ? (
             <Box
               sx={{
                 display: "flex",

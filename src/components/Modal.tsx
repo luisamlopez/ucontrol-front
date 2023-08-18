@@ -51,7 +51,7 @@ const Modal = (props: DeviceModalProps) => {
 
   const handleDeleteDevice = async () => {
     try {
-      if (await deleteDevice(props.device!._id!)) {
+      if (await deleteDevice(props.device!._id!, user?.name!)) {
         enqueueSnackbar("Dispositivo eliminado", { variant: "success" });
         window.location.reload();
       } else {
@@ -175,7 +175,6 @@ const Modal = (props: DeviceModalProps) => {
         justifyContent: "center",
         m: 2,
       }}
-      fullScreen
     >
       <Tooltip title="Cerrar">
         <IconButton
@@ -357,6 +356,7 @@ const Modal = (props: DeviceModalProps) => {
           alignSelf: "flex-end",
           m: 2,
           p: 2,
+          placeSelf: "end",
         }}
       >
         <Button

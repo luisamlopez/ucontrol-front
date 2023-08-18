@@ -196,7 +196,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         type: values.type,
         topic: routeRef.current + " / " + values.name,
       };
-      const response = await createDevice(deviceData, selectedSpace?._id!);
+      const response = await createDevice(
+        deviceData,
+        selectedSpace?._id!,
+        user?.name!
+      );
       // console.log(response);
       if (response) {
         enqueueSnackbar("Dispositivo creado con éxito", {
@@ -234,8 +238,46 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
           type: values.type,
           topic: routeRef.current + " / " + values.name,
         };
-        console.log(deviceData);
-        const response = await updateDevice(deviceData, props.deviceID!);
+        const fields: string[] = [];
+        //fill the fields to add on the history
+        if (values.name !== deviceToEdit?.name) {
+          fields.push(
+            "Cambio de nombre: " + deviceToEdit?.name + " -> " + values.name
+          );
+        }
+        if (values.description !== deviceToEdit?.description) {
+          fields.push(
+            "Cambio de descripción: " +
+              deviceToEdit?.description +
+              " -> " +
+              values.description
+          );
+        }
+        if (JSON.stringify(values.dvt) !== JSON.stringify(deviceToEdit?.dvt)) {
+          fields.push(
+            "Cambio de tipo de visualización: " +
+              deviceToEdit?.dvt +
+              " -> " +
+              deviceData.dvt
+          );
+        }
+        if (deviceData.topic !== deviceToEdit?.topic) {
+          fields.push(
+            "Cambio de tópico: " +
+              deviceToEdit?.topic +
+              " -> " +
+              routeRef.current +
+              " / " +
+              values.name
+          );
+        }
+
+        const response = await updateDevice(
+          deviceData,
+          props.deviceID!,
+          fields,
+          user?.name!
+        );
         if (response) {
           enqueueSnackbar("Dispositivo editado con éxito", {
             variant: "success",
