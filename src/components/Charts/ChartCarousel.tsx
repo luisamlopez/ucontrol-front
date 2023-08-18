@@ -5,7 +5,7 @@ import {
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Device, getSpaceFromDeviceId } from "../../api/Device";
-import BarChart from "./TempHumCharts/BarChart";
+import GeneralBarChart from "./GeneralBarChart";
 import { useParams } from "react-router-dom";
 import LineChart from "./TempHumCharts/LineChart";
 import Gauge from "./TempHumCharts/Gauge";
@@ -16,6 +16,7 @@ import SoilGauge from "./SoilCharts/SoilGauge";
 import SoilValue from "./SoilCharts/SoilValue";
 import Table from "./SwitchControlCharts/Table";
 import { Space } from "../../api/Space";
+import BarChart from "./TempHumCharts/BarChart";
 
 type ChartCarouselProps = {
   device: Device;
@@ -163,11 +164,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
             )}
             {device.type !== "tempHum" && device.type !== "hum" && (
               <>
-                {type === "bar" && (
-                  // <BarChart id={device.id} values={device.values} />
-
-                  <Box>Bar</Box>
-                )}
+                {type === "bar" && <GeneralBarChart deviceId={device._id!} />}
                 {type === "pie" && (
                   // <PieChart id={device.id} values={device.values} />
                   <Box>Pie</Box>

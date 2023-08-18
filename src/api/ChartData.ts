@@ -31,7 +31,3 @@ export interface HChartProps {
     timestamp: Date;
   }[];
 }
-
-export interface SwitchChartProps {
-  deviceId: string;
-}

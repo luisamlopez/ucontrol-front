@@ -1,5 +1,3 @@
-import { SwitchChartProps } from "../../../api/ChartData";
-
 import {
   Box,
   Button,
@@ -22,7 +20,11 @@ import {
 import { Space, getSpaceById } from "../../../api/Space";
 import DownloadDataModal from "./DownloadDataModal";
 
-const Table = ({ deviceId }: SwitchChartProps): JSX.Element => {
+interface Props {
+  deviceId: string;
+}
+
+const Table = ({ deviceId }: Props): JSX.Element => {
   const values = [
     {
       timestamp: new Date("2021-06-01T00:00:00.000Z"),

@@ -1,7 +1,8 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Switch, Typography } from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
 import ChartCarousel from "../Charts/ChartCarousel";
+import { useState } from "react";
 
 interface Props {
   devices: Device[];
@@ -90,6 +91,11 @@ function Graph(props: { device: Device }): JSX.Element {
 }
 
 const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
+  const [checked, setChecked] = useState(true);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
   return (
     <Box
       sx={{
@@ -147,7 +153,15 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
             }}
           >
             <Details device={device} />
-            {(device.type === "luz" || device.type === "aire") && <>switch</>}
+            {(device.type === "luz" || device.type === "aire") && (
+              <>
+                <Switch
+                  checked={checked}
+                  onChange={handleChange}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </>
+            )}
             <Graph device={device} />
           </Box>
         </Box>
