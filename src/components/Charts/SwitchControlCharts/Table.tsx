@@ -1,8 +1,3 @@
-import {
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarExport,
-} from "@mui/x-data-grid";
 import { SwitchChartProps } from "../../../api/ChartData";
 
 import {
@@ -10,22 +5,24 @@ import {
   Button,
   Paper,
   TableContainer,
-  Typography,
   Table as TableMUI,
   TableCell,
   TableRow,
   TableHead,
   TableBody,
+  Typography,
 } from "@mui/material";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 import { useState, useEffect } from "react";
-import { Device, getDeviceById } from "../../../api/Device";
+import {
+  Device,
+  getDeviceById,
+  getSpaceFromDeviceId,
+} from "../../../api/Device";
 import { Space, getSpaceById } from "../../../api/Space";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import DownloadDataModal from "./DownloadDataModal";
 
-const Table = ({ spaceId, deviceId }: SwitchChartProps): JSX.Element => {
+const Table = ({ deviceId }: SwitchChartProps): JSX.Element => {
   const values = [
     {
       timestamp: new Date("2021-06-01T00:00:00.000Z"),
@@ -77,15 +74,19 @@ const Table = ({ spaceId, deviceId }: SwitchChartProps): JSX.Element => {
   const [space, setSpace] = useState<Space>();
   const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
+  const [spaceId, setSpaceId] = useState<string>("");
 
   useEffect(() => {
     const fetch = async () => {
+      await getSpaceFromDeviceId(deviceId, (space) => {
+        setSpaceId(space);
+      });
       await getSpaceById(spaceId, (space) => {
         setSpace(space);
       });
     };
     fetch();
-  }, [spaceId]);
+  }, [deviceId, spaceId]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -104,32 +105,11 @@ const Table = ({ spaceId, deviceId }: SwitchChartProps): JSX.Element => {
     setOpenModal(true);
   };
 
-  function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-    if (b[orderBy] < a[orderBy]) {
-      return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-      return 1;
-    }
-    return 0;
-  }
-
-  type Order = "asc" | "desc";
-
-  function getComparator<Key extends keyof any>(
-    order: Order,
-    orderBy: Key
-  ): (
-    a: { [key in Key]: number | string },
-    b: { [key in Key]: number | string }
-  ) => number {
-    return order === "desc"
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
-  }
-
   return (
     <>
+      <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
+        Tabla de estados de {device?.name} en {space?.name}
+      </Typography>
       <Box
         sx={{
           display: "flex",
@@ -172,10 +152,9 @@ const Table = ({ spaceId, deviceId }: SwitchChartProps): JSX.Element => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-
-            m: 2,
+            mx: 2,
             p: 2,
-            height: "20rem",
+            height: "18rem",
             width: "100%",
             //Delete horizontal scroll
             overflowX: "hidden",

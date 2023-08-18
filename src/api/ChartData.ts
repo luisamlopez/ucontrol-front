@@ -33,6 +33,5 @@ export interface HChartProps {
 }
 
 export interface SwitchChartProps {
-  spaceId: string;
   deviceId: string;
 }

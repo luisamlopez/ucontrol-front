@@ -3,8 +3,8 @@ import {
   KeyboardArrowLeftRounded as NavigateBefore,
   KeyboardArrowRightRounded as NavigateNext,
 } from "@mui/icons-material";
-import { useState } from "react";
-import { Device } from "../../api/Device";
+import { useEffect, useState } from "react";
+import { Device, getSpaceFromDeviceId } from "../../api/Device";
 import BarChart from "./TempHumCharts/BarChart";
 import { useParams } from "react-router-dom";
 import LineChart from "./TempHumCharts/LineChart";
@@ -15,6 +15,7 @@ import SoilLineChart from "./SoilCharts/SoilLineChart";
 import SoilGauge from "./SoilCharts/SoilGauge";
 import SoilValue from "./SoilCharts/SoilValue";
 import Table from "./SwitchControlCharts/Table";
+import { Space } from "../../api/Space";
 
 type ChartCarouselProps = {
   device: Device;
@@ -119,7 +120,6 @@ const NumericChart = ({
 
 const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(0);
-
   const dvtTypes = device.dvt;
 
   const handlePrevClick = () => {
@@ -180,9 +180,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
                   // <Gauge id={device._id} values={device.values} />
                   <Box>Gauge</Box>
                 )}
-                {type === "table" && (
-                  <Table spaceId={""} deviceId={device._id!} />
-                )}
+                {type === "table" && <Table deviceId={device._id!} />}
                 {type === "value" && (
                   // <Value id={device._id} values={device.values} />
                   <Box>Value</Box>
