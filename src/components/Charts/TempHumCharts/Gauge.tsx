@@ -1,11 +1,11 @@
 import { Box, Button, Paper } from "@mui/material";
 import { useState, useRef, useEffect } from "react";
-import { THChartProps } from "../../../api/ChartData";
+import { Columns, THChartProps } from "../../../api/ChartData";
 import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
-import DownloadDataModal from "../DownloadDataModal";
+import DownloadDataModal from "./DownloadDataModal";
 
 const legendMarginPlugin = {
   id: "legendMargin",
@@ -18,7 +18,20 @@ const legendMarginPlugin = {
     };
   },
 };
-
+const columns: Columns[] = [
+  {
+    field: "timestamp",
+    headerName: "Fecha",
+  },
+  {
+    field: "temperature",
+    headerName: "Temperatura",
+  },
+  {
+    field: "humidity",
+    headerName: "Humedad",
+  },
+];
 ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 
 const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
@@ -239,6 +252,7 @@ const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}
+        columns={columns}
       />
     </>
   );

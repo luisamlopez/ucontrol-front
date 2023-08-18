@@ -1,28 +1,23 @@
 import { Box, Button, Paper } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Columns, THChartProps } from "../../../api/ChartData";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Columns, HChartProps } from "../../../api/ChartData";
+import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+const legendMarginPlugin = {
+  id: "legendMargin",
+  beforeInit: (chart: any) => {
+    const originalFit = chart.legend.fit;
+
+    chart.legend.fit = function () {
+      originalFit.bind(chart.legend)();
+      this.height += 20;
+    };
+  },
+};
 
 const columns: Columns[] = [
   {
@@ -30,16 +25,14 @@ const columns: Columns[] = [
     headerName: "Fecha",
   },
   {
-    field: "temperature",
-    headerName: "Temperatura",
-  },
-  {
     field: "humidity",
     headerName: "Humedad",
   },
 ];
 
-const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
+ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
+
+const SoilGauge = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
   const [space, setSpace] = useState<Space>();
   const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
@@ -79,30 +72,76 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     plugins: {
       title: {
         display: true,
-        text: `Gráfico de barras de ${device?.name} en ${space?.name}`,
+        text: `Humedad de ${device?.name} en ${space?.name}`,
       },
     },
+    backgroundColor: "white",
+    cutout: "70%",
   };
-  const labels = [];
-  for (let i = 0; i < values.length; i++) {
-    labels.push(values[i].timestamp.toLocaleString());
+
+  function getGradient(chart: any, type: string) {
+    const {
+      ctx,
+      chartArea: { left, right },
+    } = chart;
+    const gradientSegment = ctx.createLinearGradient(left, 0, right, 0);
+    if (type === "temperature") {
+      gradientSegment.addColorStop(0, "#40B4E5"); //blue
+      gradientSegment.addColorStop(0.5, "#FFC526"); //yellow
+      gradientSegment.addColorStop(1, "#FF0000"); //red
+    } else {
+      gradientSegment.addColorStop(0, "#FF0000"); //red
+      gradientSegment.addColorStop(0.5, "#FFC526"); //yellow
+      gradientSegment.addColorStop(1, "#40B4E5"); //blue
+    }
+    return gradientSegment;
   }
+
   const data = {
-    labels,
     datasets: [
       {
-        label: "Temperatura",
-        data: values.map((value) => value.valueT),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
         label: "Humedad",
-        data: values.map((value) => value.valueH),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
+        data: [
+          values[values.length - 1].value,
+          100 - values[values.length - 1].value,
+        ],
+        circumference: 180,
+        rotation: 270,
+        borderWidth: 0,
+        backgroundColor: (context: any) => {
+          const chart = context.chart;
+          const { chartArea } = chart;
+          if (!chartArea) {
+            // This case happens on initial chart load
+            return null;
+          }
+
+          if (context.dataIndex === 0) {
+            return getGradient(chart, "humidity");
+          } else {
+            return "#FFFFFF";
+          }
+        },
+        hoverOffset: -20,
       },
     ],
   };
 
+  const humidityValue = {
+    id: `humidityValue-${spaceId}-${deviceId}`,
+    beforeDraw(chart: any) {
+      const {
+        ctx,
+        chartArea: { left, top, width, height },
+      } = chart;
+      const humidityLabel = `Humedad: ${values[values.length - 1].value}%`;
+      ctx.fillStyle = "black"; // Set the color for the label
+      ctx.font = "bold 16px Arial"; // Set the font style for the label
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(humidityLabel, left + width / 2, top + height - 60);
+    },
+  };
   return (
     <>
       <Box
@@ -139,6 +178,9 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
           onClick={handleOpenModal}
         >
           Descargar
+          {/* <IconButton>
+            <KeyboardArrowDownRounded fontSize="medium" htmlColor="#FFFFFF" />
+          </IconButton> */}
         </Button>
 
         <Paper
@@ -151,13 +193,7 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
             height: "20rem",
           }}
         >
-          <Bar
-            data={data}
-            options={options}
-            updateMode="resize"
-            width={700}
-            height={400}
-          />
+          <Doughnut data={data} options={options} plugins={[humidityValue]} />
         </Paper>
       </Box>
       <DownloadDataModal
@@ -174,4 +210,4 @@ const BarChart = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   );
 };
 
-export default BarChart;
+export default SoilGauge;

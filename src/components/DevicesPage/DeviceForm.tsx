@@ -784,6 +784,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         mt: 2,
                         mr: 2,
                       }}
+                      onClick={() => {
+                        navigate("/devices");
+                      }}
                     >
                       Cancelar
                     </Button>

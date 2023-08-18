@@ -26,6 +26,8 @@ const History = (): JSX.Element => {
           allSpaces = allSpaces.filter(
             (space) => space.history && space.history.length > 0
           );
+          // Invert order of array
+          allSpaces = allSpaces.reverse();
           setSpaces(allSpaces);
         });
 
@@ -34,6 +36,8 @@ const History = (): JSX.Element => {
           allDevices = allDevices.filter(
             (device) => device.history && device.history.length > 0
           );
+          // Invert order of array
+          allDevices = allDevices.reverse();
           setDevices(allDevices);
         });
 

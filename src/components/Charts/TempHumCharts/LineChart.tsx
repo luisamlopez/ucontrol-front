@@ -1,6 +1,6 @@
 import { Box, Button, Paper } from "@mui/material";
 import { useState, useEffect } from "react";
-import { THChartProps } from "../../../api/ChartData";
+import { Columns, THChartProps } from "../../../api/ChartData";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
-import DownloadDataModal from "../DownloadDataModal";
+import DownloadDataModal from "./DownloadDataModal";
 
 ChartJS.register(
   CategoryScale,
@@ -25,7 +25,20 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+const columns: Columns[] = [
+  {
+    field: "timestamp",
+    headerName: "Fecha",
+  },
+  {
+    field: "temperature",
+    headerName: "Temperatura",
+  },
+  {
+    field: "humidity",
+    headerName: "Humedad",
+  },
+];
 const LineChart = ({
   spaceId,
   deviceId,
@@ -161,6 +174,7 @@ const LineChart = ({
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}
+        columns={columns}
       />
     </>
   );

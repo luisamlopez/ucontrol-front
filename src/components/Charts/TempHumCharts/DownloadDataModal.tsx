@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogTitle,
   IconButton,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -17,10 +16,12 @@ import {
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import { Columns } from "../../../api/ChartData";
 
 interface DownloadDataModalProps {
   show: boolean;
   handleClose: () => void;
+  columns: Columns[];
   data: any[];
   startDate: Date;
   endDate: Date;
@@ -36,6 +37,7 @@ const DownloadDataModal = ({
   startDate: initialStartDate,
   endDate: initialEndDate,
   data,
+  columns,
 }: DownloadDataModalProps) => {
   const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
   const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
@@ -134,23 +136,17 @@ const DownloadDataModal = ({
           </LocalizationProvider>
         </Box>
         <DataGrid
-          // rows={filteredData.map((value, index) => ({
-          //   id: index,
-          //   timestamp: value.timestamp,
-          //   temperature: value.valueT,
-          //   humidity: value.valueH,
-          // }))}
           rows={filteredData.map((value, index) => ({
             id: index,
             timestamp: value.timestamp,
             temperature: value.valueT,
             humidity: value.valueH,
           }))}
-          columns={[
-            { field: "timestamp", headerName: "Fecha", width: 200 },
-            { field: "temperature", headerName: "Temperatura", width: 200 },
-            { field: "humidity", headerName: "Humedad", width: 200 },
-          ]}
+          columns={columns.map((column) => ({
+            field: column.field,
+            headerName: column.headerName,
+            width: 200,
+          }))}
           slots={{
             toolbar: () => (
               <CustomToolbar

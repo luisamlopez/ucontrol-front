@@ -1,5 +1,9 @@
 import { DeviceValues } from "./Device";
 
+export interface Columns {
+  field: string;
+  headerName: string;
+}
 export interface ChartDataProps {
   id?: string;
   values: DeviceValues[];

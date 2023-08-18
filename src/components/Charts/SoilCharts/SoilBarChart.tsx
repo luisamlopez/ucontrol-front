@@ -1,9 +1,28 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Columns, THChartProps } from "../../../api/ChartData";
+import { Columns, HChartProps } from "../../../api/ChartData";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const columns: Columns[] = [
   {
@@ -11,15 +30,16 @@ const columns: Columns[] = [
     headerName: "Fecha",
   },
   {
-    field: "temperature",
-    headerName: "Temperatura",
-  },
-  {
     field: "humidity",
     headerName: "Humedad",
   },
 ];
-const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
+
+const SoilBarChart = ({
+  spaceId,
+  deviceId,
+  values,
+}: HChartProps): JSX.Element => {
   const [space, setSpace] = useState<Space>();
   const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
@@ -50,10 +70,33 @@ const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     setOpenModal(true);
   };
 
+  const options = {
+    responsive: true,
+    // Establecer el tamaño deseado para el gráfico
+    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
+    width: 700, // Ancho en píxeles
+    height: 400, // Alto en píxeles
+    plugins: {
+      title: {
+        display: true,
+        text: `Gráfico de barras de ${device?.name} en ${space?.name}`,
+      },
+    },
+  };
   const labels = [];
   for (let i = 0; i < values.length; i++) {
     labels.push(values[i].timestamp.toLocaleString());
   }
+  const data = {
+    labels,
+    datasets: [
+      {
+        label: "Humedad",
+        data: values.map((value) => value.value),
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
 
   return (
     <>
@@ -101,27 +144,15 @@ const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
             width: "80%",
             placeSelf: "center",
             height: "20rem",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: {
-              lg: "row",
-              md: "row",
-              xs: "column",
-              sm: "column",
-            },
           }}
         >
-          <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Temperatura: {values[values.length - 1].valueT} °C &nbsp;
-            </Typography>
-          </Box>
-          <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Humedad: {values[values.length - 1].valueH} %
-            </Typography>
-          </Box>
+          <Bar
+            data={data}
+            options={options}
+            updateMode="resize"
+            width={700}
+            height={400}
+          />
         </Paper>
       </Box>
       <DownloadDataModal
@@ -138,4 +169,4 @@ const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   );
 };
 
-export default Value;
+export default SoilBarChart;

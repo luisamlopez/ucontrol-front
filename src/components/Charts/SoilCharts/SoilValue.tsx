@@ -1,6 +1,6 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Columns, THChartProps } from "../../../api/ChartData";
+import { Columns, HChartProps } from "../../../api/ChartData";
 import { Space, getSpaceById } from "../../../api/Space";
 import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
@@ -11,15 +11,12 @@ const columns: Columns[] = [
     headerName: "Fecha",
   },
   {
-    field: "temperature",
-    headerName: "Temperatura",
-  },
-  {
     field: "humidity",
     headerName: "Humedad",
   },
 ];
-const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
+
+const SoilValue = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
   const [space, setSpace] = useState<Space>();
   const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
@@ -114,12 +111,7 @@ const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
         >
           <Box>
             <Typography fontWeight={600} fontSize={24}>
-              Temperatura: {values[values.length - 1].valueT} °C &nbsp;
-            </Typography>
-          </Box>
-          <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Humedad: {values[values.length - 1].valueH} %
+              Humedad: {values[values.length - 1].value} %
             </Typography>
           </Box>
         </Paper>
@@ -138,4 +130,4 @@ const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   );
 };
 
-export default Value;
+export default SoilValue;

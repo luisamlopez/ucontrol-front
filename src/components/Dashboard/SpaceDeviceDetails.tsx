@@ -1,8 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
-import ChartCarousel from "../Charts/ChartCarousel";
-import { format } from "date-fns";
+import ChartCarousel from "../Charts/TempHumCharts/ChartCarousel";
 
 interface Props {
   devices: Device[];
