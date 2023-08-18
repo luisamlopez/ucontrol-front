@@ -119,7 +119,7 @@ const DownloadDataModal = ({
             alignItems: "center",
             justifyContent: "space-between",
             gap: 2,
-            m: 2,
+            my: 2,
           }}
         >
           <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -143,8 +143,7 @@ const DownloadDataModal = ({
               dateStyle: "short",
               timeStyle: "short",
             }),
-            temperature: value.valueT,
-            humidity: value.valueH,
+            state: value.value,
           }))}
           columns={columns.map((column) => ({
             field: column.field,
@@ -160,6 +159,9 @@ const DownloadDataModal = ({
                 endDate={endDate!}
               />
             ),
+          }}
+          sx={{
+            width: "100%",
           }}
         />
       </Box>

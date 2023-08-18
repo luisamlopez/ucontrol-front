@@ -47,11 +47,6 @@ const SoilValue = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
     setOpenModal(true);
   };
 
-  const labels = [];
-  for (let i = 0; i < values.length; i++) {
-    labels.push(values[i].timestamp.toLocaleString());
-  }
-
   return (
     <>
       <Box

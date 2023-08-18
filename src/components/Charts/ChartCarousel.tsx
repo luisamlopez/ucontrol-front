@@ -3,19 +3,18 @@ import {
   KeyboardArrowLeftRounded as NavigateBefore,
   KeyboardArrowRightRounded as NavigateNext,
 } from "@mui/icons-material";
-import { useState, useEffect } from "react";
-import { Device } from "../../../api/Device";
-import { ChartDataProps } from "../../../api/ChartData";
-
-import BarChart from "./BarChart";
+import { useState } from "react";
+import { Device } from "../../api/Device";
+import BarChart from "./TempHumCharts/BarChart";
 import { useParams } from "react-router-dom";
-import LineChart from "./LineChart";
-import Gauge from "./Gauge";
-import Value from "./Value";
-import SoilBarChart from "../SoilCharts/SoilBarChart";
-import SoilLineChart from "../SoilCharts/SoilLineChart";
-import SoilGauge from "../SoilCharts/SoilGauge";
-import SoilValue from "../SoilCharts/SoilValue";
+import LineChart from "./TempHumCharts/LineChart";
+import Gauge from "./TempHumCharts/Gauge";
+import Value from "./TempHumCharts/Value";
+import SoilBarChart from "./SoilCharts/SoilBarChart";
+import SoilLineChart from "./SoilCharts/SoilLineChart";
+import SoilGauge from "./SoilCharts/SoilGauge";
+import SoilValue from "./SoilCharts/SoilValue";
+import Table from "./SwitchControlCharts/Table";
 
 type ChartCarouselProps = {
   device: Device;
@@ -182,8 +181,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
                   <Box>Gauge</Box>
                 )}
                 {type === "table" && (
-                  // <Table id={device._id} values={device.values} />
-                  <Box>Table</Box>
+                  <Table spaceId={""} deviceId={device._id!} />
                 )}
                 {type === "value" && (
                   // <Value id={device._id} values={device.values} />
@@ -194,30 +192,34 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
           </Box>
         ))}
       </Box>
-      <IconButton
-        sx={{
-          position: "absolute",
-          left: "0px",
-          top: "50%",
-          transform: "translateY(-50%)",
-          color: "primary.main",
-        }}
-        onClick={handlePrevClick}
-      >
-        <NavigateBefore />
-      </IconButton>
-      <IconButton
-        sx={{
-          position: "absolute",
-          right: "0px",
-          top: "50%",
-          transform: "translateY(-50%)",
-          color: "primary.main",
-        }}
-        onClick={handleNextClick}
-      >
-        <NavigateNext />
-      </IconButton>
+      {device.dvt.length > 1 && (
+        <>
+          <IconButton
+            sx={{
+              position: "absolute",
+              left: "0px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "primary.main",
+            }}
+            onClick={handlePrevClick}
+          >
+            <NavigateBefore />
+          </IconButton>
+          <IconButton
+            sx={{
+              position: "absolute",
+              right: "0px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "primary.main",
+            }}
+            onClick={handleNextClick}
+          >
+            <NavigateNext />
+          </IconButton>
+        </>
+      )}
     </Box>
   );
 };

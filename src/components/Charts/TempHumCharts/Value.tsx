@@ -50,11 +50,6 @@ const Value = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     setOpenModal(true);
   };
 
-  const labels = [];
-  for (let i = 0; i < values.length; i++) {
-    labels.push(values[i].timestamp.toLocaleString());
-  }
-
   return (
     <>
       <Box

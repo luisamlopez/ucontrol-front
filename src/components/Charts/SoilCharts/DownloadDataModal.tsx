@@ -138,7 +138,11 @@ const DownloadDataModal = ({
         <DataGrid
           rows={filteredData.map((value, index) => ({
             id: index,
-            timestamp: value.timestamp,
+            timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+              hour12: false,
+              dateStyle: "short",
+              timeStyle: "short",
+            }),
             humidity: value.value,
           }))}
           columns={columns.map((column) => ({
