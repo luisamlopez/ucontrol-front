@@ -102,6 +102,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [condValueOptions, setCondValueOptions] = useState<
     { label: string; value: string }[]
   >([]);
+  const [isNumeric, setIsNumeric] = useState<boolean>(false);
 
   useEffect(() => {
     switch (deviceType) {
@@ -183,6 +184,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     return route;
   };
 
+  /**
+   * @description Function to handle the form submission
+   * @param values
+   * @param actions
+   */
   const onSubmit = async (
     values: FormValues,
     actions: FormikHelpers<FormValues>
@@ -218,6 +224,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   };
 
+  /**
+   * @description Function to handle the form submission when editing a device
+   * @param values
+   * @param actions
+   */
   const onEdit = async (
     values: FormValues,
     actions: FormikHelpers<FormValues>
@@ -299,21 +310,25 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     // }
   };
 
+  /**
+   * Get the device to edit
+   */
   useEffect(() => {
     if (props.deviceID) {
       try {
         getDeviceById(props.deviceID!, (device) => {
           setDeviceToEdit(device);
-          setSelectedSpace(getSpaceInfo(device.topic!));
-          setDeviceType(device.type);
           setDataLoaded(false);
         });
       } catch (error) {
         alert(error);
       }
     }
-  }, [getSpaceInfo, props.deviceID]);
+  }, [props.deviceID]);
 
+  /**
+   * Set the initial form values when the device to edit is loaded
+   */
   useEffect(() => {
     if (deviceToEdit) {
       const initialFormValues: FormValues = {
@@ -329,6 +344,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   }, [deviceToEdit]);
 
+  /**
+   * Get the route of the selected space
+   */
   useEffect(() => {
     if (selectedSpace) {
       const route = findRoute(selectedSpace)
@@ -338,6 +356,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   }, [findRoute, selectedSpace]);
 
+  /**
+   * Get the space from the device ID and set it as the selected space when editing a device
+   */
   useEffect(() => {
     if (props.deviceID) {
       getSpaceFromDeviceId(props.deviceID, (space) => {
@@ -346,6 +367,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   }, [getSpaceInfo, props.deviceID]);
 
+  /**
+   * Get all the spaces to show them in the autocomplete for the space where the device will be added
+   */
   useEffect(() => {
     try {
       getSpaces((allSpaces) => {
@@ -357,6 +381,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   }, [props.deviceID, deviceToEdit]);
 
+  /**
+   * Get all the devices to show them in the autocomplete for the device to listen to
+   */
   useEffect(() => {
     try {
       getAllDevicesByUser(user!._id, (devices) => {
@@ -366,6 +393,34 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       alert(error);
     }
   }, [user]);
+
+  /**
+   * Get the conditions options to show them in the autocomplete for the conditions
+   */
+  function onChangeSetConditionsOptions(type: string) {
+    if (type === "tempHum" || type === "hum") {
+      setIsNumeric(true);
+      setConditionsOptions([
+        { label: ">", value: ">" },
+        { label: "<", value: "<" },
+        { label: "=", value: "=" },
+        { label: ">=", value: ">=" },
+        { label: "<=", value: "<=" },
+      ]);
+      setCondValueOptions([
+        { label: "20", value: "20" },
+        { label: "30", value: "30" },
+        { label: "40", value: "40" },
+        { label: "50", value: "50" },
+      ]);
+    } else {
+      setIsNumeric(false);
+      setConditionsOptions([
+        { label: "yes", value: "Detecta presencia" },
+        { label: "no", value: "No detecta presencia" },
+      ]);
+    }
+  }
 
   return (
     <Box display="flex" justifyContent="left" flexDirection="column">
@@ -689,15 +744,18 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         },
                       }}
                     >
+                      <Typography gutterBottom>
+                        Cambiar el estado de {values.name} cuando:
+                      </Typography>
+
                       <Field
                         component={Autocomplete}
                         name="listenerDevice"
                         options={allDevices}
                         getOptionLabel={(option: Device) => option.name || ""}
-                        // onChange={(event: any, newValue: Space) => {
-                        //   setSelectedSpace(newValue);
-                        //   console.log(findRoute(newValue));
-                        // }}
+                        onChange={(event: any, newValue: Device | null) => {
+                          onChangeSetConditionsOptions(newValue?.type!);
+                        }}
                         fullWidth
                         renderInput={(
                           params: AutocompleteRenderInputParams
@@ -741,32 +799,34 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           />
                         )}
                       />
-                      <Field
-                        component={Autocomplete}
-                        name="condValue"
-                        options={condValueOptions}
-                        getOptionLabel={(option: any) => option.label || ""}
-                        // onChange={(event: any, newValue: Space) => {
-                        //   setSelectedSpace(newValue);
-                        //   console.log(findRoute(newValue));
-                        // }}
-                        fullWidth
-                        renderInput={(
-                          params: AutocompleteRenderInputParams
-                        ) => (
-                          <TextFieldMUI
-                            {...params}
-                            label="Valor"
-                            variant="outlined"
-                            fullWidth
-                            autoComplete="on"
-                            required
-                            sx={{
-                              my: 2,
-                            }}
-                          />
-                        )}
-                      />
+                      {isNumeric && (
+                        <Field
+                          component={Autocomplete}
+                          name="condValue"
+                          options={condValueOptions}
+                          getOptionLabel={(option: any) => option.label || ""}
+                          // onChange={(event: any, newValue: Space) => {
+                          //   setSelectedSpace(newValue);
+                          //   console.log(findRoute(newValue));
+                          // }}
+                          fullWidth
+                          renderInput={(
+                            params: AutocompleteRenderInputParams
+                          ) => (
+                            <TextFieldMUI
+                              {...params}
+                              label="Valor"
+                              variant="outlined"
+                              fullWidth
+                              autoComplete="on"
+                              required
+                              sx={{
+                                my: 2,
+                              }}
+                            />
+                          )}
+                        />
+                      )}
                     </Box>
                   )}
                   <Box
