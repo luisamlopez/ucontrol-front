@@ -4,8 +4,6 @@ import { Space, getSpaceById } from "../../api/Space";
 import DownloadDataModal from "./DownloadDataModal";
 import { Box, Button, Paper } from "@mui/material";
 import { Bar } from "react-chartjs-2";
-import moment from "moment";
-import { BarControllerChartOptions } from "chart.js";
 
 interface Props {
   deviceId: string;
@@ -109,58 +107,14 @@ const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
         display: true,
         text: `Gráfico de barras de ${device?.name} en ${space?.name}`,
       },
-    },
-    scales: {
-      xAxes: [
-        {
-          type: "realtime",
-          distribution: "linear",
-          realtime: {
-            onRefresh: function (chart: {
-              data: { datasets: { data: { x: Date; y: number }[] }[] };
-            }) {
-              chart.data.datasets[0].data.push({
-                x: new Date(),
-                y: Math.random(),
-              });
-            },
-            delay: 3000,
-            time: {
-              displayFormat: "h:mm",
-            },
-          },
-          ticks: {
-            displayFormats: 1,
-            maxRotation: 0,
-            minRotation: 0,
-            stepSize: 1,
-            maxTicksLimit: 30,
-            minUnit: "second",
-            source: "auto",
-            autoSkip: true,
-            callback: function (value: moment.MomentInput) {
-              return moment(value, "HH:mm:ss").format("mm:ss");
-            },
-          },
-        },
-      ],
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-            max: 1,
-          },
-        },
-      ],
+      streaming: {
+        duration: 20000,
+      },
     },
   };
 
-  const labels = values.map((entry) => {
-    return moment(entry.timestamp).format("DD/MM/YYYY HH:mm:ss");
-  });
-
   const data = {
-    labels,
+    //labels,
     datasets: [
       {
         label: "Cantidad de presencia",
@@ -220,7 +174,7 @@ const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
         >
           <Bar
             data={data}
-            options={options as BarControllerChartOptions}
+            options={options}
             updateMode="resize"
             width={700}
             height={400}
