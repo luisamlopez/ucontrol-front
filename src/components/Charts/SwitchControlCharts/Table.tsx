@@ -80,24 +80,30 @@ const Table = ({ deviceId }: Props): JSX.Element => {
 
   useEffect(() => {
     const fetch = async () => {
-      await getSpaceFromDeviceId(deviceId, (space) => {
-        setSpaceId(space);
-      });
-      await getSpaceById(spaceId, (space) => {
-        setSpace(space);
-      });
+      try {
+        await getDeviceById(deviceId, (device) => {
+          setDevice(device);
+        });
+
+        await getSpaceFromDeviceId(deviceId, (space) => {
+          setSpaceId(space);
+
+          if (spaceId === "") {
+            console.log("No se encontro el espacio");
+          } else {
+            setTimeout(async () => {
+              await getSpaceById(spaceId, (space) => {
+                setSpace(space);
+              });
+            }, 2000);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetch();
   }, [deviceId, spaceId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getDeviceById(deviceId, (device) => {
-        setDevice(device);
-      });
-    };
-    fetch();
-  }, [deviceId]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -178,9 +184,9 @@ const Table = ({ deviceId }: Props): JSX.Element => {
               </TableHead>
 
               <TableBody>
-                {values.map((value) => (
+                {values.map((value, i) => (
                   <TableRow
-                    key={value.timestamp.toString()}
+                    key={i + value.timestamp.toString()}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell align="center" component="th" scope="row">

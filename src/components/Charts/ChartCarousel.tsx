@@ -3,20 +3,11 @@ import {
   KeyboardArrowLeftRounded as NavigateBefore,
   KeyboardArrowRightRounded as NavigateNext,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
-import { Device, getSpaceFromDeviceId } from "../../api/Device";
-import GeneralBarChart from "./GeneralBarChart";
+import { useState } from "react";
+import { Device } from "../../api/Device";
+import GeneralBarChartJSX from "./GeneralBarChartJSX";
 import { useParams } from "react-router-dom";
-import LineChart from "./TempHumCharts/LineChart";
-import Gauge from "./TempHumCharts/Gauge";
-import Value from "./TempHumCharts/Value";
-import SoilBarChart from "./SoilCharts/SoilBarChart";
-import SoilLineChart from "./SoilCharts/SoilLineChart";
-import SoilGauge from "./SoilCharts/SoilGauge";
-import SoilValue from "./SoilCharts/SoilValue";
 import Table from "./SwitchControlCharts/Table";
-import { Space } from "../../api/Space";
-import BarChart from "./TempHumCharts/BarChart";
 
 type ChartCarouselProps = {
   device: Device;
@@ -67,51 +58,58 @@ const NumericChart = ({
       {tempHum && (
         <Box>
           {type === "bar" && (
-            <BarChart
-              deviceId={device._id!}
-              values={values}
-              spaceId={spaceID!}
-            />
+            // <BarChart
+            //   deviceId={device._id!}
+            //   values={values}
+            //   spaceId={spaceID!}
+            // />
+            <Box>Bar</Box>
           )}
           {type === "line" && (
-            <LineChart
-              deviceId={device._id!}
-              values={values}
-              spaceId={spaceID!}
-            />
+            // <LineChart
+            //   deviceId={device._id!}
+            //   values={values}
+            //   spaceId={spaceID!}
+            // />
+            <Box>Line</Box>
           )}
           {type === "gauge" && (
-            <Gauge deviceId={device._id!} values={values} spaceId={spaceID!} />
-            //   <Box>Gauge</Box>
+            // <Gauge deviceId={device._id!} values={values} spaceId={spaceID!} />
+            <Box>Gauge</Box>
           )}
 
           {type === "value" && (
-            <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
+            // <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
+            <Box>Value</Box>
           )}
         </Box>
       )}
       {!tempHum && (
         <Box>
           {type === "bar" && (
-            <SoilBarChart
-              deviceId={device._id!}
-              values={hum}
-              spaceId={spaceID!}
-            />
+            // <SoilBarChart
+            //   deviceId={device._id!}
+            //   values={hum}
+            //   spaceId={spaceID!}
+            // />
+            <Box>Bar</Box>
           )}
           {type === "line" && (
-            <SoilLineChart
-              deviceId={device._id!}
-              values={hum}
-              spaceId={spaceID!}
-            />
+            // <SoilLineChart
+            //   deviceId={device._id!}
+            //   values={hum}
+            //   spaceId={spaceID!}
+            // />
+            <Box>Line</Box>
           )}
           {type === "gauge" && (
-            <SoilGauge deviceId={device._id!} values={hum} spaceId={spaceID!} />
+            // <SoilGauge deviceId={device._id!} values={hum} spaceId={spaceID!} />
+            <Box>Gauge</Box>
           )}
 
           {type === "value" && (
-            <SoilValue deviceId={device._id!} values={hum} spaceId={spaceID!} />
+            // <SoilValue deviceId={device._id!} values={hum} spaceId={spaceID!} />
+            <Box>Value</Box>
           )}
         </Box>
       )}
@@ -157,14 +155,18 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
             }}
           >
             {device.type === "tempHum" && (
-              <NumericChart device={device} type={type} tempHum={true} />
+              <Box>tempHum</Box>
+              // <NumericChart device={device} type={type} tempHum={true} />
             )}
             {device.type === "hum" && (
-              <NumericChart device={device} type={type} tempHum={false} />
+              <Box>hum</Box>
+              // <NumericChart device={device} type={type} tempHum={false} />
             )}
             {device.type !== "tempHum" && device.type !== "hum" && (
               <>
-                {type === "bar" && <GeneralBarChart deviceId={device._id!} />}
+                {type === "bar" && (
+                  <GeneralBarChartJSX deviceId={device._id!} />
+                )}
                 {type === "pie" && (
                   // <PieChart id={device.id} values={device.values} />
                   <Box>Pie</Box>

@@ -1,116 +1,103 @@
 import { useEffect, useState } from "react";
-import { Device, getDeviceById, getSpaceFromDeviceId } from "../../api/Device";
-import { Space, getSpaceById } from "../../api/Space";
+import { getDeviceById, getSpaceFromDeviceId } from "../../api/Device";
+import { getSpaceById } from "../../api/Space";
 import DownloadDataModal from "./DownloadDataModal";
 import { Box, Button, Paper } from "@mui/material";
+
 import { Bar } from "react-chartjs-2";
+import "chartjs-adapter-luxon";
+import Chart from "chart.js/auto";
 import StreamingPlugin from "chartjs-plugin-streaming";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
 
-interface Props {
-  deviceId: string;
-}
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  StreamingPlugin
-);
+Chart.register(StreamingPlugin);
 
 const columns = [
   { field: "timestamp", headerName: "Fecha", width: 200 },
   { field: "state", headerName: "Estado", width: 200 },
 ];
 
-const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
-  const [device, setDevice] = useState<Device>();
-  const [space, setSpace] = useState<Space>();
+const GeneralBarChartJSX = ({ deviceId }) => {
+  const [device, setDevice] = useState();
+  const [space, setSpace] = useState();
+  const [spaceId, setSpaceId] = useState("");
 
-  const [values, setValues] = useState<
-    {
-      timestamp: Date;
-      value: number;
-    }[]
-  >([]);
+  const [values, setValues] = useState([]);
 
   const [openModal, setOpenModal] = useState(false);
-
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const otherValues = [
     {
       timestamp: new Date("2021-06-01T00:00:00.000Z"),
-      value: 1,
+      state: 1,
     },
     {
       timestamp: new Date("2021-06-02T00:00:00.000Z"),
-      value: 0,
+      state: 0,
     },
     {
       timestamp: new Date("2021-06-03T00:00:00.000Z"),
-      value: 1,
+      state: 1,
     },
     {
       timestamp: new Date("2021-06-04T00:00:00.000Z"),
-      value: 0,
+      state: 0,
     },
     {
       timestamp: new Date("2021-06-10T00:00:00.000Z"), // Changed timestamp
-      value: 1,
+      state: 1,
     },
     {
       timestamp: new Date("2021-06-15T00:00:00.000Z"), // Changed timestamp
-      value: 1,
+      state: 1,
     },
     {
       timestamp: new Date("2021-06-20T00:00:00.000Z"), // Changed timestamp
-      value: 0,
+      state: 0,
     },
     {
       timestamp: new Date("2021-06-25T00:00:00.000Z"), // Changed timestamp
-      value: 1,
+      state: 1,
     },
     {
       timestamp: new Date("2021-06-30T00:00:00.000Z"), // Changed timestamp
-      value: 0,
+      state: 0,
     },
     {
       timestamp: new Date("2021-07-05T00:00:00.000Z"), // Changed timestamp
-      value: 1,
+      state: 1,
     },
   ];
 
   values.push(...otherValues);
 
   useEffect(() => {
-    const fetch = async () => {
-      await getSpaceFromDeviceId(deviceId, async (spaceId) => {
-        await getSpaceById(spaceId, (space) => {
-          setSpace(space);
+    const fetchData = async () => {
+      try {
+        await getDeviceById(deviceId, (device) => {
+          setDevice(device);
         });
-      });
-    };
-    fetch();
-  }, [deviceId]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      await getDeviceById(deviceId, (device) => {
-        setDevice(device);
-      });
+        await getSpaceFromDeviceId(deviceId, (space) => {
+          setSpaceId(space);
+
+          if (spaceId === "") {
+            console.log("No se encontro el espacio");
+          } else {
+            setTimeout(async () => {
+              await getSpaceById(spaceId, (space) => {
+                setSpace(space);
+              });
+            }, 2000);
+          }
+        });
+
+        setIsDataLoaded(true);
+      } catch (error) {
+        console.log(error);
+      }
     };
-    fetch();
-  }, [deviceId]);
+    fetchData();
+  }, [deviceId, spaceId]); // Only depend on deviceId
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -120,29 +107,35 @@ const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
     setOpenModal(true);
   };
 
-  // use effect to increase the values array
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const newValues = [...values];
-  //     newValues.push({
-  //       timestamp: new Date(),
-  //       value: Math.floor(Math.random() * 2),
-  //     });
-  //     setValues(newValues);
-  //   }, 1000);
-  //   return () => clearInterval(interval);
-  // }, [values]);
+  /**
+   * Chart config
+   */
+
+  const data = {
+    datasets: [
+      {
+        label: "Dataset 1",
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: "rgb(255, 99, 132)",
+        borderDash: [8, 4],
+        fill: true,
+        data: [],
+      },
+    ],
+  };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+
     scales: {
       x: {
         type: "realtime",
         realtime: {
+          delay: 2000,
           duration: 20000,
-          refresh: 500,
-          delay: 500,
-          onRefresh: (chart: any) => {
-            chart.data.datasets.forEach((dataset: any) => {
+          onRefresh: (chart) => {
+            chart.data.datasets.forEach((dataset) => {
               dataset.data.push({
                 x: Date.now(),
                 y: Math.random(),
@@ -154,18 +147,7 @@ const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
     },
   };
 
-  const data = {
-    //labels,
-    datasets: [
-      {
-        label: "Cantidad de presencia",
-        data: [],
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
-
-  return (
+  return isDataLoaded ? (
     <>
       <Box
         sx={{
@@ -215,7 +197,7 @@ const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
         >
           <Bar
             data={data}
-            //  options={options}
+            options={options}
             updateMode="resize"
             width={700}
             height={400}
@@ -225,15 +207,29 @@ const GeneralBarChart = ({ deviceId }: Props): JSX.Element => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        // deviceName={device?.name!}
-        // spaceName={space?.name!}
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
-        data={values}
+        data={otherValues}
         columns={columns}
       />
     </>
+  ) : (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: {
+          lg: "column",
+          md: "column-reverse",
+          xs: "column-reverse",
+          sm: "column-reverse",
+        },
+        p: 1,
+      }}
+    >
+      {" "}
+      Cargando...
+    </Box>
   );
 };
 
-export default GeneralBarChart;
+export default GeneralBarChartJSX;

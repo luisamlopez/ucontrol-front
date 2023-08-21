@@ -34,11 +34,12 @@ function Details(props: { device: Device }): JSX.Element {
       <Typography fontWeight={"bold"} textAlign={"left"} color={"primary.main"}>
         Detalles del dispositivo
       </Typography>
-
-      <DevicesDetailsText
-        title={"Descripcion"}
-        value={props.device.description}
-      />
+      {props.device.description && (
+        <DevicesDetailsText
+          title={"Descripcion"}
+          value={props.device.description}
+        />
+      )}
 
       <DevicesDetailsText
         title={"Conectado desde el"}
@@ -50,11 +51,6 @@ function Details(props: { device: Device }): JSX.Element {
       />
 
       <DevicesDetailsText title="Tópico" value={props.device.topic!} />
-
-      <DevicesDetailsText
-        title={"Instrucciones"}
-        value={"props.device.instructions"}
-      />
     </Box>
   );
 }
