@@ -42,6 +42,11 @@ interface DeviceFormProps {
   deviceID?: string;
 }
 
+interface Options {
+  label: string;
+  value: string;
+}
+
 interface FormValues {
   _id: string;
   name: string;
@@ -50,6 +55,9 @@ interface FormValues {
   createdBy: string;
   createdOn: Date;
   type: string;
+  listenerDevice?: string;
+  cond?: Options;
+  condValue?: Options;
 }
 
 const initialValues = {
@@ -60,6 +68,15 @@ const initialValues = {
   createdBy: "",
   createdOn: new Date(),
   type: "",
+  listenerDevice: "",
+  cond: {
+    label: "",
+    value: "",
+  },
+  condValue: {
+    label: "",
+    value: "",
+  },
 };
 
 const validationSchema = yup.object().shape({
@@ -96,12 +113,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
   const [dvt, setDvt] = useState<UnitsConfig[]>([]);
   const [deviceType, setDeviceType] = useState<String>();
-  const [conditionsOptions, setConditionsOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
-  const [condValueOptions, setCondValueOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [conditionsOptions, setConditionsOptions] = useState<Options[]>([]);
+  const [condValueOptions, setCondValueOptions] = useState<Options[]>([]);
   const [isNumeric, setIsNumeric] = useState<boolean>(false);
 
   useEffect(() => {
@@ -202,20 +215,23 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         type: values.type,
         topic: routeRef.current + " / " + values.name,
       };
-      const response = await createDevice(
-        deviceData,
-        selectedSpace?._id!,
-        user?.name!
-      );
-      // console.log(response);
-      if (response) {
-        enqueueSnackbar("Dispositivo creado con éxito", {
-          variant: "success",
-        });
-        navigate("/devices");
-      } else {
-        enqueueSnackbar("Hubo un error", { variant: "error" });
-      }
+      console.log(values.listenerDevice);
+      console.log(values.cond?.value);
+      console.log(values.condValue?.value);
+      // const response = await createDevice(
+      //   deviceData,
+      //   selectedSpace?._id!,
+      //   user?.name!
+      // );
+      // // console.log(response);
+      // if (response) {
+      //   enqueueSnackbar("Dispositivo creado con éxito", {
+      //     variant: "success",
+      //   });
+      //   navigate("/devices");
+      // } else {
+      //   enqueueSnackbar("Hubo un error", { variant: "error" });
+      // }
       actions.setSubmitting(true);
     } catch (error) {
       enqueueSnackbar("Hubo un error", { variant: "error" });
@@ -416,8 +432,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     } else {
       setIsNumeric(false);
       setConditionsOptions([
-        { label: "yes", value: "Detecta presencia" },
-        { label: "no", value: "No detecta presencia" },
+        { label: "Detecta presencia", value: "yes" },
+        { label: "No detecta presencia", value: "no" },
       ]);
     }
   }
@@ -642,7 +658,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       />
                     </Field>
                   )}
-                  {deviceType && (
+                  {deviceType && !props.deviceID && (
                     <>
                       <FormLabel>
                         Indique al menos una forma de visualización de datos
@@ -706,6 +722,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         label="Si"
                         onChange={() => {
                           setConditions(true);
+                          setConditionsOptions([]);
+                          setCondValueOptions([]);
                         }}
                       />
                       <FormControlLabel
@@ -714,108 +732,63 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         label="No"
                         onChange={() => {
                           setConditions(false);
+                          setConditionsOptions([]);
+                          setCondValueOptions([]);
                         }}
                       />
                     </Field>
                   )}
 
                   {conditions && allDevices.length > 0 && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: {
-                          lg: "row",
-                          md: "row",
-                          sm: "column",
-                          xs: "column",
-                        },
-                        alignItems: {
-                          lg: "center",
-                          md: "center",
-                          sm: "flex-start",
-                          xs: "flex-start",
-                        },
-                        justifyContent: "space-between",
-                        gap: {
-                          lg: 2,
-                          md: 2,
-                          sm: 0,
-                          xs: 0,
-                        },
-                      }}
-                    >
-                      <Typography gutterBottom>
-                        Cambiar el estado de {values.name} cuando:
-                      </Typography>
-
-                      <Field
-                        component={Autocomplete}
-                        name="listenerDevice"
-                        options={allDevices}
-                        getOptionLabel={(option: Device) => option.name || ""}
-                        onChange={(event: any, newValue: Device | null) => {
-                          onChangeSetConditionsOptions(newValue?.type!);
+                    /** Allow to add more of these boxes */
+                    <>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: {
+                            lg: "row",
+                            md: "row",
+                            sm: "column",
+                            xs: "column",
+                          },
+                          alignItems: {
+                            lg: "center",
+                            md: "center",
+                            sm: "flex-start",
+                            xs: "flex-start",
+                          },
+                          justifyContent: "space-between",
+                          gap: {
+                            lg: 2,
+                            md: 2,
+                            sm: 0,
+                            xs: 0,
+                          },
                         }}
-                        fullWidth
-                        renderInput={(
-                          params: AutocompleteRenderInputParams
-                        ) => (
-                          <TextFieldMUI
-                            {...params}
-                            label="Dispositivo a escuchar"
-                            variant="outlined"
-                            fullWidth
-                            autoComplete="on"
-                            required
-                            sx={{
-                              my: 2,
-                            }}
-                          />
-                        )}
-                      />
-                      <Field
-                        component={Autocomplete}
-                        name="cond"
-                        options={conditionsOptions}
-                        getOptionLabel={(option: any) => option.label || ""}
-                        // onChange={(event: any, newValue: Space) => {
-                        //   setSelectedSpace(newValue);
-                        //   console.log(findRoute(newValue));
-                        // }}
-                        fullWidth
-                        renderInput={(
-                          params: AutocompleteRenderInputParams
-                        ) => (
-                          <TextFieldMUI
-                            {...params}
-                            label="Condición"
-                            variant="outlined"
-                            fullWidth
-                            autoComplete="on"
-                            required
-                            sx={{
-                              my: 2,
-                            }}
-                          />
-                        )}
-                      />
-                      {isNumeric && (
+                      >
+                        <Typography gutterBottom>
+                          Cambiar el estado de {values.name} cuando:
+                        </Typography>
+
                         <Field
                           component={Autocomplete}
-                          name="condValue"
-                          options={condValueOptions}
-                          getOptionLabel={(option: any) => option.label || ""}
-                          // onChange={(event: any, newValue: Space) => {
-                          //   setSelectedSpace(newValue);
-                          //   console.log(findRoute(newValue));
-                          // }}
+                          name="listenerDevice"
+                          // Filter the devices to only show the ones that are not type luz or aire
+                          options={allDevices.filter(
+                            (obj) => obj.type !== "luz" && obj.type !== "aire"
+                          )}
+                          getOptionLabel={(option: Device) => option.name || ""}
+                          onChange={(event: any, newValue: Device | null) => {
+                            onChangeSetConditionsOptions(newValue?.type!);
+                            setFieldValue("listenerDevice", newValue?._id);
+                          }}
                           fullWidth
                           renderInput={(
                             params: AutocompleteRenderInputParams
                           ) => (
                             <TextFieldMUI
                               {...params}
-                              label="Valor"
+                              label="Dispositivo a escuchar"
                               variant="outlined"
                               fullWidth
                               autoComplete="on"
@@ -826,8 +799,63 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                             />
                           )}
                         />
-                      )}
-                    </Box>
+                        <Field
+                          component={Autocomplete}
+                          name="cond"
+                          options={conditionsOptions}
+                          getOptionLabel={(option: Options) =>
+                            option.label || ""
+                          }
+                          fullWidth
+                          onChange={(event: any, newValue: Options) => {
+                            setFieldValue("cond", newValue);
+                          }}
+                          renderInput={(
+                            params: AutocompleteRenderInputParams
+                          ) => (
+                            <TextFieldMUI
+                              {...params}
+                              label="Condición"
+                              variant="outlined"
+                              fullWidth
+                              autoComplete="on"
+                              required
+                              sx={{
+                                my: 2,
+                              }}
+                            />
+                          )}
+                        />
+                        {isNumeric && (
+                          <Field
+                            component={Autocomplete}
+                            name="condValue"
+                            options={condValueOptions}
+                            getOptionLabel={(option: any) => option.label || ""}
+                            fullWidth
+                            onChange={(event: any, newValue: Options) => {
+                              setFieldValue("condValue", newValue);
+                            }}
+                            renderInput={(
+                              params: AutocompleteRenderInputParams
+                            ) => (
+                              <TextFieldMUI
+                                {...params}
+                                label="Valor"
+                                variant="outlined"
+                                fullWidth
+                                autoComplete="on"
+                                required
+                                sx={{
+                                  my: 2,
+                                }}
+                              />
+                            )}
+                          />
+                        )}
+                      </Box>
+                      {/* Add another set of conditions */}
+                    </>
                   )}
                   <Box
                     sx={{
