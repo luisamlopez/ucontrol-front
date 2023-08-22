@@ -246,7 +246,7 @@ function SpaceDetails(space: Space) {
                     Nombre del dispositivo:
                   </Typography>
                   <Typography>
-                    {history.field.flatMap((obj) => obj).join("\n")}
+                    {history.field.flatMap((obj) => obj).join("---")}
                   </Typography>
                 </Box>
               </Box>

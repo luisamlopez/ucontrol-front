@@ -97,9 +97,7 @@ const History = (): JSX.Element => {
               <CircularProgress />
             </Box>
           ) : devices.length === 0 ? (
-            <Typography>
-              Error: no se pudieron cargar los dispositivos
-            </Typography>
+            <Typography>No hay dispositivos con historial.</Typography>
           ) : (
             <>
               {windowWidth < 600 && <HistoryAccordion devices={devices} />}

@@ -8,6 +8,8 @@ import { Device } from "../../api/Device";
 import GeneralBarChartJSX from "./GeneralBarChartJSX";
 import { useParams } from "react-router-dom";
 import Table from "./SwitchControlCharts/Table";
+import SoilValue from "./SoilCharts/SoilValue";
+import Value from "./TempHumCharts/Value";
 
 type ChartCarouselProps = {
   device: Device;
@@ -30,6 +32,39 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
       prevIndex === dvtTypes.length - 1 ? 0 : prevIndex + 1
     );
   };
+
+  const values = [
+    {
+      valueT: 28,
+      valueH: 23,
+      timestamp: new Date("2023-07-02T18:18:07.434Z"),
+    },
+    {
+      valueT: 29.3,
+      valueH: 24,
+      timestamp: new Date("2023-08-02T18:18:07.434Z"),
+    },
+    {
+      valueT: 32,
+      valueH: 43.1,
+      timestamp: new Date("2023-08-12T18:18:07.434Z"),
+    },
+  ];
+
+  const hum = [
+    {
+      value: 23,
+      timestamp: new Date("2023-07-02T18:18:07.434Z"),
+    },
+    {
+      value: 24,
+      timestamp: new Date("2023-08-02T18:18:07.434Z"),
+    },
+    {
+      value: 43.1,
+      timestamp: new Date("2023-08-12T18:18:07.434Z"),
+    },
+  ];
 
   return (
     <Box sx={{ position: "relative", height: "350px" }}>
@@ -76,36 +111,37 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
             )}
 
             {device.type === "tempHum" && dvtType === "value" && (
-              // <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
-              <Box>Value</Box>
+              <Value
+                values={values}
+                deviceId={device._id!}
+                deviceName={device.name}
+              />
+              //  <Box>Value</Box>
             )}
 
             {/* Humidity */}
 
             {device.type === "hum" && dvtType === "bar" && (
-              // <SoilBarChart
-              //   deviceId={device._id!}
-              //   values={hum}
-              //   spaceId={spaceID!}
+              // <SoilBarChart values={hum} deviceId={device._id!} deviceName={device.name}
               // />
               <Box>Bar</Box>
             )}
             {device.type === "hum" && dvtType === "line" && (
-              // <SoilLineChart
-              //   deviceId={device._id!}
-              //   values={hum}
-              //   spaceId={spaceID!}
+              // <SoilLineChart values={hum} deviceId={device._id!} deviceName={device.name}
               // />
               <Box>Line</Box>
             )}
             {device.type === "hum" && dvtType === "gauge" && (
-              // <SoilGauge deviceId={device._id!} values={hum} spaceId={spaceID!} />
+              // <SoilGauge values={hum} deviceId={device._id!} deviceName={device.name}/>
               <Box>Gauge</Box>
             )}
 
             {device.type === "hum" && dvtType === "value" && (
-              // <SoilValue deviceId={device._id!} values={hum} spaceId={spaceID!} />
-              <Box>Value</Box>
+              <SoilValue
+                values={hum}
+                deviceId={device._id!}
+                deviceName={device.name}
+              />
             )}
 
             {/* Rest of the device types */}

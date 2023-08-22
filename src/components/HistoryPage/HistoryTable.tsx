@@ -101,7 +101,9 @@ function DeviceDetails(object: Device) {
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>
-                          {history.field.flatMap((obj) => obj).join("\n")}
+                          {/* Join with a line break */}
+
+                          {history.field.flatMap((obj) => obj).join("---")}
                         </TableCell>
                       </TableRow>
                     ))}

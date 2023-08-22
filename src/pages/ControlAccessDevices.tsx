@@ -25,7 +25,6 @@ const ControlAccessDevices = (): JSX.Element => {
   const [allDevices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
   const [space, setSpace] = useState<Space>();
   const { user } = useUser();
   const spaceId = useParams<{ spaceId: string }>().spaceId;
@@ -52,87 +51,64 @@ const ControlAccessDevices = (): JSX.Element => {
   }, [spaceId]);
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="left">
-      <Sidebar />
-      <Box>
-        <Container sx={{ m: 0, p: 0 }}>
-          <Box
-            display={"flex"}
-            flexDirection="column"
-            sx={{
-              p: 2,
-            }}
-          >
-            <Typography
-              color="primary"
-              textAlign="left"
-              fontSize={{ xs: 24, sm: 48, lg: 48 }}
-              fontWeight={600}
-              p={0}
-              mt={{ xs: 6, sm: 0, lg: 0 }}
-              mb={2}
-            >
-              Dispositivos de control de acceso en {space?.name}
-            </Typography>
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : !dataLoaded ? (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box display="flex" alignItems="center" justifyContent="left">
+          <Sidebar />
+          <Box>
+            <Container sx={{ m: 0, p: 0 }}>
+              <Box
+                display={"flex"}
+                flexDirection="column"
+                sx={{
+                  p: 2,
+                }}
+              >
+                <Typography
+                  color="primary"
+                  textAlign="left"
+                  fontSize={{ xs: 24, sm: 48, lg: 48 }}
+                  fontWeight={600}
+                  p={0}
+                  mt={{ xs: 6, sm: 0, lg: 0 }}
+                  mb={2}
+                >
+                  Dispositivos de control de acceso en {space?.name}
+                </Typography>
 
-            <Typography>
-              aqui puede haber tarjetas de los dispositivos de contro de acceso
-              del espacio y que cada una lleve a la pagina de detalles del
-              dispositivo en donde se va a ver la lista de los usuarios que han
-              pasado la tarjeta, nombre, timestamp y si fue concedido el acceso
-              o no
-            </Typography>
-            {/*           
-            {loading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CircularProgress />
+                <Typography>
+                  aqui puede haber tarjetas de los dispositivos de contro de
+                  acceso del espacio y que cada una lleve a la pagina de
+                  detalles del dispositivo en donde se va a ver la lista de los
+                  usuarios que han pasado la tarjeta, nombre, timestamp y si fue
+                  concedido el acceso o no
+                </Typography>
               </Box>
-            ) : !dataLoaded ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            ) : allDevices.length === 0 ? (
-              <Typography>
-                No hay dispositivos registrados en tu cuenta, agrega uno.
-              </Typography>
-            ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <CardsContainer>
-                  {allDevices.map(
-                    (device) => (
-                      // device.name
-                      //   .toLowerCase()
-                      //   .includes(searchValue.toLowerCase()) ? (
-                      <DeviceCard key={device._id} {...device} />
-                    )
-                    // ) : null
-                  )}
-                </CardsContainer>
-              </Box>
-            )} */}
+            </Container>
           </Box>
-        </Container>
-      </Box>
-    </Box>
+        </Box>
+      )}
+    </>
   );
 };
 
