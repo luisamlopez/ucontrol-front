@@ -65,8 +65,10 @@ const SettingsPage = (): JSX.Element => {
   });
 
   useAutosave(() => {
-    alert("Se ha guardado su configuración");
-  }, 60 * 1000);
+    alert(
+      "Se ha guardado su configuración de notificaciones (aqui va la funcion)"
+    );
+  }, 60 * 5000);
 
   const onChangePassword = (
     values: ChangePaswordFormValues,
@@ -185,7 +187,6 @@ const SettingsPage = (): JSX.Element => {
               )}
             </Formik>
           </Box>
-
           <Box
             sx={{
               width: {
@@ -233,6 +234,8 @@ const SettingsPage = (): JSX.Element => {
               )}
             </Formik>
           </Box>
+          Aqui va todo lo de enviar invitacion a un usuario y luego lo de los
+          permisos
         </Box>
       </Container>
     </Box>
