@@ -55,9 +55,11 @@ interface FormValues {
   createdBy: string;
   createdOn: Date;
   type: string;
-  listenerDevice?: string;
-  cond?: Options;
-  condValue?: Options;
+  cons?: {
+    listenerDevice?: string;
+    cond?: Options;
+    condValue?: Options;
+  };
 }
 
 const initialValues = {
@@ -68,14 +70,16 @@ const initialValues = {
   createdBy: "",
   createdOn: new Date(),
   type: "",
-  listenerDevice: "",
-  cond: {
-    label: "",
-    value: "",
-  },
-  condValue: {
-    label: "",
-    value: "",
+  cons: {
+    listenerDevice: "",
+    cond: {
+      label: "",
+      value: "",
+    },
+    condValue: {
+      label: "",
+      value: "",
+    },
   },
 };
 
@@ -215,9 +219,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         type: values.type,
         topic: routeRef.current + " / " + values.name,
       };
-      console.log(values.listenerDevice);
-      console.log(values.cond?.value);
-      console.log(values.condValue?.value);
+      console.log(values.cons!.listenerDevice);
+      console.log(values.cons!.cond?.value);
+      console.log(values.cons!.condValue?.value);
       // const response = await createDevice(
       //   deviceData,
       //   selectedSpace?._id!,
@@ -780,7 +784,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
                         <Field
                           component={Autocomplete}
-                          name="listenerDevice"
+                          name="cons.listenerDevice"
                           // Filter the devices to only show the ones that are not type luz or aire
                           options={allDevices.filter(
                             (obj) => obj.type !== "luz" && obj.type !== "aire"
@@ -788,7 +792,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           getOptionLabel={(option: Device) => option.name || ""}
                           onChange={(event: any, newValue: Device | null) => {
                             onChangeSetConditionsOptions(newValue?.type!);
-                            setFieldValue("listenerDevice", newValue?._id);
+                            setFieldValue("cons.listenerDevice", newValue?._id);
                           }}
                           fullWidth
                           renderInput={(
@@ -809,14 +813,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         />
                         <Field
                           component={Autocomplete}
-                          name="cond"
+                          name="cons.cond"
                           options={conditionsOptions}
                           getOptionLabel={(option: Options) =>
                             option.label || ""
                           }
                           fullWidth
                           onChange={(event: any, newValue: Options) => {
-                            setFieldValue("cond", newValue);
+                            setFieldValue("cons.cond", newValue);
                           }}
                           renderInput={(
                             params: AutocompleteRenderInputParams
@@ -837,12 +841,12 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         {isNumeric && (
                           <Field
                             component={Autocomplete}
-                            name="condValue"
+                            name="cons.condValue"
                             options={condValueOptions}
                             getOptionLabel={(option: any) => option.label || ""}
                             fullWidth
                             onChange={(event: any, newValue: Options) => {
-                              setFieldValue("condValue", newValue);
+                              setFieldValue("cons.condValue", newValue);
                             }}
                             renderInput={(
                               params: AutocompleteRenderInputParams

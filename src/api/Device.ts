@@ -18,9 +18,11 @@ export interface Device {
     updatedOn: Date;
     field: string[];
   }[];
-  listenerDevice?: string;
-  condition?: string;
-  conditionValue?: string;
+  conditions?: {
+    listenerDevice?: string;
+    condition?: string;
+    conditionValue?: string;
+  };
   topic: string;
   /**
    * @todo change this
