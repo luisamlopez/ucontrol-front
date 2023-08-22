@@ -1,14 +1,8 @@
 import { url } from "./url";
 
-export interface MetricAndUnit {
-  metric: string;
-  unit: string;
-}
-
 export interface DeviceValues {
   timestamp?: Date;
   value?: number | string | boolean;
-  metricsAndUnits?: MetricAndUnit[];
 }
 
 export interface Device {
@@ -24,10 +18,13 @@ export interface Device {
     updatedOn: Date;
     field: string[];
   }[];
+  listenerDevice?: string;
+  condition?: string;
+  conditionValue?: string;
+  topic: string;
   /**
    * @todo change this
    */
-  topic?: string;
   values?: DeviceValues[];
 }
 

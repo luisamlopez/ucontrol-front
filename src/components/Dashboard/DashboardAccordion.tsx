@@ -6,12 +6,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import {
-  Device,
-  DeviceValues,
-  MetricAndUnit,
-  getDeviceById,
-} from "../../api/Device";
+import { Device, getDeviceById } from "../../api/Device";
 import { Space } from "../../api/Space";
 import { useEffect, useState } from "react";
 import {

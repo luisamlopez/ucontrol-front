@@ -585,6 +585,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("tempHum");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
                       <FormControlLabel
@@ -594,6 +595,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("movimiento");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
 
@@ -604,6 +606,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("luz");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
 
@@ -614,6 +617,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("agua");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
 
@@ -624,6 +628,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("hum");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
 
@@ -634,6 +639,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("aire");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
 
@@ -644,6 +650,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("controlAcceso");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
 
@@ -654,6 +661,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         onChange={() => {
                           setDeviceType("vibraciones");
                           values.dvt = [];
+                          setConditions(false);
                         }}
                       />
                     </Field>
