@@ -151,11 +151,7 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
             <Details device={device} />
             {(device.type === "luz" || device.type === "aire") && (
               <>
-                <Switch
-                  checked={checked}
-                  onChange={handleChange}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
+                <Switch checked={checked} onChange={handleChange} />
               </>
             )}
             <Graph device={device} />

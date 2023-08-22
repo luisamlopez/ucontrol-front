@@ -25,15 +25,11 @@ interface DownloadDataModalProps {
   data: any[];
   startDate: Date;
   endDate: Date;
-  deviceName: string;
-  spaceName: string;
 }
 
 const DownloadDataModal = ({
   show,
   handleClose,
-  deviceName,
-  spaceName,
   startDate: initialStartDate,
   endDate: initialEndDate,
   data,
@@ -96,7 +92,7 @@ const DownloadDataModal = ({
         color="primary.main"
         sx={{ m: 0, py: 0 }}
       >
-        Descargar datos de {deviceName} en {spaceName}
+        Descargar datos
       </DialogTitle>
 
       <Box
@@ -152,12 +148,7 @@ const DownloadDataModal = ({
           }))}
           slots={{
             toolbar: () => (
-              <CustomToolbar
-                deviceName={deviceName}
-                spaceName={spaceName}
-                startDate={startDate!}
-                endDate={endDate!}
-              />
+              <CustomToolbar startDate={startDate!} endDate={endDate!} />
             ),
           }}
           sx={{
@@ -171,13 +162,9 @@ const DownloadDataModal = ({
 export default DownloadDataModal;
 
 function CustomToolbar({
-  deviceName,
-  spaceName,
   startDate,
   endDate,
 }: {
-  deviceName: string;
-  spaceName: string;
   startDate: Date;
   endDate: Date;
 }) {
@@ -185,14 +172,11 @@ function CustomToolbar({
     <GridToolbarContainer>
       <GridToolbarExport
         csvOptions={{
-          fileName: `Datos de ${deviceName} en ${spaceName} desde ${startDate.toLocaleString(
-            "es-VE",
-            {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            }
-          )} hasta ${endDate.toLocaleString("es-VE", {
+          fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
+            hour12: false,
+            dateStyle: "short",
+            timeStyle: "short",
+          })} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
             timeStyle: "short",

@@ -1,8 +1,6 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Columns, HChartProps } from "../../../api/ChartData";
-import { Space, getSpaceById } from "../../../api/Space";
-import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
 
 const columns: Columns[] = [
@@ -16,28 +14,12 @@ const columns: Columns[] = [
   },
 ];
 
-const SoilValue = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
-  const [space, setSpace] = useState<Space>();
-  const [device, setDevice] = useState<Device>();
+const SoilValue = ({
+  deviceName,
+  deviceId,
+  values,
+}: HChartProps): JSX.Element => {
   const [openModal, setOpenModal] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getSpaceById(spaceId, (space) => {
-        setSpace(space);
-      });
-    };
-    fetch();
-  }, [spaceId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getDeviceById(deviceId, (device) => {
-        setDevice(device);
-      });
-    };
-    fetch();
-  }, [deviceId]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -114,8 +96,6 @@ const SoilValue = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        deviceName={device?.name!}
-        spaceName={space?.name!}
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}

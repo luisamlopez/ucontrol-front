@@ -1,10 +1,8 @@
 import { Box, Button, Paper } from "@mui/material";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Columns, THChartProps } from "../../../api/ChartData";
 import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Space, getSpaceById } from "../../../api/Space";
-import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
 
 const legendMarginPlugin = {
@@ -34,28 +32,8 @@ const columns: Columns[] = [
 ];
 ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 
-const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
-  const [space, setSpace] = useState<Space>();
-  const [device, setDevice] = useState<Device>();
+const Gauge = ({ deviceName, deviceId, values }: THChartProps): JSX.Element => {
   const [openModal, setOpenModal] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getSpaceById(spaceId, (space) => {
-        setSpace(space);
-      });
-    };
-    fetch();
-  }, [spaceId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getDeviceById(deviceId, (device) => {
-        setDevice(device);
-      });
-    };
-    fetch();
-  }, [deviceId]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -74,7 +52,7 @@ const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
     plugins: {
       title: {
         display: true,
-        text: `Temperatura y Humedad de ${device?.name} en ${space?.name}`,
+        text: `Temperatura y Humedad de ${deviceName}`,
       },
     },
     backgroundColor: "white",
@@ -154,7 +132,7 @@ const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   };
 
   const temperatureValue = {
-    id: `temperatureValue-${spaceId}-${deviceId}`,
+    id: `temperatureValue-${deviceId}`,
     beforeDraw(chart: any) {
       const {
         ctx,
@@ -172,7 +150,7 @@ const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
   };
 
   const humidityValue = {
-    id: `humidityValue-${spaceId}-${deviceId}`,
+    id: `humidityValue-${deviceId}`,
     beforeDraw(chart: any) {
       const {
         ctx,
@@ -247,8 +225,6 @@ const Gauge = ({ spaceId, deviceId, values }: THChartProps): JSX.Element => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        deviceName={device?.name!}
-        spaceName={space?.name!}
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}

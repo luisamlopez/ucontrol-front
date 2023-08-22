@@ -1,5 +1,5 @@
 import { Box, Button, Paper } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Columns, THChartProps } from "../../../api/ChartData";
 import {
   Chart as ChartJS,
@@ -12,8 +12,6 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { Space, getSpaceById } from "../../../api/Space";
-import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
 
 ChartJS.register(
@@ -40,31 +38,11 @@ const columns: Columns[] = [
   },
 ];
 const LineChart = ({
-  spaceId,
+  deviceName,
   deviceId,
   values,
 }: THChartProps): JSX.Element => {
-  const [space, setSpace] = useState<Space>();
-  const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getSpaceById(spaceId, (space) => {
-        setSpace(space);
-      });
-    };
-    fetch();
-  }, [spaceId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getDeviceById(deviceId, (device) => {
-        setDevice(device);
-      });
-    };
-    fetch();
-  }, [deviceId]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -83,7 +61,7 @@ const LineChart = ({
     plugins: {
       title: {
         display: true,
-        text: `Gráfico de línea de ${device?.name} en ${space?.name}`,
+        text: `Gráfico de línea de ${deviceName}`,
       },
     },
   };
@@ -169,8 +147,6 @@ const LineChart = ({
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        deviceName={device?.name!}
-        spaceName={space?.name!}
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}

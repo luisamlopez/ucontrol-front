@@ -15,108 +15,6 @@ type ChartCarouselProps = {
   tempHum?: boolean;
 };
 
-const NumericChart = ({
-  device,
-  type,
-  tempHum,
-}: ChartCarouselProps): JSX.Element => {
-  const spaceID = useParams<{ spaceID: string }>().spaceID;
-  const values = [
-    {
-      valueT: 28,
-      valueH: 23,
-      timestamp: new Date("2023-07-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 29.3,
-      valueH: 24,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 32,
-      valueH: 43.1,
-      timestamp: new Date("2023-08-12T18:18:07.434Z"),
-    },
-  ];
-
-  const hum = [
-    {
-      value: 23,
-      timestamp: new Date("2023-07-02T18:18:07.434Z"),
-    },
-    {
-      value: 24,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
-    },
-    {
-      value: 43.1,
-      timestamp: new Date("2023-08-12T18:18:07.434Z"),
-    },
-  ];
-  return (
-    <>
-      {tempHum && (
-        <Box>
-          {type === "bar" && (
-            // <BarChart
-            //   deviceId={device._id!}
-            //   values={values}
-            //   spaceId={spaceID!}
-            // />
-            <Box>Bar</Box>
-          )}
-          {type === "line" && (
-            // <LineChart
-            //   deviceId={device._id!}
-            //   values={values}
-            //   spaceId={spaceID!}
-            // />
-            <Box>Line</Box>
-          )}
-          {type === "gauge" && (
-            // <Gauge deviceId={device._id!} values={values} spaceId={spaceID!} />
-            <Box>Gauge</Box>
-          )}
-
-          {type === "value" && (
-            // <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
-            <Box>Value</Box>
-          )}
-        </Box>
-      )}
-      {!tempHum && (
-        <Box>
-          {type === "bar" && (
-            // <SoilBarChart
-            //   deviceId={device._id!}
-            //   values={hum}
-            //   spaceId={spaceID!}
-            // />
-            <Box>Bar</Box>
-          )}
-          {type === "line" && (
-            // <SoilLineChart
-            //   deviceId={device._id!}
-            //   values={hum}
-            //   spaceId={spaceID!}
-            // />
-            <Box>Line</Box>
-          )}
-          {type === "gauge" && (
-            // <SoilGauge deviceId={device._id!} values={hum} spaceId={spaceID!} />
-            <Box>Gauge</Box>
-          )}
-
-          {type === "value" && (
-            // <SoilValue deviceId={device._id!} values={hum} spaceId={spaceID!} />
-            <Box>Value</Box>
-          )}
-        </Box>
-      )}
-    </>
-  );
-};
-
 const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(0);
   const dvtTypes = device.dvt;
@@ -145,7 +43,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
           height: "100%",
         }}
       >
-        {dvtTypes.map((type, index) => (
+        {dvtTypes.map((dvtType, index) => (
           <Box
             key={index}
             sx={{
@@ -154,33 +52,87 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
               height: "100%",
             }}
           >
-            {device.type === "tempHum" && (
-              <Box>tempHum</Box>
-              // <NumericChart device={device} type={type} tempHum={true} />
+            {/* Temperature and humidity */}
+            {device.type === "tempHum" && dvtType === "bar" && (
+              // <BarChart
+              //   deviceId={device._id!}
+              //   values={values}
+              //   spaceId={spaceID!}
+              // />
+              <Box>Bar</Box>
             )}
-            {device.type === "hum" && (
-              <Box>hum</Box>
-              // <NumericChart device={device} type={type} tempHum={false} />
+
+            {device.type === "tempHum" && dvtType === "line" && (
+              // <LineChart
+              //   deviceId={device._id!}
+              //   values={values}
+              //   spaceId={spaceID!}
+              // />
+              <Box>Line</Box>
             )}
+            {device.type === "tempHum" && dvtType === "gauge" && (
+              // <Gauge deviceId={device._id!} values={values} spaceId={spaceID!} />
+              <Box>Gauge</Box>
+            )}
+
+            {device.type === "tempHum" && dvtType === "value" && (
+              // <Value deviceId={device._id!} values={values} spaceId={spaceID!} />
+              <Box>Value</Box>
+            )}
+
+            {/* Humidity */}
+
+            {device.type === "hum" && dvtType === "bar" && (
+              // <SoilBarChart
+              //   deviceId={device._id!}
+              //   values={hum}
+              //   spaceId={spaceID!}
+              // />
+              <Box>Bar</Box>
+            )}
+            {device.type === "hum" && dvtType === "line" && (
+              // <SoilLineChart
+              //   deviceId={device._id!}
+              //   values={hum}
+              //   spaceId={spaceID!}
+              // />
+              <Box>Line</Box>
+            )}
+            {device.type === "hum" && dvtType === "gauge" && (
+              // <SoilGauge deviceId={device._id!} values={hum} spaceId={spaceID!} />
+              <Box>Gauge</Box>
+            )}
+
+            {device.type === "hum" && dvtType === "value" && (
+              // <SoilValue deviceId={device._id!} values={hum} spaceId={spaceID!} />
+              <Box>Value</Box>
+            )}
+
+            {/* Rest of the device types */}
             {device.type !== "tempHum" && device.type !== "hum" && (
               <>
-                {type === "bar" && (
-                  <GeneralBarChartJSX deviceId={device._id!} />
+                {dvtType === "bar" && (
+                  <GeneralBarChartJSX
+                    deviceId={device._id!}
+                    deviceName={device.name}
+                  />
                 )}
-                {type === "pie" && (
+                {dvtType === "pie" && (
                   // <PieChart id={device.id} values={device.values} />
                   <Box>Pie</Box>
                 )}
-                {type === "line" && (
+                {dvtType === "line" && (
                   //  <LineChart id={device.id} values={device.values} />
                   <Box>Line</Box>
                 )}
-                {type === "gauge" && (
+                {dvtType === "gauge" && (
                   // <Gauge id={device._id} values={device.values} />
                   <Box>Gauge</Box>
                 )}
-                {type === "table" && <Table deviceId={device._id!} />}
-                {type === "value" && (
+                {dvtType === "table" && (
+                  <Table deviceId={device._id!} deviceName={device.name} />
+                )}
+                {dvtType === "value" && (
                   // <Value id={device._id} values={device.values} />
                   <Box>Value</Box>
                 )}

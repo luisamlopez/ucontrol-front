@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { getDeviceById, getSpaceFromDeviceId } from "../../api/Device";
-import { getSpaceById } from "../../api/Space";
+import { useState } from "react";
 import DownloadDataModal from "./DownloadDataModal";
 import { Box, Button, Paper } from "@mui/material";
 
@@ -16,15 +14,11 @@ const columns = [
   { field: "state", headerName: "Estado", width: 200 },
 ];
 
-const GeneralBarChartJSX = ({ deviceId }) => {
-  const [device, setDevice] = useState();
-  const [space, setSpace] = useState();
-  const [spaceId, setSpaceId] = useState("");
-
+const GeneralBarChartJSX = ({ deviceId, deviceName }) => {
   const [values, setValues] = useState([]);
 
   const [openModal, setOpenModal] = useState(false);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
   const otherValues = [
     {
       timestamp: new Date("2021-06-01T00:00:00.000Z"),
@@ -70,35 +64,6 @@ const GeneralBarChartJSX = ({ deviceId }) => {
 
   values.push(...otherValues);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await getDeviceById(deviceId, (device) => {
-          setDevice(device);
-        });
-
-        await getSpaceFromDeviceId(deviceId, (space) => {
-          setSpaceId(space);
-
-          if (spaceId === "") {
-            console.log("No se encontro el espacio");
-          } else {
-            setTimeout(async () => {
-              await getSpaceById(spaceId, (space) => {
-                setSpace(space);
-              });
-            }, 2000);
-          }
-        });
-
-        setIsDataLoaded(true);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [deviceId, spaceId]); // Only depend on deviceId
-
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -114,9 +79,8 @@ const GeneralBarChartJSX = ({ deviceId }) => {
   const data = {
     datasets: [
       {
-        label: "Dataset 1",
+        label: "Cantidad de precencia detectadas",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
-        borderColor: "rgb(255, 99, 132)",
         borderDash: [8, 4],
         fill: true,
         data: [],
@@ -127,18 +91,24 @@ const GeneralBarChartJSX = ({ deviceId }) => {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-
     scales: {
       x: {
         type: "realtime",
         realtime: {
           delay: 2000,
-          duration: 20000,
+          duration: 10000,
           onRefresh: (chart) => {
             chart.data.datasets.forEach((dataset) => {
               dataset.data.push({
+                /**
+                 * @todo Get the influx data from the API instead of random
+                 */
                 x: Date.now(),
-                y: Math.random(),
+                /**
+                 * @todo Here I need to have how many times a day the device returned only 1
+                 * so I need the sum of the values of the day
+                 */
+                y: Math.floor(Math.random() * 2),
               });
             });
           },
@@ -147,7 +117,7 @@ const GeneralBarChartJSX = ({ deviceId }) => {
     },
   };
 
-  return isDataLoaded ? (
+  return (
     <>
       <Box
         sx={{
@@ -213,22 +183,6 @@ const GeneralBarChartJSX = ({ deviceId }) => {
         columns={columns}
       />
     </>
-  ) : (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: {
-          lg: "column",
-          md: "column-reverse",
-          xs: "column-reverse",
-          sm: "column-reverse",
-        },
-        p: 1,
-      }}
-    >
-      {" "}
-      Cargando...
-    </Box>
   );
 };
 

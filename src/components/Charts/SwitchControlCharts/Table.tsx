@@ -22,9 +22,10 @@ import DownloadDataModal from "./DownloadDataModal";
 
 interface Props {
   deviceId: string;
+  deviceName?: string;
 }
 
-const Table = ({ deviceId }: Props): JSX.Element => {
+const Table = ({ deviceId, deviceName }: Props): JSX.Element => {
   const values = [
     {
       timestamp: new Date("2021-06-01T00:00:00.000Z"),
@@ -73,37 +74,7 @@ const Table = ({ deviceId }: Props): JSX.Element => {
     { field: "state", headerName: "Estado", width: 200 },
   ];
 
-  const [space, setSpace] = useState<Space>();
-  const [device, setDevice] = useState<Device>();
   const [openModal, setOpenModal] = useState(false);
-  const [spaceId, setSpaceId] = useState<string>("");
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        await getDeviceById(deviceId, (device) => {
-          setDevice(device);
-        });
-
-        await getSpaceFromDeviceId(deviceId, (space) => {
-          setSpaceId(space);
-
-          if (spaceId === "") {
-            console.log("No se encontro el espacio");
-          } else {
-            setTimeout(async () => {
-              await getSpaceById(spaceId, (space) => {
-                setSpace(space);
-              });
-            }, 2000);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetch();
-  }, [deviceId, spaceId]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -116,7 +87,7 @@ const Table = ({ deviceId }: Props): JSX.Element => {
   return (
     <>
       <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
-        Tabla de estados de {device?.name} en {space?.name}
+        Tabla de estados de {deviceName}
       </Typography>
       <Box
         sx={{
@@ -203,8 +174,6 @@ const Table = ({ deviceId }: Props): JSX.Element => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        deviceName={device?.name!}
-        spaceName={space?.name!}
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}

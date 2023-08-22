@@ -1,10 +1,8 @@
 import { Box, Button, Paper } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Columns, HChartProps } from "../../../api/ChartData";
 import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Space, getSpaceById } from "../../../api/Space";
-import { Device, getDeviceById } from "../../../api/Device";
 import DownloadDataModal from "./DownloadDataModal";
 
 const legendMarginPlugin = {
@@ -32,28 +30,12 @@ const columns: Columns[] = [
 
 ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 
-const SoilGauge = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
-  const [space, setSpace] = useState<Space>();
-  const [device, setDevice] = useState<Device>();
+const SoilGauge = ({
+  deviceName,
+  deviceId,
+  values,
+}: HChartProps): JSX.Element => {
   const [openModal, setOpenModal] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getSpaceById(spaceId, (space) => {
-        setSpace(space);
-      });
-    };
-    fetch();
-  }, [spaceId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      await getDeviceById(deviceId, (device) => {
-        setDevice(device);
-      });
-    };
-    fetch();
-  }, [deviceId]);
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -72,7 +54,7 @@ const SoilGauge = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
     plugins: {
       title: {
         display: true,
-        text: `Humedad de ${device?.name} en ${space?.name}`,
+        text: `Humedad de ${deviceName}`,
       },
     },
     backgroundColor: "white",
@@ -128,7 +110,7 @@ const SoilGauge = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
   };
 
   const humidityValue = {
-    id: `humidityValue-${spaceId}-${deviceId}`,
+    id: `humidityValue-${deviceId}`,
     beforeDraw(chart: any) {
       const {
         ctx,
@@ -199,8 +181,6 @@ const SoilGauge = ({ spaceId, deviceId, values }: HChartProps): JSX.Element => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        deviceName={device?.name!}
-        spaceName={space?.name!}
         startDate={values[0].timestamp}
         endDate={values[values.length - 1].timestamp}
         data={values}

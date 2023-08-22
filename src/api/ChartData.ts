@@ -14,7 +14,7 @@ export interface ChartDataProps {
 }
 
 export interface THChartProps {
-  spaceId: string;
+  deviceName: string;
   deviceId: string;
   values: {
     valueT: number;
@@ -24,7 +24,7 @@ export interface THChartProps {
 }
 
 export interface HChartProps {
-  spaceId: string;
+  deviceName: string;
   deviceId: string;
   values: {
     value: number;
