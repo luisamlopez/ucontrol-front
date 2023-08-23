@@ -60,6 +60,7 @@ interface FormValues {
     cond?: Options;
     condValue?: Options;
   };
+  listenerDevice?: string;
 }
 
 const initialValues = {
@@ -211,6 +212,15 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     actions: FormikHelpers<FormValues>
   ) => {
     try {
+      const conditions = {
+        listenerDevice: values.listenerDevice!,
+        condition: values.cons!.cond?.value!,
+        conditionValue:
+          values.cons!.cond?.value!.includes("yes") ||
+          values.cons!.cond?.value!.includes("no")
+            ? ""
+            : values.cons!.condValue?.value!,
+      };
       const deviceData: Device = {
         name: values.name,
         description: values.description,
@@ -218,24 +228,24 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         createdBy: user?._id!,
         type: values.type,
         topic: routeRef.current + " / " + values.name,
+        conditions: conditions,
       };
-      console.log(values.cons!.listenerDevice);
-      console.log(values.cons!.cond?.value);
-      console.log(values.cons!.condValue?.value);
-      // const response = await createDevice(
-      //   deviceData,
-      //   selectedSpace?._id!,
-      //   user?.name!
-      // );
-      // // console.log(response);
-      // if (response) {
-      //   enqueueSnackbar("Dispositivo creado con éxito", {
-      //     variant: "success",
-      //   });
-      //   navigate("/devices");
-      // } else {
-      //   enqueueSnackbar("Hubo un error", { variant: "error" });
-      // }
+
+      console.log(deviceData);
+      const response = await createDevice(
+        deviceData,
+        selectedSpace?._id!,
+        user?.name!
+      );
+      console.log(response);
+      if (response) {
+        enqueueSnackbar("Dispositivo creado con éxito", {
+          variant: "success",
+        });
+        navigate("/devices");
+      } else {
+        enqueueSnackbar("Hubo un error", { variant: "error" });
+      }
       actions.setSubmitting(true);
     } catch (error) {
       enqueueSnackbar("Hubo un error", { variant: "error" });
@@ -260,6 +270,15 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         });
         return;
       } else {
+        const conditions = {
+          listenerDevice: values.listenerDevice!,
+          condition: values.cons!.cond?.value!,
+          conditionValue:
+            values.cons!.cond?.value!.includes("yes") ||
+            values.cons!.cond?.value!.includes("no")
+              ? ""
+              : values.cons!.condValue?.value!,
+        };
         const deviceData: Device = {
           _id: props.deviceID!,
           name: values.name,
@@ -268,7 +287,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
           dvt: values.dvt,
           type: values.type,
           topic: routeRef.current + " / " + values.name,
+          conditions: conditions,
         };
+        console.log(deviceData);
         const fields: string[] = [];
         //fill the fields to add on the history
         if (values.name !== deviceToEdit?.name) {
@@ -334,34 +355,75 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
    * Get the device to edit
    */
   useEffect(() => {
-    if (props.deviceID) {
-      try {
-        getDeviceById(props.deviceID!, (device) => {
-          setDeviceToEdit(device);
-          setDataLoaded(false);
-        });
-      } catch (error) {
-        alert(error);
+    const fetch = async () => {
+      if (props.deviceID) {
+        try {
+          await getDeviceById(props.deviceID!, async (device) => {
+            setDeviceToEdit(device);
+            setDataLoaded(false);
+            if (device.conditions) {
+              setConditions(true);
+              onChangeSetConditionsOptions(device.type!);
+              try {
+                await getDeviceById(
+                  device.conditions.listenerDevice!,
+                  (deviceToEdit) => {
+                    initialFormValues.listenerDevice = deviceToEdit._id!;
+                    onChangeSetConditionsOptions(deviceToEdit.type!);
+                    initialFormValues.cons!.listenerDevice = deviceToEdit._id!;
+                    initialFormValues.cons!.cond = {
+                      label: device.conditions!.condition!,
+                      value: device.conditions!.condition!,
+                    };
+                    if (
+                      device.conditions!.conditionValue &&
+                      device.conditions!.conditionValue !== ""
+                    ) {
+                      initialFormValues.cons!.condValue = {
+                        label: device.conditions!.conditionValue!,
+                        value: device.conditions!.conditionValue!,
+                      };
+                    }
+                  }
+                );
+              } catch (error: any) {
+                console.log("error");
+              }
+            }
+            console.log(device);
+          });
+        } catch (error) {
+          alert(error);
+        }
       }
-    }
+    };
+
+    fetch();
   }, [props.deviceID]);
 
   /**
    * Set the initial form values when the device to edit is loaded
    */
   useEffect(() => {
-    if (deviceToEdit) {
-      const initialFormValues: FormValues = {
-        _id: deviceToEdit._id!,
-        name: deviceToEdit.name,
-        description: deviceToEdit.description || "",
-        dvt: deviceToEdit.dvt || [],
-        createdBy: deviceToEdit.createdBy || "",
-        createdOn: deviceToEdit.createdOn || new Date(),
-        type: deviceToEdit.type || "",
-      };
-      setInitialFormValues(initialFormValues);
-    }
+    const fetch = async () => {
+      if (deviceToEdit) {
+        const initialFormValues: FormValues = {
+          _id: deviceToEdit._id!,
+          name: deviceToEdit.name,
+          description: deviceToEdit.description || "",
+          dvt: deviceToEdit.dvt || [],
+          createdBy: deviceToEdit.createdBy || "",
+          createdOn: deviceToEdit.createdOn || new Date(),
+          type: deviceToEdit.type || "",
+          cons: deviceToEdit.conditions || {},
+        };
+        setDeviceType(deviceToEdit.type!);
+
+        setInitialFormValues(initialFormValues);
+      }
+    };
+
+    fetch();
   }, [deviceToEdit]);
 
   /**
@@ -404,6 +466,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   /**
    * Get all the devices to show them in the autocomplete for the device to listen to
    */
+
   useEffect(() => {
     try {
       getAllDevicesByUser(user!._id, (devices) => {
@@ -670,7 +733,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       />
                     </Field>
                   )}
-                  {deviceType && !props.deviceID && (
+                  {deviceType && (
                     <>
                       <FormLabel>
                         Indique al menos una forma de visualización de datos
@@ -732,6 +795,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         value={true}
                         control={<Radio />}
                         label="Si"
+                        checked={deviceToEdit?.conditions ? true : false}
                         onChange={() => {
                           setConditions(true);
                           setConditionsOptions([]);
@@ -742,6 +806,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         value={false}
                         control={<Radio />}
                         label="No"
+                        checked={!deviceToEdit?.conditions ? true : false}
                         onChange={() => {
                           setConditions(false);
                           setConditionsOptions([]);
@@ -752,7 +817,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                   )}
 
                   {conditions && allDevices.length > 0 && (
-                    /** Allow to add more of these boxes */
                     <>
                       <Box
                         sx={{
@@ -784,7 +848,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
 
                         <Field
                           component={Autocomplete}
-                          name="cons.listenerDevice"
+                          name="listenerDevice"
                           // Filter the devices to only show the ones that are not type luz or aire
                           options={allDevices.filter(
                             (obj) => obj.type !== "luz" && obj.type !== "aire"
@@ -792,7 +856,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           getOptionLabel={(option: Device) => option.name || ""}
                           onChange={(event: any, newValue: Device | null) => {
                             onChangeSetConditionsOptions(newValue?.type!);
-                            setFieldValue("cons.listenerDevice", newValue?._id);
+                            setFieldValue("listenerDevice", newValue?._id);
                           }}
                           fullWidth
                           renderInput={(

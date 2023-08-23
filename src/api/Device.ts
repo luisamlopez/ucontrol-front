@@ -101,7 +101,7 @@ export const createDevice = async (
         userName: userName,
       }),
     });
-
+    console.log(response);
     if (response.ok) return true;
   } catch (error) {
     console.log(error);

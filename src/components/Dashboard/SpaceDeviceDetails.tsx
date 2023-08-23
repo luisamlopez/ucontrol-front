@@ -40,7 +40,6 @@ function Details(props: { device: Device }): JSX.Element {
           value={props.device.description}
         />
       )}
-
       <DevicesDetailsText
         title={"Conectado desde el"}
         value={new Date(props.device.createdOn!).toLocaleString("es-VE", {
@@ -49,7 +48,26 @@ function Details(props: { device: Device }): JSX.Element {
           timeStyle: "short",
         })}
       />
-
+      <DevicesDetailsText
+        title={"Tipo de dispositivo"}
+        value={
+          props.device.type === "tempHum"
+            ? "Sensor de temperatura y humedad del aire"
+            : props.device.type === "hum"
+            ? "Sensor de humedad de tierra"
+            : props.device.type === "luz"
+            ? "Control de luminaria"
+            : props.device.type === "movimiento"
+            ? "Sensor de movimiento"
+            : props.device.type === "vibraciones"
+            ? "Sensor de vibraciones"
+            : props.device.type === "controlAcceso"
+            ? "Control de acceso"
+            : props.device.type === "aire"
+            ? "Control de aire acondicionado"
+            : "Flujo de agua"
+        }
+      />
       <DevicesDetailsText title="Tópico" value={props.device.topic!} />
     </Box>
   );
