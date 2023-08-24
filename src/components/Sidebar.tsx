@@ -71,12 +71,12 @@ export const Sidebar = (props: Props) => {
       link: "/dashboard",
     },
     {
-      name: "Administrar dispositivos",
+      name: "Administrador de dispositivos",
       icon: <DeviceHubRounded />,
       link: "/devices",
     },
     {
-      name: "Administrar espacios",
+      name: "Administrador de espacios",
       icon: <ApartmentRounded />,
       link: "/spaces",
     },
@@ -86,7 +86,7 @@ export const Sidebar = (props: Props) => {
       link: "/history",
     },
     {
-      name: "Control de acceso",
+      name: "Control de Acceso",
       icon: <VpnKeyRounded />,
       link: "/controlAccess",
     },
