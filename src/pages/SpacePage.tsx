@@ -1,14 +1,22 @@
-import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Container,
+  Typography,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device, getAllDevicesBySpace } from "../api/Device";
 import { Space, getSpaceById, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import SpaceDeviceDetails from "../components/Dashboard/SpaceDeviceDetails";
+import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 
 const SpacePage = (): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [space, setSpace] = useState<Space>();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
@@ -87,17 +95,41 @@ const SpacePage = (): JSX.Element => {
               p: 2,
             }}
           >
-            <Typography
-              color="primary"
-              textAlign="left"
-              fontSize={{ xs: 24, sm: 48, lg: 48 }}
-              fontWeight={600}
-              p={0}
-              mt={{ xs: 6, sm: 0, lg: 0 }}
-              mb={2}
-            >
-              Dispositivos del espacio: {space.name}
-            </Typography>
+            <Box display={"flex"}>
+              <IconButton
+                sx={{
+                  display: {
+                    lg: "none",
+                  },
+                  fontSize: "large",
+                  p: 0,
+                  mt: 0.5,
+                }}
+                onClick={() => navigate(-1)}
+              >
+                <KeyboardArrowLeftRounded
+                  fontSize="large"
+                  color="secondary"
+                  sx={{
+                    display: {
+                      lg: "none",
+                    },
+                  }}
+                />
+              </IconButton>
+              <Typography
+                color="primary"
+                textAlign="left"
+                fontSize={{ xs: 24, sm: 48, lg: 48 }}
+                fontWeight={600}
+                p={0}
+                mt={{ xs: 6, sm: 0, lg: 0 }}
+                mb={2}
+              >
+                Dispositivos del espacio: {space.name}
+              </Typography>
+            </Box>
+
             <SpaceDeviceDetails devices={devices} />
           </Box>
         )}

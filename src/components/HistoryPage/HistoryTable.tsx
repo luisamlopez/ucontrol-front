@@ -48,15 +48,15 @@ function DeviceDetails(object: Device) {
           {object.name}
         </TableCell>
         <TableCell align="center">
-          {object.history?.length === 0
-            ? new Date(
-                object.history[object.history?.length].updatedOn
-              ).toLocaleString("es-VE", {
+          {object.history && object.history?.length === 0
+            ? new Date(object.createdOn!).toLocaleString("es-VE", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "short",
               })
-            : new Date(object.createdOn!).toLocaleString("es-VE", {
+            : new Date(
+                object.history![object.history?.length! - 1].updatedOn
+              ).toLocaleString("es-VE", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "short",
@@ -101,9 +101,7 @@ function DeviceDetails(object: Device) {
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>
-                          {/* Join with a line break */}
-
-                          {history.field.flatMap((obj) => obj).join("---")}
+                          {history.field.flatMap((obj) => obj).join(", ")}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -140,15 +138,15 @@ function SpaceDetails(object: Space) {
           {object.name}
         </TableCell>
         <TableCell align="center">
-          {object.history?.length === 0
-            ? new Date(
-                object.history[object.history?.length].updatedOn
-              ).toLocaleString("es-VE", {
+          {object.history && object.history?.length === 0
+            ? new Date(object.createdOn!).toLocaleString("es-VE", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "short",
               })
-            : new Date(object.createdOn!).toLocaleString("es-VE", {
+            : new Date(
+                object.history![object.history?.length! - 1].updatedOn
+              ).toLocaleString("es-VE", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "short",
@@ -193,7 +191,9 @@ function SpaceDetails(object: Space) {
                         </TableCell>
                         <TableCell>{history.updatedBy}</TableCell>
                         <TableCell>{object.name}</TableCell>
-                        <TableCell>{history.field}</TableCell>
+                        <TableCell>
+                          {history.field.flatMap((obj) => obj).join(", ")}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

@@ -121,6 +121,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [conditionsOptions, setConditionsOptions] = useState<Options[]>([]);
   const [condValueOptions, setCondValueOptions] = useState<Options[]>([]);
   const [isNumeric, setIsNumeric] = useState<boolean>(false);
+  const [listenerDevice, setListenerDevice] = useState<Device | undefined>();
 
   useEffect(() => {
     switch (deviceType) {
@@ -270,75 +271,153 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         });
         return;
       } else {
-        const conditions = {
-          listenerDevice: values.listenerDevice!,
-          condition: values.cons!.cond?.value!,
-          conditionValue:
-            values.cons!.cond?.value!.includes("yes") ||
-            values.cons!.cond?.value!.includes("no")
-              ? ""
-              : values.cons!.condValue?.value!,
-        };
-        const deviceData: Device = {
-          _id: props.deviceID!,
-          name: values.name,
-          description: values.description,
-          createdBy: values.createdBy,
-          dvt: values.dvt,
-          type: values.type,
-          topic: routeRef.current + " / " + values.name,
-          conditions: conditions,
-        };
-        console.log(deviceData);
-        const fields: string[] = [];
-        //fill the fields to add on the history
-        if (values.name !== deviceToEdit?.name) {
-          fields.push(
-            "Cambio de nombre: " + deviceToEdit?.name + " -> " + values.name
-          );
-        }
-        if (values.description !== deviceToEdit?.description) {
-          fields.push(
-            "Cambio de descripción: " +
-              deviceToEdit?.description +
-              " -> " +
-              values.description
-          );
-        }
-        if (JSON.stringify(values.dvt) !== JSON.stringify(deviceToEdit?.dvt)) {
-          fields.push(
-            "Cambio de tipo de visualización: " +
-              deviceToEdit?.dvt +
-              " -> " +
-              deviceData.dvt
-          );
-        }
-        if (deviceData.topic !== deviceToEdit?.topic) {
-          fields.push(
-            "Cambio de tópico: " +
-              deviceToEdit?.topic +
-              " -> " +
-              routeRef.current +
-              " / " +
-              values.name
-          );
-        }
+        if (conditions) {
+          const cons = {
+            listenerDevice: values.listenerDevice!,
+            condition: values.cons!.cond?.value!,
+            conditionValue:
+              values.cons!.cond?.value!.includes("yes") ||
+              values.cons!.cond?.value!.includes("no")
+                ? ""
+                : values.cons!.condValue?.value!,
+          };
+          const deviceData: Device = {
+            _id: props.deviceID!,
+            name: values.name,
+            description: values.description,
+            createdBy: values.createdBy,
+            dvt: values.dvt,
+            type: values.type,
+            topic: routeRef.current + " / " + values.name,
+            conditions: cons,
+          };
+          const fields: string[] = [];
+          //fill the fields to add on the history
+          if (values.name !== deviceToEdit?.name) {
+            fields.push(
+              "Cambio de nombre: " + deviceToEdit?.name + " -> " + values.name
+            );
+          }
+          if (values.description !== deviceToEdit?.description) {
+            fields.push(
+              "Cambio de descripción: " +
+                deviceToEdit?.description +
+                " -> " +
+                values.description
+            );
+          }
+          if (
+            JSON.stringify(values.dvt) !== JSON.stringify(deviceToEdit?.dvt)
+          ) {
+            fields.push(
+              "Cambio de tipo de visualización: " +
+                deviceToEdit?.dvt +
+                " -> " +
+                deviceData.dvt
+            );
+          }
+          if (deviceData.topic !== deviceToEdit?.topic) {
+            fields.push(
+              "Cambio de tópico: " +
+                deviceToEdit?.topic +
+                " -> " +
+                routeRef.current +
+                " / " +
+                values.name
+            );
+          }
+          if (deviceToEdit?.conditions) {
+            if (
+              deviceData.conditions?.listenerDevice !==
+                deviceToEdit?.conditions?.listenerDevice ||
+              deviceData.conditions?.condition !==
+                deviceToEdit?.conditions?.condition ||
+              deviceData.conditions?.conditionValue !==
+                deviceToEdit?.conditions?.conditionValue
+            ) {
+              fields.push("Cambio de condición/regla");
+            }
+          }
 
-        const response = await updateDevice(
-          deviceData,
-          props.deviceID!,
-          fields,
-          user?.name!
-        );
-        if (response) {
-          enqueueSnackbar("Dispositivo editado con éxito", {
-            variant: "success",
-          });
-          navigate("/devices");
+          const response = await updateDevice(
+            deviceData,
+            props.deviceID!,
+            fields,
+            user?.name!
+          );
+          if (response) {
+            enqueueSnackbar("Dispositivo editado con éxito", {
+              variant: "success",
+            });
+            navigate("/devices");
+          } else {
+            enqueueSnackbar("Hubo un error", {
+              variant: "error",
+            });
+          }
         } else {
-          enqueueSnackbar("Hubo un error", {
-            variant: "error",
-          });
+          const deviceData: Device = {
+            _id: props.deviceID!,
+            name: values.name,
+            description: values.description,
+            createdBy: values.createdBy,
+            dvt: values.dvt,
+            type: values.type,
+            topic: routeRef.current + " / " + values.name,
+          };
+          const fields: string[] = [];
+          //fill the fields to add on the history
+          if (values.name !== deviceToEdit?.name) {
+            fields.push(
+              "Cambio de nombre: " + deviceToEdit?.name + " -> " + values.name
+            );
+          }
+          if (values.description !== deviceToEdit?.description) {
+            fields.push(
+              "Cambio de descripción: " +
+                deviceToEdit?.description +
+                " -> " +
+                values.description
+            );
+          }
+          if (
+            JSON.stringify(values.dvt) !== JSON.stringify(deviceToEdit?.dvt)
+          ) {
+            fields.push(
+              "Cambio de tipo de visualización: " +
+                deviceToEdit?.dvt +
+                " -> " +
+                deviceData.dvt
+            );
+          }
+          if (deviceData.topic !== deviceToEdit?.topic) {
+            fields.push(
+              "Cambio de tópico: " +
+                deviceToEdit?.topic +
+                " -> " +
+                routeRef.current +
+                " / " +
+                values.name
+            );
+          }
+
+          const response = await updateDevice(
+            deviceData,
+            props.deviceID!,
+            fields,
+            user?.name!
+          );
+          console.log(response);
+          if (response) {
+            enqueueSnackbar("Dispositivo editado con éxito", {
+              variant: "success",
+            });
+            navigate("/devices");
+          } else {
+            enqueueSnackbar("Hubo un error", {
+              variant: "error",
+            });
+          }
         }
 
         actions.setSubmitting(true);
@@ -362,28 +441,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             setDeviceToEdit(device);
             setDataLoaded(false);
             if (device.conditions) {
-              setConditions(true);
-              onChangeSetConditionsOptions(device.type!);
               try {
                 await getDeviceById(
                   device.conditions.listenerDevice!,
-                  (deviceToEdit) => {
-                    initialFormValues.listenerDevice = deviceToEdit._id!;
-                    onChangeSetConditionsOptions(deviceToEdit.type!);
-                    initialFormValues.cons!.listenerDevice = deviceToEdit._id!;
-                    initialFormValues.cons!.cond = {
-                      label: device.conditions!.condition!,
-                      value: device.conditions!.condition!,
-                    };
-                    if (
-                      device.conditions!.conditionValue &&
-                      device.conditions!.conditionValue !== ""
-                    ) {
-                      initialFormValues.cons!.condValue = {
-                        label: device.conditions!.conditionValue!,
-                        value: device.conditions!.conditionValue!,
-                      };
-                    }
+                  (listenerDevice) => {
+                    setListenerDevice(listenerDevice);
                   }
                 );
               } catch (error: any) {
@@ -774,7 +836,27 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       </FieldArray>
                     </>
                   )}
-
+                  {props.deviceID &&
+                    deviceToEdit?.conditions &&
+                    listenerDevice && (
+                      <Typography>
+                        Este dispositivo tiene una condición asociada, escucha a{" "}
+                        {listenerDevice?.name} y cambia de estado cuando detecta{" "}
+                        {deviceToEdit?.conditions?.condition === "yes" ||
+                        deviceToEdit?.conditions?.condition === "no"
+                          ? "o no presencia"
+                          : deviceToEdit?.conditions?.condition}{" "}
+                        {deviceToEdit?.conditions?.conditionValue
+                          ? deviceToEdit?.conditions?.conditionValue
+                          : ""}
+                        {listenerDevice.type === "tempHum"
+                          ? "°C"
+                          : listenerDevice.type === "hum"
+                          ? "%"
+                          : ""}
+                        .
+                      </Typography>
+                    )}
                   {(deviceType === "luz" || deviceType === "aire") && (
                     <Field
                       component={RadioGroup}
@@ -789,13 +871,16 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           fontSize: "18px",
                         }}
                       >
-                        ¿Desea agregar una condición?
+                        ¿
+                        {props.deviceID && deviceToEdit?.conditions
+                          ? "Desea cambiar la condición"
+                          : "Desea agregar una condición"}
+                        ?
                       </FormLabel>
                       <FormControlLabel
                         value={true}
                         control={<Radio />}
                         label="Si"
-                        checked={deviceToEdit?.conditions ? true : false}
                         onChange={() => {
                           setConditions(true);
                           setConditionsOptions([]);
@@ -806,7 +891,6 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                         value={false}
                         control={<Radio />}
                         label="No"
-                        checked={!deviceToEdit?.conditions ? true : false}
                         onChange={() => {
                           setConditions(false);
                           setConditionsOptions([]);
@@ -816,7 +900,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     </Field>
                   )}
 
-                  {conditions && allDevices.length > 0 && (
+                  {((conditions && allDevices.length > 0) ||
+                    (conditions &&
+                      allDevices.length > 0 &&
+                      props.deviceID &&
+                      deviceToEdit?.conditions)) && (
                     <>
                       <Box
                         sx={{

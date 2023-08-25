@@ -202,6 +202,7 @@ export const updateDevice = async (
         topic: deviceData.topic,
         fields: fields,
         userName: username,
+        conditions: deviceData.conditions,
       }),
     });
 

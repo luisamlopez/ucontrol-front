@@ -351,27 +351,29 @@ const Modal = (props: DeviceModalProps) => {
           </Box>
         </DialogContent>
       </Box>
-      <Box
-        sx={{
-          alignSelf: "flex-end",
-          m: 2,
-          p: 2,
-          placeSelf: "end",
-        }}
-      >
-        <Button
-          sx={{ mr: 2 }}
-          onClick={() => {
-            if (props.device) {
-              handleDeleteDevice();
-            } else if (props.space) {
-              handleDeleteSpace();
-            }
+      {user?.admin && (
+        <Box
+          sx={{
+            alignSelf: "flex-end",
+            m: 2,
+            p: 2,
+            placeSelf: "end",
           }}
         >
-          <Typography>Eliminar</Typography>
-        </Button>
-        {user?.admin && (
+          {/* ToDo: Change if the user has permissions on read/write with devices */}
+
+          <Button
+            sx={{ mr: 2 }}
+            onClick={() => {
+              if (props.device) {
+                handleDeleteDevice();
+              } else if (props.space) {
+                handleDeleteSpace();
+              }
+            }}
+          >
+            <Typography>Eliminar</Typography>
+          </Button>
           <Button
             variant="contained"
             onClick={() => {
@@ -384,8 +386,8 @@ const Modal = (props: DeviceModalProps) => {
           >
             <Typography>Editar</Typography>
           </Button>
-        )}
-      </Box>
+        </Box>
+      )}
     </Dialog>
   );
 };
