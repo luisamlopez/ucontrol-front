@@ -213,40 +213,69 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     actions: FormikHelpers<FormValues>
   ) => {
     try {
-      const conditions = {
-        listenerDevice: values.listenerDevice!,
-        condition: values.cons!.cond?.value!,
-        conditionValue:
-          values.cons!.cond?.value!.includes("yes") ||
-          values.cons!.cond?.value!.includes("no")
-            ? ""
-            : values.cons!.condValue?.value!,
-      };
-      const deviceData: Device = {
-        name: values.name,
-        description: values.description,
-        dvt: values.dvt,
-        createdBy: user?._id!,
-        type: values.type,
-        topic: routeRef.current + " / " + values.name,
-        conditions: conditions,
-      };
+      if (conditions) {
+        const cons = {
+          listenerDevice: values.listenerDevice ? values.listenerDevice : "",
+          condition: values.cons!.cond?.value!,
+          conditionValue:
+            values.cons!.cond?.value!.includes("yes") ||
+            values.cons!.cond?.value!.includes("no")
+              ? ""
+              : values.cons!.condValue?.value!,
+        };
 
-      console.log(deviceData);
-      const response = await createDevice(
-        deviceData,
-        selectedSpace?._id!,
-        user?.name!
-      );
-      console.log(response);
-      if (response) {
-        enqueueSnackbar("Dispositivo creado con éxito", {
-          variant: "success",
-        });
-        navigate("/devices");
+        const deviceData: Device = {
+          name: values.name,
+          description: values.description,
+          dvt: values.dvt,
+          createdBy: user?._id!,
+          type: values.type,
+          topic: routeRef.current + " / " + values.name,
+          conditions: cons,
+        };
+
+        console.log(deviceData);
+        const response = await createDevice(
+          deviceData,
+          selectedSpace?._id!,
+          user?.name!
+        );
+        console.log(response);
+        if (response) {
+          enqueueSnackbar("Dispositivo creado con éxito", {
+            variant: "success",
+          });
+          navigate("/devices");
+        } else {
+          enqueueSnackbar("Hubo un error", { variant: "error" });
+        }
       } else {
-        enqueueSnackbar("Hubo un error", { variant: "error" });
+        const deviceData: Device = {
+          name: values.name,
+          description: values.description,
+          dvt: values.dvt,
+          createdBy: user?._id!,
+          type: values.type,
+          topic: routeRef.current + " / " + values.name,
+        };
+
+        console.log(deviceData);
+        const response = await createDevice(
+          deviceData,
+          selectedSpace?._id!,
+          user?.name!
+        );
+        console.log(response);
+        if (response) {
+          enqueueSnackbar("Dispositivo creado con éxito", {
+            variant: "success",
+          });
+          navigate("/devices");
+        } else {
+          enqueueSnackbar("Hubo un error", { variant: "error" });
+        }
       }
+
       actions.setSubmitting(true);
     } catch (error) {
       enqueueSnackbar("Hubo un error", { variant: "error" });

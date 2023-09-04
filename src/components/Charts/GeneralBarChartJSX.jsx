@@ -79,7 +79,7 @@ const GeneralBarChartJSX = ({ deviceId, deviceName }) => {
   const data = {
     datasets: [
       {
-        label: "Cantidad de precencia detectadas",
+        label: "Cantidad de presencia detectadas",
         backgroundColor: "rgba(255, 99, 132, 0.5)",
         borderDash: [8, 4],
         fill: true,

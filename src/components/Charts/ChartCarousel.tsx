@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import Table from "./SwitchControlCharts/Table";
 import SoilValue from "./SoilCharts/SoilValue";
 import Value from "./TempHumCharts/Value";
+import Gauge from "./TempHumCharts/Gauge";
 
 type ChartCarouselProps = {
   device: Device;
@@ -106,8 +107,12 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
               <Box>Line</Box>
             )}
             {device.type === "tempHum" && dvtType === "gauge" && (
-              // <Gauge deviceId={device._id!} values={values} spaceId={spaceID!} />
-              <Box>Gauge</Box>
+              <Gauge
+                deviceId={device._id!}
+                values={values}
+                deviceName={device.name}
+              />
+              //<Box>Gauge</Box>
             )}
 
             {device.type === "tempHum" && dvtType === "value" && (

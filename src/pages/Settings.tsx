@@ -64,36 +64,38 @@ const SettingsPage = (): JSX.Element => {
     notifications: yup.boolean().required("Seleccione una opción, por favor"),
   });
 
-  useAutosave(() => {
-    alert(
-      "Se ha guardado su configuración de notificaciones (aqui va la funcion)"
-    );
-  }, 60 * 5000);
+  // useAutosave(() => {
+  //   alert(
+  //     "Se ha guardado su configuración de notificaciones (aqui va la funcion)"
+  //   );
+  // }, 60 * 1000);
 
-  const onChangePassword = (
+  const onChangePassword = async (
     values: ChangePaswordFormValues,
     actions: FormikHelpers<ChangePaswordFormValues>
   ) => {
-    try {
-      actions.setSubmitting(true);
-      /**
-       * TODO: Add change password functionality
-       */
-      // const response = await login(values);
-      // if (response.success) {
-      enqueueSnackbar("response.message", { variant: "success" });
-      window.location.reload();
-      // } else {
-      //   enqueueSnackbar(response.message, { variant: "error" });
-      // }
-    } catch (error) {
-      enqueueSnackbar("Hubo un error", { variant: "error" });
-    } finally {
-      actions.setSubmitting(false);
-    }
+    console.log(values);
+    // try {
+    //   // actions.setSubmitting(true);
+    //   /**
+    //    * TODO: Add change password functionality
+    //    */
+    //   // const response = await login(values);
+    //   // if (response.success) {
+    //   // enqueueSnackbar(response.message, { variant: "success" });
+    //   // window.location.reload();
+    //   // } else {
+    //   //   enqueueSnackbar(response.message, { variant: "error" });
+    //   // }
+    // } catch (error) {
+    //   enqueueSnackbar("Hubo un error", { variant: "error" });
+    // }
+    // finally {
+    //   actions.setSubmitting(false);
+    // }
   };
 
-  const onNotifications = (
+  const onChangeNotifications = (
     values: NotificationsFormValues,
     actions: FormikHelpers<NotificationsFormValues>
   ) => {
@@ -197,7 +199,7 @@ const SettingsPage = (): JSX.Element => {
           >
             <Formik
               initialValues={notificationsInitialValues}
-              onSubmit={onNotifications}
+              onSubmit={onChangeNotifications}
               validationSchema={notificationsValidationSchema}
             >
               {({ isSubmitting }) => (
