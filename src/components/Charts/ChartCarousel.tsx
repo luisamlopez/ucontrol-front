@@ -11,6 +11,8 @@ import Table from "./SwitchControlCharts/Table";
 import SoilValue from "./SoilCharts/SoilValue";
 import Value from "./TempHumCharts/Value";
 import Gauge from "./TempHumCharts/Gauge";
+import { THBarChart } from "./TempHumCharts/THBarChart";
+import { THLineChart } from "./TempHumCharts/THLineCHart";
 
 type ChartCarouselProps = {
   device: Device;
@@ -95,7 +97,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
               //   values={values}
               //   spaceId={spaceID!}
               // />
-              <Box>Bar</Box>
+              <THBarChart topic={device.topic} deviceName={device.name} />
             )}
 
             {device.type === "tempHum" && dvtType === "line" && (
@@ -104,7 +106,7 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
               //   values={values}
               //   spaceId={spaceID!}
               // />
-              <Box>Line</Box>
+              <THLineChart topic={device.topic} deviceName={device.name} />
             )}
             {device.type === "tempHum" && dvtType === "gauge" && (
               <Gauge
