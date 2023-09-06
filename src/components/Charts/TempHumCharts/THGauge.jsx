@@ -26,7 +26,7 @@ ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
 const org = "UControl";
-const url = "http://192.168.250.5:8086/";
+const url = "http://172.29.91.241:8086/";
 
 const columns = [
   {
@@ -43,31 +43,10 @@ const columns = [
   },
 ];
 
-export const THGauge = ({ deviceName, topic }) => {
+export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
   const [dataTemp, setDataTemp] = useState();
   const [dataHum, setDataHum] = useState();
   const [openModal, setOpenModal] = useState(false);
-
-  /**
-   * @todo Add the real values to the export data
-   */
-  const values = [
-    {
-      valueT: 28,
-      valueH: 23,
-      timestamp: new Date("2023-07-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 29.3,
-      valueH: 24,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 32,
-      valueH: 43.1,
-      timestamp: new Date("2023-08-12T18:18:07.434Z"),
-    },
-  ];
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -78,14 +57,14 @@ export const THGauge = ({ deviceName, topic }) => {
   };
 
   let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -2m, stop: 1h) 
+|>  range(start: -5m, stop: 1h) 
 |> filter(fn: (r) => r["_measurement"] == "measurements")
 |> filter(fn: (r) =>  r["_field"] == "Temperature")
 |> filter(fn: (r) => r["topic"] == "${topic}")
 |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -2m, stop: 1h)
+|>  range(start: -5m, stop: 1h)
 |> filter(fn: (r) => r["_measurement"] == "measurements")
 |> filter(fn: (r) =>  r["_field"] == "Humidity")
 |> filter(fn: (r) => r["topic"] == "${topic}")
@@ -193,11 +172,6 @@ export const THGauge = ({ deviceName, topic }) => {
       influxQuery();
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
-
-  useEffect(() => {
-    console.log("dataTemp", dataTemp);
-    console.log("dataHum", dataHum);
   }, [dataHum, dataTemp]);
 
   const options = {
@@ -361,13 +335,7 @@ export const THGauge = ({ deviceName, topic }) => {
             height: "25rem",
           }}
         >
-          <Doughnut
-            data={dataSet}
-            options={options}
-            width={200}
-            height={200}
-            onResize={"resize"}
-          />
+          <Doughnut data={dataSet} options={options} width={200} height={200} />
           <Box
             sx={{
               display: "flex",
@@ -398,10 +366,11 @@ export const THGauge = ({ deviceName, topic }) => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        startDate={values[0].timestamp}
-        endDate={values[values.length - 1].timestamp}
+        startDate={deviceStartDate}
+        endDate={Date.now()}
         data={values}
         columns={columns}
+        deviceName={deviceName}
       />
     </>
   );

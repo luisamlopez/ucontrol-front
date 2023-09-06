@@ -7,7 +7,7 @@ import DownloadDataModal from "./DownloadDataModal";
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
 const org = "UControl";
-const url = "http://192.168.250.5:8086/";
+const url = "http://172.29.91.241:8086/";
 
 const columns = [
   {
@@ -24,7 +24,7 @@ const columns = [
   },
 ];
 
-export const THValue = ({ deviceName, topic }) => {
+export const THValue = ({ deviceName, topic, deviceStartDate }) => {
   const [dataTemp, setDataTemp] = useState([]);
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -59,14 +59,14 @@ export const THValue = ({ deviceName, topic }) => {
   };
 
   let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -2m, stop: 1h) 
+|>  range(start: -5m, stop: 1h) 
 |> filter(fn: (r) => r["_measurement"] == "measurements")
 |> filter(fn: (r) =>  r["_field"] == "Temperature")
 |> filter(fn: (r) => r["topic"] == "${topic}")
 |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -2m, stop: 1h)
+|>  range(start: -5m, stop: 1h)
 |> filter(fn: (r) => r["_measurement"] == "measurements")
 |> filter(fn: (r) =>  r["_field"] == "Humidity")
 |> filter(fn: (r) => r["topic"] == "${topic}")
@@ -176,11 +176,6 @@ export const THValue = ({ deviceName, topic }) => {
     return () => clearInterval(interval);
   }, [dataHum, dataTemp]);
 
-  useEffect(() => {
-    console.log("dataTemp", dataTemp);
-    console.log("dataHum", dataHum);
-  }, [dataHum, dataTemp]);
-
   return (
     <>
       <Box
@@ -257,6 +252,7 @@ export const THValue = ({ deviceName, topic }) => {
         endDate={values[values.length - 1].timestamp}
         data={values}
         columns={columns}
+        deviceName={deviceName}
       />
     </>
   );
