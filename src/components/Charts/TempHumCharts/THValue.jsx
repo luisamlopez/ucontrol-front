@@ -1,30 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
-import { Bar } from "react-chartjs-2";
-import "chartjs-adapter-luxon";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import StreamingPlugin from "chartjs-plugin-streaming";
 import DownloadDataModal from "./DownloadDataModal";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  StreamingPlugin
-);
 
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
@@ -46,7 +24,7 @@ const columns = [
   },
 ];
 
-export const THBarChart = ({ deviceName, topic }) => {
+export const THValue = ({ deviceName, topic }) => {
   const [dataTemp, setDataTemp] = useState([]);
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -94,39 +72,6 @@ export const THBarChart = ({ deviceName, topic }) => {
 |> filter(fn: (r) => r["topic"] == "${topic}")
 |> yield(name: "mean")`;
 
-  const options = {
-    responsive: true,
-    // Establecer el tamaño deseado para el gráfico
-    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
-    width: 3000, // Ancho en píxeles
-    height: 1500, // Alto en píxeles
-    plugins: {
-      title: {
-        display: true,
-        text: `Gráfico de barras de ${deviceName}`,
-      },
-    },
-  };
-
-  const dataSet = {
-    labels: dataTemp[0]?.data.map((value) =>
-      new Date(value.x).toLocaleString()
-    ),
-    datasets: [
-      {
-        label: "Temperatura",
-        //get data from the array of objects where the field is temperature.
-        data: dataTemp[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
-        label: "Humedad",
-        data: dataHum[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
-
   useEffect(() => {
     let resT = [];
     let resH = [];
@@ -173,7 +118,7 @@ export const THBarChart = ({ deviceName, topic }) => {
             exists = false;
           }
 
-          setDataTemp(finalData);
+          setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
         },
         error(error) {
           console.log("temp query failed- ", error);
@@ -218,7 +163,7 @@ export const THBarChart = ({ deviceName, topic }) => {
             exists = false;
           }
 
-          setDataHum(finalData);
+          setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
         },
         error(error) {
           console.log("hum query failed- ", error);
@@ -231,10 +176,10 @@ export const THBarChart = ({ deviceName, topic }) => {
     return () => clearInterval(interval);
   }, [dataHum, dataTemp]);
 
-  //useEffect(() => {
-  // console.log(dataTemp);
-  //console.log(dataHum);
-  //}, [dataTemp, dataHum]);
+  useEffect(() => {
+    console.log("dataTemp", dataTemp);
+    console.log("dataHum", dataHum);
+  }, [dataHum, dataTemp]);
 
   return (
     <>
@@ -279,18 +224,30 @@ export const THBarChart = ({ deviceName, topic }) => {
             mb: 2,
             zIndex: 0,
             whiteSpace: "nowrap",
-            width: "90%",
+            width: "80%",
             placeSelf: "center",
-            height: "25rem",
+            height: "20rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: {
+              lg: "row",
+              md: "row",
+              xs: "column",
+              sm: "column",
+            },
           }}
         >
-          <Bar
-            data={dataSet}
-            updateMode="resize"
-            width={2500}
-            height={1500}
-            //options={options}
-          />
+          <Box>
+            <Typography fontWeight={600} fontSize={24}>
+              Temperatura: {dataTemp} °C &nbsp;
+            </Typography>
+          </Box>
+          <Box>
+            <Typography fontWeight={600} fontSize={24}>
+              Humedad: {dataHum} %
+            </Typography>
+          </Box>
         </Paper>
       </Box>
       <DownloadDataModal

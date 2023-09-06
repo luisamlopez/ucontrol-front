@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
-import { Bar } from "react-chartjs-2";
 import "chartjs-adapter-luxon";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+
+import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import StreamingPlugin from "chartjs-plugin-streaming";
 import DownloadDataModal from "./DownloadDataModal";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  StreamingPlugin
-);
+const legendMarginPlugin = {
+  id: "legendMargin",
+  beforeInit: (chart) => {
+    const originalFit = chart.legend.fit;
+
+    chart.legend.fit = function () {
+      originalFit.bind(chart.legend)();
+      this.height += 20;
+    };
+  },
+};
+
+ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
@@ -46,9 +43,9 @@ const columns = [
   },
 ];
 
-export const THBarChart = ({ deviceName, topic }) => {
-  const [dataTemp, setDataTemp] = useState([]);
-  const [dataHum, setDataHum] = useState([]);
+export const THGauge = ({ deviceName, topic }) => {
+  const [dataTemp, setDataTemp] = useState();
+  const [dataHum, setDataHum] = useState();
   const [openModal, setOpenModal] = useState(false);
 
   /**
@@ -93,39 +90,6 @@ export const THBarChart = ({ deviceName, topic }) => {
 |> filter(fn: (r) =>  r["_field"] == "Humidity")
 |> filter(fn: (r) => r["topic"] == "${topic}")
 |> yield(name: "mean")`;
-
-  const options = {
-    responsive: true,
-    // Establecer el tamaño deseado para el gráfico
-    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
-    width: 3000, // Ancho en píxeles
-    height: 1500, // Alto en píxeles
-    plugins: {
-      title: {
-        display: true,
-        text: `Gráfico de barras de ${deviceName}`,
-      },
-    },
-  };
-
-  const dataSet = {
-    labels: dataTemp[0]?.data.map((value) =>
-      new Date(value.x).toLocaleString()
-    ),
-    datasets: [
-      {
-        label: "Temperatura",
-        //get data from the array of objects where the field is temperature.
-        data: dataTemp[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
-        label: "Humedad",
-        data: dataHum[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
 
   useEffect(() => {
     let resT = [];
@@ -173,7 +137,7 @@ export const THBarChart = ({ deviceName, topic }) => {
             exists = false;
           }
 
-          setDataTemp(finalData);
+          setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
         },
         error(error) {
           console.log("temp query failed- ", error);
@@ -218,7 +182,7 @@ export const THBarChart = ({ deviceName, topic }) => {
             exists = false;
           }
 
-          setDataHum(finalData);
+          setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
         },
         error(error) {
           console.log("hum query failed- ", error);
@@ -231,10 +195,123 @@ export const THBarChart = ({ deviceName, topic }) => {
     return () => clearInterval(interval);
   }, [dataHum, dataTemp]);
 
-  //useEffect(() => {
-  // console.log(dataTemp);
-  //console.log(dataHum);
-  //}, [dataTemp, dataHum]);
+  useEffect(() => {
+    console.log("dataTemp", dataTemp);
+    console.log("dataHum", dataHum);
+  }, [dataHum, dataTemp]);
+
+  const options = {
+    responsive: true,
+    // Establecer el tamaño deseado para el gráfico
+    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
+    width: 700, // Ancho en píxeles
+    height: 400, // Alto en píxeles
+    plugins: {
+      title: {
+        display: true,
+        text: `Temperatura y Humedad de ${deviceName}`,
+      },
+    },
+    backgroundColor: "white",
+    cutout: "70%",
+  };
+
+  function getGradient(chart, type) {
+    const {
+      ctx,
+      chartArea: { left, right },
+    } = chart;
+    const gradientSegment = ctx.createLinearGradient(left, 0, right, 0);
+    if (type === "temperature") {
+      gradientSegment.addColorStop(0, "#40B4E5"); //blue
+      gradientSegment.addColorStop(0.5, "#FFC526"); //yellow
+      gradientSegment.addColorStop(1, "#FF0000"); //red
+    } else {
+      gradientSegment.addColorStop(0, "#FF0000"); //red
+      gradientSegment.addColorStop(0.5, "#FFC526"); //yellow
+      gradientSegment.addColorStop(1, "#40B4E5"); //blue
+    }
+    return gradientSegment;
+  }
+
+  const dataSet = {
+    datasets: [
+      {
+        label: "Temperatura",
+        //get data from the array of objects where the field is temperature.
+        data: [dataTemp, 45 - dataTemp],
+        circumference: 180,
+        rotation: 270,
+        borderWidth: 0,
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { chartArea } = chart;
+          if (!chartArea) {
+            // This case happens on initial chart load
+            return null;
+          }
+          if (context.dataIndex === 0) {
+            return getGradient(chart, "temperature");
+          } else {
+            return "#FFFFFF";
+          }
+        },
+        hoverOffset: 10,
+      },
+      {
+        label: "Humedad",
+        data: [dataHum, 100 - dataHum],
+        circumference: 180,
+        rotation: 270,
+        borderWidth: 0,
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { chartArea } = chart;
+          if (!chartArea) {
+            // This case happens on initial chart load
+            return null;
+          }
+
+          if (context.dataIndex === 0) {
+            return getGradient(chart, "humidity");
+          } else {
+            return "#FFFFFF";
+          }
+        },
+        hoverOffset: -20,
+      },
+    ],
+  };
+
+  const temperatureValue = {
+    beforeDraw(chart) {
+      const {
+        ctx,
+        chartArea: { left, top, width, height },
+      } = chart;
+      const temperatureLabel = `Temperatura: ${dataTemp ? dataTemp : "0"}°C`;
+      ctx.fillStyle = "black"; // Set the color for the label
+      ctx.font = "bold 16px Arial"; // Set the font style for the label
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(temperatureLabel, left + width / 2, top + height - 60);
+    },
+  };
+
+  const humidityValue = {
+    beforeDraw(chart) {
+      const {
+        ctx,
+        chartArea: { left, top, width, height },
+      } = chart;
+      const humidityLabel = `Humedad: ${dataHum ? dataHum : "0"}%`;
+      ctx.fillStyle = "black"; // Set the color for the label
+      ctx.font = "bold 16px Arial"; // Set the font style for the label
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(humidityLabel, left + width / 2, top + height - 80);
+    },
+  };
 
   return (
     <>
@@ -284,13 +361,38 @@ export const THBarChart = ({ deviceName, topic }) => {
             height: "25rem",
           }}
         >
-          <Bar
+          <Doughnut
             data={dataSet}
-            updateMode="resize"
-            width={2500}
-            height={1500}
-            //options={options}
+            options={options}
+            width={200}
+            height={200}
+            onResize={"resize"}
           />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: {
+                lg: "column",
+                md: "column-reverse",
+                xs: "column-reverse",
+                sm: "column-reverse",
+              },
+              p: 1,
+              placeSelf: "center",
+              m: -10,
+            }}
+          >
+            <Box>
+              <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
+                Temperatura: {dataTemp} °C &nbsp;
+              </Typography>
+            </Box>
+            <Box>
+              <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
+                Humedad: {dataHum} %
+              </Typography>
+            </Box>
+          </Box>
         </Paper>
       </Box>
       <DownloadDataModal

@@ -13,6 +13,8 @@ import Value from "./TempHumCharts/Value";
 import Gauge from "./TempHumCharts/Gauge";
 import { THBarChart } from "./TempHumCharts/THBarChart";
 import { THLineChart } from "./TempHumCharts/THLineCHart";
+import { THGauge } from "./TempHumCharts/THGauge";
+import { THValue } from "./TempHumCharts/THValue";
 
 type ChartCarouselProps = {
   device: Device;
@@ -109,21 +111,18 @@ const ChartCarousel = ({ device }: ChartCarouselProps): JSX.Element => {
               <THLineChart topic={device.topic} deviceName={device.name} />
             )}
             {device.type === "tempHum" && dvtType === "gauge" && (
-              <Gauge
-                deviceId={device._id!}
-                values={values}
-                deviceName={device.name}
-              />
+              <THGauge topic={device.topic} deviceName={device.name} />
               //<Box>Gauge</Box>
             )}
 
             {device.type === "tempHum" && dvtType === "value" && (
-              <Value
-                values={values}
-                deviceId={device._id!}
-                deviceName={device.name}
-              />
+              // <Value
+              //   values={values}
+              //   deviceId={device._id!}
+              //   deviceName={device.name}
+              // />
               //  <Box>Value</Box>
+              <THValue topic={device.topic} deviceName={device.name} />
             )}
 
             {/* Humidity */}
