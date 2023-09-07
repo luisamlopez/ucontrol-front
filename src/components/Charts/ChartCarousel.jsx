@@ -69,8 +69,6 @@ const ChartCarousel = ({ device }) => {
                   point["x"] = resT[i]["_time"];
                   point["y"] = resT[i]["_value"];
                   finalData[j]["data"].push(point);
-                  // THValues[i]["valueT"].push(resT[i]["_value"]);
-                  //  THValues[i]["timestamp"].push(resT[i]["_time"]);
                 }
               }
               //if the ID does not exist, create the key and append first data point to array
@@ -116,8 +114,6 @@ const ChartCarousel = ({ device }) => {
                   point["x"] = resH[i]["_time"];
                   point["y"] = resH[i]["_value"];
                   finalData[j]["data"].push(point);
-                  //  THValues[i]["valueH"].push(resT[i]["_value"]);
-                  //  THValues[i]["timestamp"].push(resT[i]["_time"]);
                 }
               }
               //if the ID does not exist, create the key and append first data point to array
@@ -146,7 +142,7 @@ const ChartCarousel = ({ device }) => {
     }
   }, [device]);
 
-  useEffect(() => {
+  useMemo(() => {
     if (
       device.type === "tempHum" &&
       dataTemp &&

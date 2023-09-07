@@ -289,7 +289,7 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate }) => {
           />
         </Paper>
       </Box>
-      <DownloadDataModal
+      {/* <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
         startDate={values[0].timestamp}
@@ -297,7 +297,7 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate }) => {
         data={values}
         columns={columns}
         deviceName={deviceName}
-      />
+      /> */}
     </>
   );
 };

@@ -47,7 +47,7 @@ const DownloadDataModal = ({
   const handleEndDateChange = (date: Date | null) => {
     setEndDate(date);
   };
-  console.log(data);
+
   const [filteredData, setFilteredData] = useState(data);
 
   useEffect(() => {

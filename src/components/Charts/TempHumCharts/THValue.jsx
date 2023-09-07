@@ -245,7 +245,7 @@ export const THValue = ({ deviceName, topic, deviceStartDate }) => {
           </Box>
         </Paper>
       </Box>
-      <DownloadDataModal
+      {/* <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
         startDate={values[0].timestamp}
@@ -253,7 +253,7 @@ export const THValue = ({ deviceName, topic, deviceStartDate }) => {
         data={values}
         columns={columns}
         deviceName={deviceName}
-      />
+      /> */}
     </>
   );
 };
