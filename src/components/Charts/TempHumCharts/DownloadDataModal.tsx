@@ -134,15 +134,15 @@ const DownloadDataModal = ({
           </LocalizationProvider>
         </Box>
         <DataGrid
-          rows={filteredData.map((value, index) => ({
+          rows={data.map((value, index) => ({
             id: index,
             timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
               hour12: false,
               dateStyle: "short",
               timeStyle: "short",
             }),
-            temperature: value.valueT,
-            humidity: value.valueH,
+            temperature: Math.round(value.valueT * 100) / 100,
+            humidity: Math.round(value.valueH * 100) / 100,
           }))}
           columns={columns.map((column) => ({
             field: column.field,

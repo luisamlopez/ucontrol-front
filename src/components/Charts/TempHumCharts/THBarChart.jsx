@@ -46,31 +46,10 @@ const columns = [
   },
 ];
 
-export const THBarChart = ({ deviceName, topic, deviceStartDate }) => {
+export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
   const [dataTemp, setDataTemp] = useState([]);
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-
-  /**
-   * @todo Add the real values to the export data
-   */
-  const values = [
-    {
-      valueT: 28,
-      valueH: 23,
-      timestamp: new Date("2023-07-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 29.3,
-      valueH: 24,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 32,
-      valueH: 43.1,
-      timestamp: new Date("2023-08-12T18:18:07.434Z"),
-    },
-  ];
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -293,15 +272,15 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate }) => {
           />
         </Paper>
       </Box>
-      {/* <DownloadDataModal
+      <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        startDate={values[0].timestamp}
-        endDate={values[values.length - 1].timestamp}
+        startDate={deviceStartDate}
+        endDate={Date.now()}
         data={values}
         columns={columns}
         deviceName={deviceName}
-      /> */}
+      />
     </>
   );
 };

@@ -28,14 +28,14 @@ const ChartCarousel = ({ device }) => {
       const org = "UControl";
       const url = "http://172.29.91.241:8086/";
       let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: ${device.createdOn}, stop: ${Date.now()})
+|>  range(start: -5m, stop:  ${Date.now()})
 |> filter(fn: (r) => r["_measurement"] == "measurements")
 |> filter(fn: (r) =>  r["_field"] == "Temperature")
 |> filter(fn: (r) => r["topic"] == "${device.topic}")
 |> yield(name: "mean")`;
 
       let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: ${device.createdOn}, stop: ${Date.now()})
+|>  range(start: -5m, stop: ${Date.now()})
 |> filter(fn: (r) => r["_measurement"] == "measurements")
 |> filter(fn: (r) =>  r["_field"] == "Humidity")
 |> filter(fn: (r) => r["topic"] == "${device.topic}")
@@ -142,7 +142,7 @@ const ChartCarousel = ({ device }) => {
     }
   }, [device]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (
       device.type === "tempHum" &&
       dataTemp &&
@@ -161,6 +161,10 @@ const ChartCarousel = ({ device }) => {
       setTHValues(values);
     }
   }, [dataHum, dataTemp, device.type]);
+
+  useEffect(() => {
+    console.log(THValues);
+  }, [THValues]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const dvtTypes = device.dvt;
@@ -224,6 +228,7 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
+                values={THValues.length > 0 ? THValues : []}
               />
             )}
 
@@ -237,6 +242,7 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
+                values={THValues.length > 0 ? THValues : []}
               />
             )}
             {device.type === "tempHum" && dvtType === "gauge" && (
@@ -260,6 +266,7 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
+                values={THValues.length > 0 ? THValues : []}
               />
             )}
 
