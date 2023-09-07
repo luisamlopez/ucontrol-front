@@ -45,6 +45,28 @@ export const createSubSpace = async (newSubspace: Space, spaceId: string) => {
 	}
 };
 
+export const getParentSpaces = async (
+	userId: string | undefined,
+	callback: (spaces: Space[]) => void
+) => {
+	try {
+		const response = await fetch(`${url}getUserParentSpaces/${userId}`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		});
+		//   console.log(response);
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.message);
+		}
+
+		const spaces = await response.json();
+		callback(spaces.data);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
 export const getSpaces = async (
 	userId: string | undefined,
 	callback: (spaces: Space[]) => void
