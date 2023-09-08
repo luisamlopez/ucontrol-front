@@ -1,30 +1,27 @@
 import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
-import { Bar } from "react-chartjs-2";
 import "chartjs-adapter-luxon";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+
+import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import StreamingPlugin from "chartjs-plugin-streaming";
 import DownloadDataModal from "./DownloadDataModal";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  StreamingPlugin
-);
+const legendMarginPlugin = {
+  id: "legendMargin",
+  beforeInit: (chart) => {
+    const originalFit = chart.legend.fit;
+
+    chart.legend.fit = function () {
+      originalFit.bind(chart.legend)();
+      this.height += 20;
+    };
+  },
+};
+
+ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
@@ -37,18 +34,13 @@ const columns = [
     headerName: "Fecha",
   },
   {
-    field: "temperature",
-    headerName: "Temperatura",
-  },
-  {
     field: "humidity",
     headerName: "Humedad",
   },
 ];
 
-export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
-  const [dataTemp, setDataTemp] = useState([]);
-  const [dataHum, setDataHum] = useState([]);
+export const SoilGauge = ({ deviceName, topic, deviceStartDate, values }) => {
+  const [dataHum, setDataHum] = useState();
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -59,105 +51,19 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
     setOpenModal(true);
   };
 
-  let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -5m, stop: 1h) 
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Temperature")
-|> filter(fn: (r) => r["topic"] == "${topic}")
-|> yield(name: "mean")`;
-
   let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -5m, stop: 1h)
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Humidity")
-|> filter(fn: (r) => r["topic"] == "${topic}")
-|> yield(name: "mean")`;
-
-  const options = {
-    responsive: true,
-    // Establecer el tamaño deseado para el gráfico
-    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
-    width: 3000, // Ancho en píxeles
-    height: 1500, // Alto en píxeles
-    plugins: {
-      title: {
-        display: true,
-        text: `Gráfico de barras de ${deviceName}`,
-      },
-    },
-  };
-
-  const dataSet = {
-    labels: dataTemp[0]?.data.map((value) =>
-      new Date(value.x).toLocaleString()
-    ),
-    datasets: [
-      {
-        label: "Temperatura",
-        //get data from the array of objects where the field is temperature.
-        data: dataTemp[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
-        label: "Humedad",
-        data: dataHum[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
+  |> range(start: -5m, stop: 1h)
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["measurement"] == "soilMoist")
+  |> filter(fn: (r) => r["_field"] == "soilValue")
+  |> yield(name: "mean")`;
 
   useEffect(() => {
-    let resT = [];
     let resH = [];
     const influxQuery = async () => {
       //create InfluxDB client
       const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
       //make query
-      await queryApi.queryRows(queryT, {
-        next(row, tableMeta) {
-          const o = tableMeta.toObject(row);
-          //push rows from query into an array object
-          resT.push(o);
-        },
-        complete() {
-          let finalData = [];
-
-          //variable is used to track if the current ID already has a key
-          var exists = false;
-
-          //nested for loops aren't ideal, this could be optimized but gets the job done
-          for (let i = 0; i < resT.length; i++) {
-            for (let j = 0; j < finalData.length; j++) {
-              //check if the sensor ID is already in the array, if true we want to add the current data point to the array
-              if (resT[i]["sensor_id"] === finalData[j]["id"]) {
-                exists = true;
-                let point = {};
-                point["x"] = resT[i]["_time"];
-                point["y"] = resT[i]["_value"];
-                finalData[j]["data"].push(point);
-              }
-            }
-            //if the ID does not exist, create the key and append first data point to array
-            if (!exists) {
-              let d = {};
-              d["id"] = resT[i]["sensor_id"];
-              d["data"] = [];
-              let point = {};
-              point["x"] = resT[i]["_time"];
-              point["y"] = resT[i]["_value"];
-              d["data"].push(point);
-              finalData.push(d);
-            }
-            //need to set this back to false
-            exists = false;
-          }
-
-          setDataTemp(finalData);
-        },
-        error(error) {
-          console.log("temp query failed- ", error);
-        },
-      });
       await queryApi.queryRows(queryH, {
         next(row, tableMeta) {
           const o = tableMeta.toObject(row);
@@ -196,8 +102,14 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
             //need to set this back to false
             exists = false;
           }
-
-          setDataHum(finalData);
+          if (
+            finalData &&
+            finalData[0] &&
+            finalData[0].data &&
+            finalData[0].data.length > 0
+          ) {
+            setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+          }
         },
         error(error) {
           console.log("hum query failed- ", error);
@@ -210,12 +122,64 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum]);
 
-  //useEffect(() => {
-  // console.log(dataTemp);
-  //console.log(dataHum);
-  //}, [dataTemp, dataHum]);
+  const options = {
+    responsive: true,
+    // Establecer el tamaño deseado para el gráfico
+    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
+    width: 700, // Ancho en píxeles
+    height: 400, // Alto en píxeles
+    plugins: {
+      title: {
+        display: true,
+        text: `Temperatura y Humedad de ${deviceName}`,
+      },
+    },
+    backgroundColor: "white",
+    cutout: "70%",
+  };
+
+  function getGradient(chart, type) {
+    const {
+      ctx,
+      chartArea: { left, right },
+    } = chart;
+    const gradientSegment = ctx.createLinearGradient(left, 0, right, 0);
+
+    gradientSegment.addColorStop(0, "#FF0000"); //red
+    gradientSegment.addColorStop(0.5, "#FFC526"); //yellow
+    gradientSegment.addColorStop(1, "#40B4E5"); //blue
+
+    return gradientSegment;
+  }
+
+  const dataSet = {
+    datasets: [
+      {
+        label: "Humedad",
+        data: [dataHum, 100 - dataHum],
+        circumference: 180,
+        rotation: 270,
+        borderWidth: 0,
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { chartArea } = chart;
+          if (!chartArea) {
+            // This case happens on initial chart load
+            return null;
+          }
+
+          if (context.dataIndex === 0) {
+            return getGradient(chart, "humidity");
+          } else {
+            return "#FFFFFF";
+          }
+        },
+        hoverOffset: -20,
+      },
+    ],
+  };
 
   return (
     <>
@@ -260,12 +224,32 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
             mb: 2,
             zIndex: 0,
             whiteSpace: "nowrap",
-            width: "90%",
+            width: "80%",
             placeSelf: "center",
-            height: "25rem",
+            height: "20rem",
           }}
         >
-          <Bar data={dataSet} updateMode="resize" width={2500} height={1500} />
+          <Doughnut data={dataSet} options={options} width={200} height={200} />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: {
+                lg: "column",
+                md: "column-reverse",
+                xs: "column-reverse",
+                sm: "column-reverse",
+              },
+              p: 1,
+              placeSelf: "center",
+              m: -10,
+            }}
+          >
+            <Box>
+              <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
+                Humedad: {dataHum} %
+              </Typography>
+            </Box>
+          </Box>
         </Paper>
       </Box>
       <DownloadDataModal

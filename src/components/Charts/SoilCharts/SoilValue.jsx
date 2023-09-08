@@ -1,32 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
-import { Line } from "react-chartjs-2";
-import "chartjs-adapter-luxon";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import StreamingPlugin from "chartjs-plugin-streaming";
 import DownloadDataModal from "./DownloadDataModal";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  StreamingPlugin
-);
 
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
@@ -39,17 +15,12 @@ const columns = [
     headerName: "Fecha",
   },
   {
-    field: "temperature",
-    headerName: "Temperatura",
-  },
-  {
     field: "humidity",
     headerName: "Humedad",
   },
 ];
 
-export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
-  const [dataTemp, setDataTemp] = useState([]);
+export const SoilValue = ({ deviceName, topic, deviceStartDate, values }) => {
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
 
@@ -61,91 +32,20 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
     setOpenModal(true);
   };
 
-  let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -5m, stop: 1h) 
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Temperature")
-|> filter(fn: (r) => r["topic"] == "${topic}")
-|> yield(name: "mean")`;
-
   let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -5m, stop: 1h)
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Humidity")
-|> filter(fn: (r) => r["topic"] == "${topic}")
-|> yield(name: "mean")`;
-
-  const dataSet = {
-    labels: dataTemp[0]?.data.map((value) =>
-      new Date(value.x).toLocaleString()
-    ),
-    datasets: [
-      {
-        label: "Temperatura",
-        //get data from the array of objects where the field is temperature.
-        data: dataTemp[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-      {
-        label: "Humedad",
-        data: dataHum[0]?.data.map((value) => value.y),
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
+  |> range(start: -5m, stop: 1h)
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["measurement"] == "soilMoist")
+  |> filter(fn: (r) => r["_field"] == "soilValue")
+  |> yield(name: "mean")`;
 
   useEffect(() => {
-    let resT = [];
     let resH = [];
     const influxQuery = async () => {
       //create InfluxDB client
       const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
       //make query
-      await queryApi.queryRows(queryT, {
-        next(row, tableMeta) {
-          const o = tableMeta.toObject(row);
-          //push rows from query into an array object
-          resT.push(o);
-        },
-        complete() {
-          let finalData = [];
 
-          //variable is used to track if the current ID already has a key
-          var exists = false;
-
-          //nested for loops aren't ideal, this could be optimized but gets the job done
-          for (let i = 0; i < resT.length; i++) {
-            for (let j = 0; j < finalData.length; j++) {
-              //check if the sensor ID is already in the array, if true we want to add the current data point to the array
-              if (resT[i]["sensor_id"] === finalData[j]["id"]) {
-                exists = true;
-                let point = {};
-                point["x"] = resT[i]["_time"];
-                point["y"] = resT[i]["_value"];
-                finalData[j]["data"].push(point);
-              }
-            }
-            //if the ID does not exist, create the key and append first data point to array
-            if (!exists) {
-              let d = {};
-              d["id"] = resT[i]["sensor_id"];
-              d["data"] = [];
-              let point = {};
-              point["x"] = resT[i]["_time"];
-              point["y"] = resT[i]["_value"];
-              d["data"].push(point);
-              finalData.push(d);
-            }
-            //need to set this back to false
-            exists = false;
-          }
-
-          setDataTemp(finalData);
-        },
-        error(error) {
-          console.log("temp query failed- ", error);
-        },
-      });
       await queryApi.queryRows(queryH, {
         next(row, tableMeta) {
           const o = tableMeta.toObject(row);
@@ -184,8 +84,9 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
             //need to set this back to false
             exists = false;
           }
-
-          setDataHum(finalData);
+          if (finalData[0] && finalData[0].data[finalData[0].data.length - 1]) {
+            setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+          }
         },
         error(error) {
           console.log("hum query failed- ", error);
@@ -198,7 +99,7 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum]);
 
   return (
     <>
@@ -243,12 +144,25 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
             mb: 2,
             zIndex: 0,
             whiteSpace: "nowrap",
-            width: "90%",
+            width: "80%",
             placeSelf: "center",
-            height: "25rem",
+            height: "20rem",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: {
+              lg: "row",
+              md: "row",
+              xs: "column",
+              sm: "column",
+            },
           }}
         >
-          <Line data={dataSet} width={2500} height={1500} />
+          <Box>
+            <Typography fontWeight={600} fontSize={24}>
+              Humedad: {dataHum} %
+            </Typography>
+          </Box>
         </Paper>
       </Box>
       <DownloadDataModal

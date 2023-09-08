@@ -94,7 +94,7 @@ const DownloadDataModal = ({
         color="primary.main"
         sx={{ m: 0, py: 0 }}
       >
-        Descargar datos de {deviceName} {data.length > 0 && "hola"}
+        Descargar datos de {deviceName}
       </DialogTitle>
 
       <Box

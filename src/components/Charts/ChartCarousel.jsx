@@ -3,30 +3,36 @@ import {
   KeyboardArrowLeftRounded as NavigateBefore,
   KeyboardArrowRightRounded as NavigateNext,
 } from "@mui/icons-material";
-import { useEffect, useMemo, useState } from "react";
-import { Device } from "../../api/Device";
+import { useEffect, useState } from "react";
 import GeneralBarChartJSX from "./GeneralBarChartJSX";
-import { useParams } from "react-router-dom";
 import Table from "./SwitchControlCharts/Table";
-import SoilValue from "./SoilCharts/SoilValue";
+import { SoilValue } from "./SoilCharts/SoilValue";
 import { THBarChart } from "./TempHumCharts/THBarChart";
 import { THLineChart } from "./TempHumCharts/THLineCHart";
 import { THGauge } from "./TempHumCharts/THGauge";
 import { THValue } from "./TempHumCharts/THValue";
 import { InfluxDB } from "@influxdata/influxdb-client";
+import { SoilBarChart } from "./SoilCharts/SoilBarChart";
+import { SoilGauge } from "./SoilCharts/SoilGauge";
+import { SoilLineChart } from "./SoilCharts/SoilLineChart";
 
 const ChartCarousel = ({ device }) => {
   const [dataTemp, setDataTemp] = useState();
   const [dataHum, setDataHum] = useState();
+  const [dataSoil, setDataSoil] = useState();
 
   const [THValues, setTHValues] = useState([]);
+  const [SoilValues, setSoilValues] = useState([]);
 
+  /**
+   * This effect is used to query the database and get the data for the temperature and humidity charts
+   */
   useEffect(() => {
     if (device.type === "tempHum") {
       const token =
         "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
       const org = "UControl";
-      const url = "http://172.29.91.241:8086/";
+      const url = "http://172.29.91.241:8086";
       let queryT = `from(bucket: "ucontrol-arm21") 
 |>  range(start: -5m, stop:  ${Date.now()})
 |> filter(fn: (r) => r["_measurement"] == "measurements")
@@ -85,8 +91,9 @@ const ChartCarousel = ({ device }) => {
               //need to set this back to false
               exists = false;
             }
-
-            setDataTemp(finalData);
+            if (finalData.length > 0) {
+              setDataTemp(finalData);
+            }
           },
           error(error) {
             console.log("temp query failed- ", error);
@@ -130,8 +137,9 @@ const ChartCarousel = ({ device }) => {
               //need to set this back to false
               exists = false;
             }
-
-            setDataHum(finalData);
+            if (finalData.length > 0) {
+              setDataHum(finalData);
+            }
           },
           error(error) {
             console.log("hum query failed- ", error);
@@ -142,29 +150,129 @@ const ChartCarousel = ({ device }) => {
     }
   }, [device]);
 
+  /**
+   * This effect is used to format the data for the temperature and humidity charts
+   */
   useEffect(() => {
-    if (
-      device.type === "tempHum" &&
-      dataTemp &&
-      dataHum &&
-      dataTemp[0].data.length > 0 &&
-      dataHum[0].data.length > 0
-    ) {
-      let values = [];
-      for (let i = 0; i < dataTemp[0].data.length; i++) {
-        let point = {};
-        point["valueT"] = dataTemp[0].data[i]["y"];
-        point["valueH"] = dataHum[0].data[i]["y"];
-        point["timestamp"] = dataTemp[0].data[i]["x"];
-        values.push(point);
+    try {
+      if (
+        device.type === "tempHum" &&
+        dataTemp &&
+        dataHum &&
+        dataTemp[0].data.length > 0 &&
+        dataHum[0].data.length > 0
+      ) {
+        let values = [];
+        for (let i = 0; i < dataTemp[0].data.length; i++) {
+          let point = {};
+          point["valueT"] = dataTemp[0].data[i]["y"];
+          point["valueH"] = dataHum[0].data[i]["y"];
+          point["timestamp"] = dataTemp[0].data[i]["x"];
+          values.push(point);
+        }
+        setTHValues(values);
       }
-      setTHValues(values);
-    }
+    } catch {}
   }, [dataHum, dataTemp, device.type]);
 
+  /**
+   *  This effect is used to query the database and get the data for the soil moist charts
+   */
+
   useEffect(() => {
-    console.log(THValues);
-  }, [THValues]);
+    if (device.type === "tempHum") {
+      const token =
+        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
+      const org = "UControl";
+      const url = "http://172.29.91.241:8086";
+
+      let queryH = `from(bucket: "ucontrol-arm21")
+|>  range(start: -5m, stop: ${Date.now()})
+  |> filter(fn: (r) => r["_measurement"] == "Escuela de Ingeniería Civil / Oficina Profe Yolanda / Sensor de macetas")
+  |> filter(fn: (r) => r["measurement"] == "soilMoist")
+  |> filter(fn: (r) => r["_field"] == "soilValue")
+|> yield(name: "mean")`;
+
+      let resH = [];
+      const influxQuery = async () => {
+        //create InfluxDB client
+        const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
+        //make query
+
+        queryApi.queryRows(queryH, {
+          next(row, tableMeta) {
+            const o = tableMeta.toObject(row);
+            //push rows from query into an array object
+            resH.push(o);
+          },
+          complete() {
+            let finalData = [];
+
+            //variable is used to track if the current ID already has a key
+            var exists = false;
+
+            //nested for loops aren't ideal, this could be optimized but gets the job done
+            for (let i = 0; i < resH.length; i++) {
+              for (let j = 0; j < finalData.length; j++) {
+                //check if the sensor ID is already in the array, if true we want to add the current data point to the array
+                if (resH[i]["sensor_id"] === finalData[j]["id"]) {
+                  exists = true;
+                  let point = {};
+                  point["x"] = resH[i]["_time"];
+                  point["y"] = resH[i]["_value"];
+                  finalData[j]["data"].push(point);
+                }
+              }
+              //if the ID does not exist, create the key and append first data point to array
+              if (!exists) {
+                let d = {};
+                d["id"] = resH[i]["sensor_id"];
+                d["data"] = [];
+                let point = {};
+                point["x"] = resH[i]["_time"];
+                point["y"] = resH[i]["_value"];
+                d["data"].push(point);
+                finalData.push(d);
+              }
+              //need to set this back to false
+              exists = false;
+            }
+            if (finalData.length > 0) {
+              setDataSoil(finalData);
+            }
+          },
+          error(error) {
+            console.log("hum query failed- ", error);
+          },
+        });
+      };
+      influxQuery();
+    }
+  }, [device]);
+
+  /**
+   * This effect is used to format the data for the soil moist charts
+   */
+  useEffect(() => {
+    try {
+      if (device.type === "hum" && dataSoil && dataSoil[0].data.length > 0) {
+        let values = [];
+        for (let i = 0; i < dataSoil[0].data.length; i++) {
+          let point = {};
+          point["valueH"] = dataSoil[0].data[i]["y"];
+          point["timestamp"] = dataSoil[0].data[i]["x"];
+          values.push(point);
+        }
+        setSoilValues(values);
+        console.log("values: ", values);
+      }
+    } catch {}
+  }, [dataSoil, device.type]);
+
+  // useEffect(() => {
+  //   console.log("SoilValues: ", SoilValues);
+  //   console.log("csd: ", dataSoil);
+  // }, [SoilValues, dataSoil]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const dvtTypes = device.dvt;
@@ -180,21 +288,6 @@ const ChartCarousel = ({ device }) => {
       prevIndex === dvtTypes.length - 1 ? 0 : prevIndex + 1
     );
   };
-
-  const hum = [
-    {
-      value: 23,
-      timestamp: new Date("2023-07-02T18:18:07.434Z"),
-    },
-    {
-      value: 24,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
-    },
-    {
-      value: 43.1,
-      timestamp: new Date("2023-08-12T18:18:07.434Z"),
-    },
-  ];
 
   return (
     <Box sx={{ position: "relative", height: "350px" }}>
@@ -219,11 +312,6 @@ const ChartCarousel = ({ device }) => {
           >
             {/* Temperature and humidity */}
             {device.type === "tempHum" && dvtType === "bar" && (
-              // <BarChart
-              //   deviceId={device._id!}
-              //   values={values}
-              //   spaceId={spaceID!}
-              // />
               <THBarChart
                 topic={device.topic}
                 deviceName={device.name}
@@ -233,11 +321,6 @@ const ChartCarousel = ({ device }) => {
             )}
 
             {device.type === "tempHum" && dvtType === "line" && (
-              // <LineChart
-              //   deviceId={device._id!}
-              //   values={values}
-              //   spaceId={spaceID!}
-              // />
               <THLineChart
                 topic={device.topic}
                 deviceName={device.name}
@@ -252,16 +335,9 @@ const ChartCarousel = ({ device }) => {
                 deviceStartDate={new Date(device.createdOn)}
                 values={THValues.length > 0 ? THValues : []}
               />
-              //<Box>Gauge</Box>
             )}
 
             {device.type === "tempHum" && dvtType === "value" && (
-              // <Value
-              //   values={values}
-              //   deviceId={device._id!}
-              //   deviceName={device.name}
-              // />
-              //  <Box>Value</Box>
               <THValue
                 topic={device.topic}
                 deviceName={device.name}
@@ -273,25 +349,36 @@ const ChartCarousel = ({ device }) => {
             {/* Humidity */}
 
             {device.type === "hum" && dvtType === "bar" && (
-              // <SoilBarChart values={hum} deviceId={device._id!} deviceName={device.name}
-              // />
-              <Box>Bar</Box>
+              <SoilBarChart
+                topic={device.topic}
+                deviceName={device.name}
+                deviceStartDate={new Date(device.createdOn)}
+                values={SoilValues}
+              />
             )}
             {device.type === "hum" && dvtType === "line" && (
-              // <SoilLineChart values={hum} deviceId={device._id!} deviceName={device.name}
-              // />
-              <Box>Line</Box>
+              <SoilLineChart
+                topic={device.topic}
+                deviceName={device.name}
+                deviceStartDate={new Date(device.createdOn)}
+                values={SoilValues}
+              />
             )}
             {device.type === "hum" && dvtType === "gauge" && (
-              // <SoilGauge values={hum} deviceId={device._id!} deviceName={device.name}/>
-              <Box>Gauge</Box>
+              <SoilGauge
+                topic={device.topic}
+                deviceName={device.name}
+                deviceStartDate={new Date(device.createdOn)}
+                values={SoilValues}
+              />
             )}
 
             {device.type === "hum" && dvtType === "value" && (
               <SoilValue
-                values={hum}
-                deviceId={device._id}
+                topic={device.topic}
                 deviceName={device.name}
+                deviceStartDate={new Date(device.createdOn)}
+                values={SoilValues}
               />
             )}
 

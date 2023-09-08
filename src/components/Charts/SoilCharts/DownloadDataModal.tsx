@@ -25,6 +25,7 @@ interface DownloadDataModalProps {
   data: any[];
   startDate: Date;
   endDate: Date;
+  deviceName: string;
 }
 
 const DownloadDataModal = ({
@@ -34,6 +35,7 @@ const DownloadDataModal = ({
   endDate: initialEndDate,
   data,
   columns,
+  deviceName,
 }: DownloadDataModalProps) => {
   const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
   const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
@@ -92,7 +94,7 @@ const DownloadDataModal = ({
         color="primary.main"
         sx={{ m: 0, py: 0 }}
       >
-        Descargar datos
+        Descargar datos de {deviceName}
       </DialogTitle>
 
       <Box
@@ -132,14 +134,14 @@ const DownloadDataModal = ({
           </LocalizationProvider>
         </Box>
         <DataGrid
-          rows={filteredData.map((value, index) => ({
+          rows={data.map((value, index) => ({
             id: index,
             timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
               hour12: false,
               dateStyle: "short",
               timeStyle: "short",
             }),
-            humidity: value.value,
+            humidity: Math.round(value.value * 100) / 100,
           }))}
           columns={columns.map((column) => ({
             field: column.field,
@@ -148,7 +150,11 @@ const DownloadDataModal = ({
           }))}
           slots={{
             toolbar: () => (
-              <CustomToolbar startDate={startDate!} endDate={endDate!} />
+              <CustomToolbar
+                startDate={startDate!}
+                endDate={endDate!}
+                deviceName={deviceName}
+              />
             ),
           }}
         />
@@ -161,19 +167,24 @@ export default DownloadDataModal;
 function CustomToolbar({
   startDate,
   endDate,
+  deviceName,
 }: {
   startDate: Date;
   endDate: Date;
+  deviceName: string;
 }) {
   return (
     <GridToolbarContainer>
       <GridToolbarExport
         csvOptions={{
-          fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
-            hour12: false,
-            dateStyle: "short",
-            timeStyle: "short",
-          })} hasta ${endDate.toLocaleString("es-VE", {
+          fileName: `Datos de ${deviceName} desde ${startDate.toLocaleString(
+            "es-VE",
+            {
+              hour12: false,
+              dateStyle: "short",
+              timeStyle: "short",
+            }
+          )} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
             timeStyle: "short",

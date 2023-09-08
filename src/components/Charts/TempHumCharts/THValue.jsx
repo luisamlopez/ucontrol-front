@@ -7,7 +7,7 @@ import DownloadDataModal from "./DownloadDataModal";
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
 const org = "UControl";
-const url = "http://172.29.91.241:8086/";
+const url = "http://172.29.91.241:8086";
 
 const columns = [
   {
@@ -96,8 +96,11 @@ export const THValue = ({ deviceName, topic, deviceStartDate, values }) => {
             //need to set this back to false
             exists = false;
           }
-
-          setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+          if (
+            finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
+          ) {
+            setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+          }
         },
         error(error) {
           console.log("temp query failed- ", error);
@@ -141,8 +144,11 @@ export const THValue = ({ deviceName, topic, deviceStartDate, values }) => {
             //need to set this back to false
             exists = false;
           }
-
-          setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+          if (
+            finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
+          ) {
+            setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+          }
         },
         error(error) {
           console.log("hum query failed- ", error);
@@ -150,7 +156,9 @@ export const THValue = ({ deviceName, topic, deviceStartDate, values }) => {
       });
     };
     const interval = setInterval(() => {
-      influxQuery();
+      try {
+        influxQuery();
+      } catch {}
     }, 10000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp]);
