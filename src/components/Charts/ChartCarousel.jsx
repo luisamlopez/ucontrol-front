@@ -34,17 +34,17 @@ const ChartCarousel = ({ device }) => {
       const org = "UControl";
       const url = "http://172.29.91.241:8086";
       let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -5m, stop:  ${Date.now()})
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Temperature")
-|> filter(fn: (r) => r["topic"] == "${device.topic}")
+|>  range(start: ${device.createdOn}, stop:  ${Date.now()})
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${device.type}")
+|> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
       let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -5m, stop: ${Date.now()})
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Humidity")
-|> filter(fn: (r) => r["topic"] == "${device.topic}")
+|>  range(start: ${device.createdOn}, stop: ${Date.now()})
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${device.type}")
+|> filter(fn: (r) =>  r["_field"] == "humidity")
 |> yield(name: "mean")`;
 
       let resT = [];
@@ -180,16 +180,16 @@ const ChartCarousel = ({ device }) => {
    */
 
   useEffect(() => {
-    if (device.type === "tempHum") {
+    if (device.type === "hum") {
       const token =
         "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
       const org = "UControl";
       const url = "http://172.29.91.241:8086";
 
       let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -5m, stop: ${Date.now()})
-  |> filter(fn: (r) => r["_measurement"] == "Escuela de Ingeniería Civil / Oficina Profe Yolanda / Sensor de macetas")
-  |> filter(fn: (r) => r["measurement"] == "soilMoist")
+|>  range(start: ${device.createdOn}, stop: ${Date.now()})
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
+  |> filter(fn: (r) => r["deviceType"] == "hum")
   |> filter(fn: (r) => r["_field"] == "soilValue")
 |> yield(name: "mean")`;
 
@@ -263,16 +263,15 @@ const ChartCarousel = ({ device }) => {
           point["timestamp"] = dataSoil[0].data[i]["x"];
           values.push(point);
         }
+
         setSoilValues(values);
-        console.log("values: ", values);
       }
     } catch {}
   }, [dataSoil, device.type]);
 
   // useEffect(() => {
   //   console.log("SoilValues: ", SoilValues);
-  //   console.log("csd: ", dataSoil);
-  // }, [SoilValues, dataSoil]);
+  // }, [SoilValues]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const dvtTypes = device.dvt;

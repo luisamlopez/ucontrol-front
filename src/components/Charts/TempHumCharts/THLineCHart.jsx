@@ -204,7 +204,7 @@ export const THLineChart = ({
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum, dataTemp, queryH, queryT]);
 
   return (
     <>

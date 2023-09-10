@@ -128,7 +128,7 @@ export const SoilGauge = ({
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum]);
+  }, [dataHum, queryH]);
 
   const options = {
     responsive: true,

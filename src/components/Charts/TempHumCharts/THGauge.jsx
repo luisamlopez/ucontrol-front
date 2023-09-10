@@ -186,7 +186,7 @@ export const THGauge = ({
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum, dataTemp, queryH, queryT]);
 
   const options = {
     responsive: true,

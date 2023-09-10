@@ -79,20 +79,6 @@ export const THBarChart = ({
 |> filter(fn: (r) =>  r["_field"] == "humidity")
 |> yield(name: "mean")`;
 
-  const options = {
-    responsive: true,
-    // Establecer el tamaño deseado para el gráfico
-    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
-    width: 3000, // Ancho en píxeles
-    height: 1500, // Alto en píxeles
-    plugins: {
-      title: {
-        display: true,
-        text: `Gráfico de barras de ${deviceName}`,
-      },
-    },
-  };
-
   const dataSet = {
     labels: dataTemp[0]?.data.map((value) =>
       new Date(value.x).toLocaleString()
@@ -216,7 +202,7 @@ export const THBarChart = ({
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum, dataTemp, queryH, queryT]);
 
   //useEffect(() => {
   // console.log(dataTemp);

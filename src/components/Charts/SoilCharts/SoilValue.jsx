@@ -105,7 +105,7 @@ export const SoilValue = ({
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum]);
+  }, [dataHum, queryH]);
 
   return (
     <>

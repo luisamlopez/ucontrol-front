@@ -125,7 +125,7 @@ export const SoilBarChart = ({
       } catch {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [dataHum]);
+  }, [dataHum, queryH]);
 
   const dataSet = {
     labels: dataHum[0]?.data.map((value) => new Date(value.x).toLocaleString()),

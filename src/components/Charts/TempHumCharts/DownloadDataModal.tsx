@@ -53,7 +53,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = value.timestamp;
+        const timestamp = new Date(value.timestamp);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -134,7 +134,7 @@ const DownloadDataModal = ({
           </LocalizationProvider>
         </Box>
         <DataGrid
-          rows={data.map((value, index) => ({
+          rows={filteredData.map((value, index) => ({
             id: index,
             timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
               hour12: false,
