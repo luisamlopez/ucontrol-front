@@ -175,7 +175,6 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
 
       for (let space of spaces) {
         const devices: Device[] = [];
-        console.log(space.name);
         for (let deviceId of space.devices!) {
           try {
             await getDeviceById(deviceId!, (device) => {

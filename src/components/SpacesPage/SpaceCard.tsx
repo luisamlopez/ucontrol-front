@@ -36,13 +36,12 @@ const SpaceCard = (space: Space): JSX.Element => {
           });
         }
         setDevices(dev);
-        console.log(devices);
         setDevicesLoaded(true);
       } catch (error) {
         console.log(error);
       }
     }
-  }, []);
+  }, [space.devices]);
 
   useEffect(() => {
     try {
@@ -50,9 +49,6 @@ const SpaceCard = (space: Space): JSX.Element => {
         setUser(user);
       });
       space.createdBy = user?.name!;
-      if (user?.name) {
-        console.log("CREADO POR " + user?.name!);
-      }
     } catch (error) {}
   }, [space, space.createdBy, user?.name]);
 
