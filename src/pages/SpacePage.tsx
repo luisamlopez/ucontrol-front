@@ -42,13 +42,15 @@ const SpacePage = (): JSX.Element => {
   }, [spaceID]);
 
   /**
-   * Get devices from the space using spaceID
+   * Get devices from the space using spaceID but keep only the ones that are not type controlAcceso
    */
   useEffect(() => {
     const fetch = async () => {
       try {
         await getAllDevicesBySpace(spaceID!, (devices) => {
-          setDevices(devices!);
+          setDevices(
+            devices?.filter((device) => device.type !== "controlAcceso")!
+          );
           setLoading(false);
           setDataLoaded(true);
         });

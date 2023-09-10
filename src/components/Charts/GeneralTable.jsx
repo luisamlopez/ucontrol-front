@@ -13,6 +13,12 @@ import {
 } from "@mui/material";
 
 import { useState, useEffect } from "react";
+import {
+  Device,
+  getDeviceById,
+  getSpaceFromDeviceId,
+} from "../../../api/Device";
+import { Space, getSpaceById } from "../../../api/Space";
 import DownloadDataModal from "./DownloadDataModal";
 import { InfluxDB } from "@influxdata/influxdb-client";
 
@@ -21,7 +27,13 @@ const token =
 const org = "UControl";
 const url = "http://172.29.91.241:8086";
 
-const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
+export const GeneralTable = ({
+  topic,
+  deviceName,
+  deviceType,
+  values,
+  deviceStartDate,
+}) => {
   const columns = [
     { field: "timestamp", headerName: "Fecha", width: 200 },
     { field: "state", headerName: "Estado", width: 200 },
@@ -248,5 +260,3 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
     </>
   );
 };
-
-export default Table;

@@ -180,10 +180,11 @@ export const THGauge = ({
         },
       });
     };
+    influxQuery();
     const interval = setInterval(() => {
       try {
         influxQuery();
-      } catch {}
+      } catch (error) {}
     }, 10000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);

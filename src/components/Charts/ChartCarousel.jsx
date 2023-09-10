@@ -4,7 +4,6 @@ import {
   KeyboardArrowRightRounded as NavigateNext,
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import GeneralBarChartJSX from "./GeneralBarChartJSX";
 import Table from "./SwitchControlCharts/SwitchControlTable";
 import { SoilValue } from "./SoilCharts/SoilValue";
 import { THBarChart } from "./TempHumCharts/THBarChart";
@@ -148,7 +147,9 @@ const ChartCarousel = ({ device }) => {
           },
         });
       };
-      influxQuery();
+      try {
+        influxQuery();
+      } catch {}
     }
   }, [device]);
 
@@ -248,7 +249,9 @@ const ChartCarousel = ({ device }) => {
           },
         });
       };
-      influxQuery();
+      try {
+        influxQuery();
+      } catch {}
     }
   }, [device]);
 
@@ -341,7 +344,9 @@ const ChartCarousel = ({ device }) => {
           },
         });
       };
-      influxQuery();
+      try {
+        influxQuery();
+      } catch {}
     }
   }, [device]);
 
@@ -487,23 +492,9 @@ const ChartCarousel = ({ device }) => {
             {/* Rest of the device types */}
             {device.type !== "tempHum" && device.type !== "hum" && (
               <>
-                {dvtType === "bar" && (
-                  <GeneralBarChartJSX
-                    deviceId={device._id}
-                    deviceName={device.name}
-                  />
-                )}
-                {dvtType === "pie" && (
-                  // <PieChart id={device.id} values={device.values} />
-                  <Box>Pie</Box>
-                )}
-                {dvtType === "line" && (
-                  //  <LineChart id={device.id} values={device.values} />
-                  <Box>Line</Box>
-                )}
-                {dvtType === "gauge" && (
+                {dvtType === "preTable" && (
                   // <Gauge id={device._id} values={device.values} />
-                  <Box>Gauge</Box>
+                  <Box>nueva tabla</Box>
                 )}
                 {dvtType === "table" && (
                   <Table
