@@ -5,7 +5,7 @@ import {
 } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import GeneralBarChartJSX from "./GeneralBarChartJSX";
-import Table from "./SwitchControlCharts/Table";
+import Table from "./SwitchControlCharts/SwitchControlTable";
 import { SoilValue } from "./SoilCharts/SoilValue";
 import { THBarChart } from "./TempHumCharts/THBarChart";
 import { THLineChart } from "./TempHumCharts/THLineCHart";
@@ -20,9 +20,11 @@ const ChartCarousel = ({ device }) => {
   const [dataTemp, setDataTemp] = useState();
   const [dataHum, setDataHum] = useState();
   const [dataSoil, setDataSoil] = useState();
+  const [dataLight, setDataLight] = useState();
 
   const [THValues, setTHValues] = useState([]);
   const [SoilValues, setSoilValues] = useState([]);
+  const [LightValues, setLightValues] = useState([]);
 
   /**
    * This effect is used to query the database and get the data for the temperature and humidity charts
@@ -269,9 +271,98 @@ const ChartCarousel = ({ device }) => {
     } catch {}
   }, [dataSoil, device.type]);
 
-  // useEffect(() => {
-  //   console.log("SoilValues: ", SoilValues);
-  // }, [SoilValues]);
+  /**
+   *  This effect is used to query the database and get the data for the soil moist charts
+   */
+
+  useEffect(() => {
+    if (device.type === "luz") {
+      const token =
+        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
+      const org = "UControl";
+      const url = "http://172.29.91.241:8086";
+
+      let queryH = `from(bucket: "ucontrol-arm21")
+|>  range(start: ${device.createdOn}, stop: ${Date.now()})
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
+  |> filter(fn: (r) => r["deviceType"] == "luz")
+  |> filter(fn: (r) => r["_field"] == "switchStatus")`;
+
+      let res = [];
+      const influxQuery = async () => {
+        //create InfluxDB client
+        const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
+        //make query
+
+        queryApi.queryRows(queryH, {
+          next(row, tableMeta) {
+            const o = tableMeta.toObject(row);
+            //push rows from query into an array object
+            res.push(o);
+          },
+          complete() {
+            let finalData = [];
+
+            //variable is used to track if the current ID already has a key
+            var exists = false;
+
+            //nested for loops aren't ideal, this could be optimized but gets the job done
+            for (let i = 0; i < res.length; i++) {
+              for (let j = 0; j < finalData.length; j++) {
+                //check if the sensor ID is already in the array, if true we want to add the current data point to the array
+                if (res[i]["sensor_id"] === finalData[j]["id"]) {
+                  exists = true;
+                  let point = {};
+                  point["x"] = res[i]["_time"];
+                  point["y"] = res[i]["_value"];
+                  finalData[j]["data"].push(point);
+                }
+              }
+              //if the ID does not exist, create the key and append first data point to array
+              if (!exists) {
+                let d = {};
+                d["id"] = res[i]["sensor_id"];
+                d["data"] = [];
+                let point = {};
+                point["x"] = res[i]["_time"];
+                point["y"] = res[i]["_value"];
+                d["data"].push(point);
+                finalData.push(d);
+              }
+              //need to set this back to false
+              exists = false;
+            }
+            if (finalData.length > 0) {
+              setDataLight(finalData);
+            }
+          },
+          error(error) {
+            console.log("hum query failed- ", error);
+          },
+        });
+      };
+      influxQuery();
+    }
+  }, [device]);
+
+  /**
+   * This effect is used to format the data for the soil moist charts
+   */
+  useEffect(() => {
+    try {
+      if (device.type === "luz" && dataLight && dataLight[0].data.length > 0) {
+        let values = [];
+        for (let i = 0; i < dataLight[0].data.length; i++) {
+          let point = {};
+          point["state"] = dataLight[0].data[i]["y"];
+          point["timestamp"] = dataLight[0].data[i]["x"];
+          values.push(point);
+        }
+
+        setLightValues(values);
+      }
+    } catch {}
+  }, [dataLight, device.type]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const dvtTypes = device.dvt;
@@ -411,7 +502,13 @@ const ChartCarousel = ({ device }) => {
                   <Box>Gauge</Box>
                 )}
                 {dvtType === "table" && (
-                  <Table deviceId={device._id} deviceName={device.name} />
+                  <Table
+                    topic={device.topic}
+                    deviceName={device.name}
+                    values={LightValues.length > 0 ? LightValues : []}
+                    deviceType={device.type}
+                    deviceStartDate={new Date(device.createdOn)}
+                  />
                 )}
                 {dvtType === "value" && (
                   // <Value id={device._id} values={device.values} />

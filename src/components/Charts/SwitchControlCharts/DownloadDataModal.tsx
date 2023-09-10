@@ -51,7 +51,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = value.timestamp;
+        const timestamp = new Date(value.timestamp);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -139,7 +139,7 @@ const DownloadDataModal = ({
               dateStyle: "short",
               timeStyle: "short",
             }),
-            state: value.value,
+            state: value.state === "1" ? "Encendido" : "Apagado",
           }))}
           columns={columns.map((column) => ({
             field: column.field,
