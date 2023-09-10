@@ -42,7 +42,13 @@ const columns = [
   },
 ];
 
-export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
+export const THGauge = ({
+  deviceName,
+  topic,
+  deviceStartDate,
+  values,
+  deviceType,
+}) => {
   const [dataTemp, setDataTemp] = useState();
   const [dataHum, setDataHum] = useState();
   const [openModal, setOpenModal] = useState(false);
@@ -57,16 +63,16 @@ export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
 
   let queryT = `from(bucket: "ucontrol-arm21") 
 |>  range(start: -5m, stop: 1h) 
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Temperature")
-|> filter(fn: (r) => r["topic"] == "${topic}")
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
+|> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol-arm21")
 |>  range(start: -5m, stop: 1h)
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Humidity")
-|> filter(fn: (r) => r["topic"] == "${topic}")
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
+|> filter(fn: (r) =>  r["_field"] == "humidity")
 |> yield(name: "mean")`;
 
   useEffect(() => {

@@ -317,6 +317,7 @@ const ChartCarousel = ({ device }) => {
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
                 values={THValues.length > 0 ? THValues : []}
+                deviceType={device.type}
               />
             )}
 
@@ -326,6 +327,7 @@ const ChartCarousel = ({ device }) => {
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
                 values={THValues.length > 0 ? THValues : []}
+                deviceType={device.type}
               />
             )}
             {device.type === "tempHum" && dvtType === "gauge" && (
@@ -334,6 +336,7 @@ const ChartCarousel = ({ device }) => {
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
                 values={THValues.length > 0 ? THValues : []}
+                deviceType={device.type}
               />
             )}
 
@@ -343,6 +346,7 @@ const ChartCarousel = ({ device }) => {
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
                 values={THValues.length > 0 ? THValues : []}
+                deviceType={device.type}
               />
             )}
 
@@ -353,7 +357,8 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues}
+                values={SoilValues.length > 0 ? SoilValues : []}
+                deviceType={device.type}
               />
             )}
             {device.type === "hum" && dvtType === "line" && (
@@ -361,7 +366,8 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues}
+                values={SoilValues.length > 0 ? SoilValues : []}
+                deviceType={device.type}
               />
             )}
             {device.type === "hum" && dvtType === "gauge" && (
@@ -369,7 +375,8 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues}
+                values={SoilValues.length > 0 ? SoilValues : []}
+                deviceType={device.type}
               />
             )}
 
@@ -378,7 +385,8 @@ const ChartCarousel = ({ device }) => {
                 topic={device.topic}
                 deviceName={device.name}
                 deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues}
+                values={SoilValues.length > 0 ? SoilValues : []}
+                deviceType={device.type}
               />
             )}
 

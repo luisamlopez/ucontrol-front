@@ -47,6 +47,7 @@ export const SoilBarChart = ({
   topic,
   deviceStartDate,
   values,
+  deviceType,
 }) => {
   const [openModal, setOpenModal] = useState(false);
 
@@ -62,7 +63,7 @@ export const SoilBarChart = ({
   let queryH = `from(bucket: "ucontrol-arm21")
   |> range(start: -5m, stop: 1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["measurement"] == "soilMoist")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
   |> filter(fn: (r) => r["_field"] == "soilValue")
   |> yield(name: "mean")`;
 
