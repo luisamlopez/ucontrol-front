@@ -276,7 +276,7 @@ const ChartCarousel = ({ device }) => {
    */
 
   useEffect(() => {
-    if (device.type === "luz") {
+    if (device.type === "luz" || device.type === "aire") {
       const token =
         "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
       const org = "UControl";
@@ -285,8 +285,8 @@ const ChartCarousel = ({ device }) => {
       let queryH = `from(bucket: "ucontrol-arm21")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["deviceType"] == "luz")
-  |> filter(fn: (r) => r["_field"] == "switchStatus")`;
+  |> filter(fn: (r) => r["_field"] == "switchStatus")
+  |> filter(fn: (r) => r["deviceType"] == "${device.type}")`;
 
       let res = [];
       const influxQuery = async () => {
@@ -350,7 +350,11 @@ const ChartCarousel = ({ device }) => {
    */
   useEffect(() => {
     try {
-      if (device.type === "luz" && dataLight && dataLight[0].data.length > 0) {
+      if (
+        (device.type === "luz" || device.type === "aire") &&
+        dataLight &&
+        dataLight[0].data.length > 0
+      ) {
         let values = [];
         for (let i = 0; i < dataLight[0].data.length; i++) {
           let point = {};

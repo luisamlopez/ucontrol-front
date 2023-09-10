@@ -116,76 +116,75 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
 
   return (
     <>
-      {data && data.length > 0 && (
-        <>
-          {(deviceType === "luz" || deviceType === "aire") && (
-            <>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Typography
-                  fontWeight={600}
-                  fontSize={16}
-                  textAlign={"center"}
-                  m={2}
-                >
-                  Controlar estado de {deviceName}
-                </Typography>
-                <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
-                  OFF
-                </Typography>
-                <Switch checked={checked} onChange={handleChange} />
-                <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
-                  ON
-                </Typography>
-              </Box>
-            </>
-          )}
+      <>
+        {(deviceType === "luz" || deviceType === "aire") && (
           <>
-            <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
-              Tabla de estados de {deviceName}
-            </Typography>
             <Box
               sx={{
                 display: "flex",
-                flexDirection: {
-                  lg: "column",
-                  md: "column-reverse",
-                  xs: "column-reverse",
-                  sm: "column-reverse",
-                },
-                p: 1,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Button
-                variant="contained"
-                sx={{
-                  mb: 2,
-                  zIndex: 1,
-                  placeSelf: "flex-end",
-                  width: {
-                    lg: "20%",
-                    md: "20%",
-                    xs: "100%",
-                    sm: "100%",
-                  },
-                  mr: {
-                    lg: "5",
-                    md: "5",
-                    xs: "0",
-                    sm: "0",
-                  },
-                }}
-                onClick={handleOpenModal}
+              <Typography
+                fontWeight={600}
+                fontSize={16}
+                textAlign={"center"}
+                m={2}
               >
-                Descargar
-              </Button>
-
+                Controlar estado de {deviceName}
+              </Typography>
+              <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
+                OFF
+              </Typography>
+              <Switch checked={checked} onChange={handleChange} />
+              <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
+                ON
+              </Typography>
+            </Box>
+          </>
+        )}
+        <>
+          <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
+            Tabla de estados de {deviceName}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: {
+                lg: "column",
+                md: "column-reverse",
+                xs: "column-reverse",
+                sm: "column-reverse",
+              },
+              p: 1,
+            }}
+          >
+            <Button
+              variant="contained"
+              sx={{
+                mb: 2,
+                zIndex: 1,
+                placeSelf: "flex-end",
+                width: {
+                  lg: "20%",
+                  md: "20%",
+                  xs: "100%",
+                  sm: "100%",
+                },
+                mr: {
+                  lg: "5",
+                  md: "5",
+                  xs: "0",
+                  sm: "0",
+                },
+              }}
+              onClick={handleOpenModal}
+            >
+              Descargar
+            </Button>
+            {data && data[0] && data[0].data && data[0].data.length > 0 && (
               <Box
                 sx={{
                   display: "flex",
@@ -239,10 +238,10 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
                   </TableMUI>
                 </TableContainer>
               </Box>
-            </Box>
-          </>
+            )}
+          </Box>
         </>
-      )}
+      </>
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
