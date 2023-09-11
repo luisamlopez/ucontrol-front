@@ -6,7 +6,6 @@ import "chartjs-adapter-luxon";
 
 import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import StreamingPlugin from "chartjs-plugin-streaming";
 import DownloadDataModal from "./DownloadDataModal";
 
 const legendMarginPlugin = {

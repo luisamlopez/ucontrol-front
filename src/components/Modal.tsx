@@ -12,7 +12,6 @@ import { Device, deleteDevice, getSpaceFromDeviceId } from "../api/Device";
 import { CloseRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Space, deleteSpace, getSpaceById } from "../api/Space";
-import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "../contexts/authContext";
 import { useSnackbar } from "notistack";
@@ -268,7 +267,7 @@ const Modal = (props: DeviceModalProps) => {
               props.spaceDevices.length > 0 && (
                 <Box>
                   <Typography fontWeight={"bold"}>Dispositivos:</Typography>
-                  <Typography>
+                  <Box>
                     <ul>
                       {props.spaceDevices.map((device, i) => (
                         <li key={i}>{device.name}</li>
@@ -281,7 +280,7 @@ const Modal = (props: DeviceModalProps) => {
                         No hay dispositivos en este espacio.
                       </Typography>
                     )}
-                  </Typography>
+                  </Box>
                 </Box>
               )}
             {props.device && (
@@ -289,7 +288,7 @@ const Modal = (props: DeviceModalProps) => {
                 <Typography fontWeight={"bold"}>
                   Visualización de datos:
                 </Typography>
-                <Typography>
+                <Box>
                   {props.device && (
                     <ul>
                       {props.device.dvt.map((obj, i) => (
@@ -302,16 +301,16 @@ const Modal = (props: DeviceModalProps) => {
                             ? "Gráfico de líneas"
                             : obj === "gauge"
                             ? "Gauge"
-                            : obj === "value"
+                            : obj === "value" || obj === "preValue"
                             ? "Solo valor"
-                            : obj === "table"
+                            : obj === "table" || obj === "preTable"
                             ? "Tabla"
                             : "Diagrama de dispersión"}
                         </li>
                       ))}
                     </ul>
                   )}
-                </Typography>
+                </Box>
               </Box>
             )}
             <Box>

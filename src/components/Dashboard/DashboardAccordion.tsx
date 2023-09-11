@@ -9,11 +9,7 @@ import {
 import { Device, getDeviceById } from "../../api/Device";
 import { Space } from "../../api/Space";
 import { useEffect, useState } from "react";
-import {
-  EmojiObjectsRounded,
-  KeyboardArrowDownRounded,
-  WarningRounded,
-} from "@mui/icons-material";
+import { KeyboardArrowDownRounded } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 export interface AccordionProps {
@@ -34,12 +30,7 @@ function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
           display: "flex",
           flexDirection: "column",
           backgroundColor: "#fff",
-          width: {
-            lg: "25%",
-            md: "25%",
-            xs: "100%",
-            sm: "100%",
-          },
+          width: "100%",
           borderRadius: "4px",
           p: 1,
           mr: {
@@ -72,97 +63,6 @@ function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
         </ul>
       </Box>
     </>
-  );
-}
-
-function Summary({ devices }: { devices: Device[] }): JSX.Element {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "#fff",
-        width: {
-          lg: "70%",
-          md: "70%",
-          xs: "100%",
-          sm: "100%",
-        },
-        borderRadius: "4px",
-        p: 1,
-      }}
-    >
-      <Typography
-        fontWeight={"bold"}
-        textAlign={"left"}
-        fontSize={{ xs: 14, sm: 18, lg: 18 }}
-        color={"primary.main"}
-      >
-        Resumen de actividad
-      </Typography>
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: {
-            lg: "row",
-            md: "row",
-            xs: "column",
-            sm: "column",
-          },
-          justifyContent: "space-between",
-        }}
-      >
-        <Box>
-          <ul>
-            {devices.map((device, i) => (
-              <li key={i}>
-                <Typography textAlign={"left"}>
-                  {device.name}:&nbsp;
-                  {/* {device.values[device.values.length - 1].value}&nbsp; tomada
-                  el&nbsp;
-                  {device.values[
-                    device.values.length - 1
-                  ].timestamp?.toString()} */}
-                </Typography>
-              </li>
-            ))}
-          </ul>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <WarningRounded sx={{ fontSize: 30 }} color="warning" />
-
-            <Typography>Alerta de consumo</Typography>
-          </Box>
-
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <EmojiObjectsRounded sx={{ fontSize: 30 }} color="secondary" />
-            <Typography>Recomendación</Typography>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
   );
 }
 
@@ -249,7 +149,6 @@ const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
                   }}
                 >
                   <DevicesDetails devices={space.devices} />
-                  <Summary devices={space.devices} />
                 </Box>
 
                 <Button

@@ -150,13 +150,19 @@ const SpaceCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
                 Dispositivos:
               </Typography>
-              <Typography textAlign={"left"} color={"black"}>
+              <Box>
                 <ul>
                   {devices.map((device) => (
-                    <li key={device._id}>{device.name}</li>
+                    <Typography
+                      textAlign={"left"}
+                      color={"black"}
+                      key={device._id}
+                    >
+                      {device.name}
+                    </Typography>
                   ))}
                 </ul>
-              </Typography>
+              </Box>
             </Box>
           )}
 

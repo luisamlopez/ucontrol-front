@@ -134,13 +134,13 @@ const ControlAccessCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
                 Dispositivos:
               </Typography>
-              <Typography textAlign={"left"} color={"black"}>
+              <Box textAlign={"left"} color={"black"}>
                 <ul>
                   {devices.map((device) => (
                     <li key={device._id}>{device.name}</li>
                   ))}
                 </ul>
-              </Typography>
+              </Box>
             </Box>
           )}
 
