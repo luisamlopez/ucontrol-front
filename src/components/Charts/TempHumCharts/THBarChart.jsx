@@ -201,7 +201,7 @@ export const THBarChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 10000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 

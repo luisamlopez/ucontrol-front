@@ -141,7 +141,7 @@ const DownloadDataModal = ({
               timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
                 hour12: false,
                 dateStyle: "short",
-                timeStyle: "short",
+                timeStyle: "long",
               }),
               temperature: Math.round(value.valueT * 100) / 100,
               humidity: Math.round(value.valueH * 100) / 100,
@@ -190,12 +190,12 @@ function CustomToolbar({
             {
               hour12: false,
               dateStyle: "short",
-              timeStyle: "short",
+              timeStyle: "long",
             }
           )} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })}`,
           delimiter: ";",
           utf8WithBom: true,

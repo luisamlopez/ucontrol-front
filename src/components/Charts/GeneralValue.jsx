@@ -23,7 +23,6 @@ const GeneralValue = ({
 }) => {
   const [data, setData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -96,9 +95,9 @@ const GeneralValue = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 10000);
+    }, 60000);
     return () => clearInterval(interval);
-  }, [query]);
+  }, [query, data]);
 
   useEffect(() => {
     console.log(data);

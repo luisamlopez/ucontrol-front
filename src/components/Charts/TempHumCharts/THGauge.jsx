@@ -185,7 +185,7 @@ export const THGauge = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 10000);
+    }, 60000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 

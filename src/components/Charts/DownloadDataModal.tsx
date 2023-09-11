@@ -138,7 +138,7 @@ const DownloadDataModal = ({
               timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
                 hour12: false,
                 dateStyle: "short",
-                timeStyle: "short",
+                timeStyle: "long",
               }),
               state:
                 value.state === "1"
@@ -181,11 +181,11 @@ function CustomToolbar({
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })}`,
           delimiter: ";",
           utf8WithBom: true,
