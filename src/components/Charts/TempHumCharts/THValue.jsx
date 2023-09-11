@@ -44,14 +44,14 @@ export const THValue = ({
   };
 
   let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -5m, stop: 1h) 
+|>  range(start: -5m) 
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
 |> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -5m, stop: 1h)
+|>  range(start: -5m)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
 |> filter(fn: (r) =>  r["_field"] == "humidity")

@@ -52,7 +52,7 @@ export const temperatureAndHumDVT: UnitsConfig[] = [
 export const movementDVT: UnitsConfig[] = [
   { label: "Tabla de valores de presencia", value: "preTable" },
 
-  { label: "Solo valor", value: "value" },
+  { label: "Solo valor", value: "preValue" },
 ];
 
 // on/off values  and timestamp
@@ -63,7 +63,7 @@ export const lightDVT: UnitsConfig[] = [
 // number of times water has been detected and if it detected water or not
 export const waterFlowDVT: UnitsConfig[] = [
   { label: "Tabla de valores de presencia", value: "preTable" },
-  { label: "Solo valor", value: "value" },
+  { label: "Solo valor", value: "preValue" },
 ];
 
 // on/off values and timestamp
@@ -79,7 +79,7 @@ export const accessControlDVT: UnitsConfig[] = [
 // number of times vibrations have been detected and if it detected vibrations or not
 export const vibrationsDVT: UnitsConfig[] = [
   { label: "Tabla de valores de presencia", value: "preTable" },
-  { label: "Solo valor", value: "value" },
+  { label: "Solo valor", value: "preValue" },
 ];
 
 // API calls

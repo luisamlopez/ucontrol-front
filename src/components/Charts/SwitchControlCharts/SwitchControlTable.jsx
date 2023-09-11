@@ -234,6 +234,12 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
                 </TableContainer>
               </Box>
             )}
+
+            {data && data[0] && data[0].data && data[0].data.length === 0 && (
+              <Typography fontWeight={600} fontSize={16} textAlign={"center"}>
+                No hay datos disponibles
+              </Typography>
+            )}
           </Box>
         </>
       </>

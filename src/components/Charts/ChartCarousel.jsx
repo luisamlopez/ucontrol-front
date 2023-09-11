@@ -14,16 +14,20 @@ import { InfluxDB } from "@influxdata/influxdb-client";
 import { SoilBarChart } from "./SoilCharts/SoilBarChart";
 import { SoilGauge } from "./SoilCharts/SoilGauge";
 import { SoilLineChart } from "./SoilCharts/SoilLineChart";
+import GeneralTable from "./GeneralTable";
+import GeneralValue from "./GeneralValue";
 
 const ChartCarousel = ({ device }) => {
   const [dataTemp, setDataTemp] = useState();
   const [dataHum, setDataHum] = useState();
   const [dataSoil, setDataSoil] = useState();
   const [dataLight, setDataLight] = useState();
+  const [data, setData] = useState();
 
   const [THValues, setTHValues] = useState([]);
   const [SoilValues, setSoilValues] = useState([]);
   const [LightValues, setLightValues] = useState([]);
+  const [values, setValues] = useState([]);
 
   /**
    * This effect is used to query the database and get the data for the temperature and humidity charts
@@ -275,7 +279,7 @@ const ChartCarousel = ({ device }) => {
   }, [dataSoil, device.type]);
 
   /**
-   *  This effect is used to query the database and get the data for the soil moist charts
+   *  This effect is used to query the database and get the data for the switch charts
    */
 
   useEffect(() => {
@@ -351,7 +355,7 @@ const ChartCarousel = ({ device }) => {
   }, [device]);
 
   /**
-   * This effect is used to format the data for the soil moist charts
+   * This effect is used to format the data for the  switch charts
    */
   useEffect(() => {
     try {
@@ -372,6 +376,111 @@ const ChartCarousel = ({ device }) => {
       }
     } catch {}
   }, [dataLight, device.type]);
+
+  /**
+   *  This effect is used to query the database and get the  the rest of the charts
+   */
+
+  useEffect(() => {
+    if (
+      device.type === "agua" ||
+      device.type === "movimiento" ||
+      device.type === "vibraciones"
+    ) {
+      const token =
+        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
+      const org = "UControl";
+      const url = "http://172.29.91.241:8086";
+
+      let queryH = `from(bucket: "ucontrol-arm21")
+|>  range(start: ${device.createdOn}, stop: ${Date.now()})
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
+  |> filter(fn: (r) => r["_field"] == "sensorStatus")
+  |> filter(fn: (r) => r["deviceType"] == "${device.type}")`;
+
+      let res = [];
+      const influxQuery = async () => {
+        //create InfluxDB client
+        const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
+        //make query
+
+        queryApi.queryRows(queryH, {
+          next(row, tableMeta) {
+            const o = tableMeta.toObject(row);
+            //push rows from query into an array object
+            res.push(o);
+          },
+          complete() {
+            let finalData = [];
+
+            //variable is used to track if the current ID already has a key
+            var exists = false;
+
+            //nested for loops aren't ideal, this could be optimized but gets the job done
+            for (let i = 0; i < res.length; i++) {
+              for (let j = 0; j < finalData.length; j++) {
+                //check if the sensor ID is already in the array, if true we want to add the current data point to the array
+                if (res[i]["sensor_id"] === finalData[j]["id"]) {
+                  exists = true;
+                  let point = {};
+                  point["x"] = res[i]["_time"];
+                  point["y"] = res[i]["_value"];
+                  finalData[j]["data"].push(point);
+                }
+              }
+              //if the ID does not exist, create the key and append first data point to array
+              if (!exists) {
+                let d = {};
+                d["id"] = res[i]["sensor_id"];
+                d["data"] = [];
+                let point = {};
+                point["x"] = res[i]["_time"];
+                point["y"] = res[i]["_value"];
+                d["data"].push(point);
+                finalData.push(d);
+              }
+              //need to set this back to false
+              exists = false;
+            }
+            if (finalData.length > 0) {
+              setData(finalData);
+            }
+          },
+          error(error) {
+            console.log("hum query failed- ", error);
+          },
+        });
+      };
+      try {
+        influxQuery();
+      } catch {}
+    }
+  }, [device]);
+
+  /**
+   * This effect is used to format the data for the rest of the charts
+   */
+  useEffect(() => {
+    try {
+      if (
+        (device.type === "agua" ||
+          device.type === "movimiento" ||
+          device.type === "vibraciones") &&
+        data &&
+        data[0].data.length > 0
+      ) {
+        let values = [];
+        for (let i = 0; i < data[0].data.length; i++) {
+          let point = {};
+          point["state"] = data[0].data[i]["y"];
+          point["timestamp"] = data[0].data[i]["x"];
+          values.push(point);
+        }
+
+        setValues(values);
+      }
+    } catch {}
+  }, [data, device.type]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const dvtTypes = device.dvt;
@@ -410,107 +519,122 @@ const ChartCarousel = ({ device }) => {
             }}
           >
             {/* Temperature and humidity */}
-            {device.type === "tempHum" && dvtType === "bar" && (
-              <THBarChart
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={THValues.length > 0 ? THValues : []}
-                deviceType={device.type}
-              />
-            )}
+            <>
+              {device.type === "tempHum" && dvtType === "bar" && (
+                <THBarChart
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={THValues.length > 0 ? THValues : []}
+                  deviceType={device.type}
+                />
+              )}
 
-            {device.type === "tempHum" && dvtType === "line" && (
-              <THLineChart
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={THValues.length > 0 ? THValues : []}
-                deviceType={device.type}
-              />
-            )}
-            {device.type === "tempHum" && dvtType === "gauge" && (
-              <THGauge
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={THValues.length > 0 ? THValues : []}
-                deviceType={device.type}
-              />
-            )}
+              {device.type === "tempHum" && dvtType === "line" && (
+                <THLineChart
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={THValues.length > 0 ? THValues : []}
+                  deviceType={device.type}
+                />
+              )}
+              {device.type === "tempHum" && dvtType === "gauge" && (
+                <THGauge
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={THValues.length > 0 ? THValues : []}
+                  deviceType={device.type}
+                />
+              )}
 
-            {device.type === "tempHum" && dvtType === "value" && (
-              <THValue
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={THValues.length > 0 ? THValues : []}
-                deviceType={device.type}
-              />
-            )}
+              {device.type === "tempHum" && dvtType === "value" && (
+                <THValue
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={THValues.length > 0 ? THValues : []}
+                  deviceType={device.type}
+                />
+              )}
+            </>
 
             {/* Humidity */}
-
-            {device.type === "hum" && dvtType === "bar" && (
-              <SoilBarChart
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues.length > 0 ? SoilValues : []}
-                deviceType={device.type}
-              />
-            )}
-            {device.type === "hum" && dvtType === "line" && (
-              <SoilLineChart
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues.length > 0 ? SoilValues : []}
-                deviceType={device.type}
-              />
-            )}
-            {device.type === "hum" && dvtType === "gauge" && (
-              <SoilGauge
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues.length > 0 ? SoilValues : []}
-                deviceType={device.type}
-              />
-            )}
-
-            {device.type === "hum" && dvtType === "value" && (
-              <SoilValue
-                topic={device.topic}
-                deviceName={device.name}
-                deviceStartDate={new Date(device.createdOn)}
-                values={SoilValues.length > 0 ? SoilValues : []}
-                deviceType={device.type}
-              />
-            )}
+            <>
+              {device.type === "hum" && dvtType === "bar" && (
+                <SoilBarChart
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={SoilValues.length > 0 ? SoilValues : []}
+                  deviceType={device.type}
+                />
+              )}
+              {device.type === "hum" && dvtType === "line" && (
+                <SoilLineChart
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={SoilValues.length > 0 ? SoilValues : []}
+                  deviceType={device.type}
+                />
+              )}
+              {device.type === "hum" && dvtType === "gauge" && (
+                <SoilGauge
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={SoilValues.length > 0 ? SoilValues : []}
+                  deviceType={device.type}
+                />
+              )}
+              {device.type === "hum" && dvtType === "value" && (
+                <SoilValue
+                  topic={device.topic}
+                  deviceName={device.name}
+                  deviceStartDate={new Date(device.createdOn)}
+                  values={SoilValues.length > 0 ? SoilValues : []}
+                  deviceType={device.type}
+                />
+              )}
+            </>
 
             {/* Rest of the device types */}
-            {device.type !== "tempHum" && device.type !== "hum" && (
-              <>
-                {dvtType === "preTable" && (
-                  // <Gauge id={device._id} values={device.values} />
-                  <Box>nueva tabla</Box>
-                )}
-                {dvtType === "table" && (
-                  <Table
-                    topic={device.topic}
-                    deviceName={device.name}
-                    values={LightValues.length > 0 ? LightValues : []}
-                    deviceType={device.type}
-                    deviceStartDate={new Date(device.createdOn)}
-                  />
-                )}
-                {dvtType === "value" && (
-                  // <Value id={device._id} values={device.values} />
-                  <Box>Value</Box>
-                )}
-              </>
-            )}
+            <>
+              {device.type !== "tempHum" && device.type !== "hum" && (
+                <>
+                  {dvtType === "preTable" && (
+                    <GeneralTable
+                      topic={device.topic}
+                      deviceName={device.name}
+                      values={values.length > 0 ? values : []}
+                      deviceType={device.type}
+                      deviceStartDate={new Date(device.createdOn)}
+                    />
+                  )}
+                  {dvtType === "preValue" && (
+                    <GeneralValue
+                      topic={device.topic}
+                      deviceName={device.name}
+                      values={values.length > 0 ? values : []}
+                      deviceType={device.type}
+                      deviceStartDate={new Date(device.createdOn)}
+                    />
+                  )}
+                  {(device.type === "luz" || device.type === "aire") &&
+                    dvtType === "table" && (
+                      <Table
+                        topic={device.topic}
+                        deviceName={device.name}
+                        values={LightValues.length > 0 ? LightValues : []}
+                        deviceType={device.type}
+                        deviceStartDate={new Date(device.createdOn)}
+                      />
+                    )}
+                </>
+              )}
+            </>
           </Box>
         ))}
       </Box>

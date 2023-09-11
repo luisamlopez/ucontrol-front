@@ -133,31 +133,37 @@ const DownloadDataModal = ({
             />
           </LocalizationProvider>
         </Box>
-        <DataGrid
-          rows={filteredData.map((value, index) => ({
-            id: index,
-            timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-            humidity: Math.round(value.valueH * 100) / 100,
-          }))}
-          columns={columns.map((column) => ({
-            field: column.field,
-            headerName: column.headerName,
-            width: 200,
-          }))}
-          slots={{
-            toolbar: () => (
-              <CustomToolbar
-                startDate={startDate!}
-                endDate={endDate!}
-                deviceName={deviceName}
-              />
-            ),
-          }}
-        />
+
+        {data && data.length > 0 && (
+          <DataGrid
+            rows={filteredData.map((value, index) => ({
+              id: index,
+              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              }),
+              humidity: Math.round(value.valueH * 100) / 100,
+            }))}
+            columns={columns.map((column) => ({
+              field: column.field,
+              headerName: column.headerName,
+              width: 200,
+            }))}
+            slots={{
+              toolbar: () => (
+                <CustomToolbar
+                  startDate={startDate!}
+                  endDate={endDate!}
+                  deviceName={deviceName}
+                />
+              ),
+            }}
+          />
+        )}
+        {data && data.length === 0 && (
+          <Typography>No hay datos para mostrar</Typography>
+        )}
       </Box>
     </Dialog>
   );
