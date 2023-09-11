@@ -98,7 +98,11 @@ const GeneralValue = ({
       } catch (error) {}
     }, 10000);
     return () => clearInterval(interval);
-  }, [query, data]);
+  }, [query]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
