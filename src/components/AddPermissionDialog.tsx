@@ -65,12 +65,16 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
 	) => {
 		setSubmitting(true);
 		const response = await createPermission(spaceId, permission, email);
-		if (!response) {
+		if (response?.success) {
 			setSubmitting(false);
-			return enqueueSnackbar("Hubo un error", { variant: "error" });
+			enqueueSnackbar(response?.message, {
+				variant: "success",
+			});
+			closeDialog();
+			return;
 		}
-		enqueueSnackbar("¡Registro exitoso!", { variant: "success" });
-		closeDialog();
+		setSubmitting(false);
+		return enqueueSnackbar(response?.message, { variant: "error" });
 	};
 
 	return (
