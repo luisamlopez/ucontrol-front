@@ -5,9 +5,9 @@ import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/authContext";
 import { Space, getSpaceById } from "../api/Space";
-import CADeviceCard from "../components/ControlAccessPage/CADevice";
+import CADeviceCard from "../components/AccessControlPage/ACDevice";
 
-const ControlAccessDevices = (): JSX.Element => {
+const AccessControlDevices = (): JSX.Element => {
   const [allDevices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
@@ -112,4 +112,4 @@ const ControlAccessDevices = (): JSX.Element => {
   );
 };
 
-export default ControlAccessDevices;
+export default AccessControlDevices;

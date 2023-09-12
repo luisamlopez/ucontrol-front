@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { Device, getDeviceById } from "../../api/Device";
 import { User, getUserById } from "../../api/User";
 
-const ControlAccessCard = (space: Space): JSX.Element => {
+const AccessControlCard = (space: Space): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [devicesLoaded, setDevicesLoaded] = useState(false);
   const [user, setUser] = useState<User>();
@@ -176,4 +176,4 @@ const ControlAccessCard = (space: Space): JSX.Element => {
   );
 };
 
-export default ControlAccessCard;
+export default AccessControlCard;

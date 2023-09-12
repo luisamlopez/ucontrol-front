@@ -2,9 +2,9 @@ import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Space, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
-import ControlAccessCard from "../components/ControlAccessPage/ControlAccessCard";
+import AccessControlCard from "../components/AccessControlPage/ACCard";
 
-const ControlAccessSpaces = (): JSX.Element => {
+const AccessControlSpaces = (): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
@@ -95,7 +95,7 @@ const ControlAccessSpaces = (): JSX.Element => {
                 }}
               >
                 {spaces.map((space) => (
-                  <ControlAccessCard key={space._id} {...space} />
+                  <AccessControlCard key={space._id} {...space} />
                 ))}
               </Box>
             )}
@@ -106,4 +106,4 @@ const ControlAccessSpaces = (): JSX.Element => {
   );
 };
 
-export default ControlAccessSpaces;
+export default AccessControlSpaces;
