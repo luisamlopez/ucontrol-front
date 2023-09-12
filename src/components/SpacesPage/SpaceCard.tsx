@@ -44,12 +44,15 @@ const SpaceCard = (space: Space): JSX.Element => {
   }, [space.devices]);
 
   useEffect(() => {
-    try {
-      getUserById(space.createdBy, (user) => {
-        setUser(user);
-      });
-      space.createdBy = user?.name!;
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getUserById(space.createdBy, (user) => {
+          setUser(user);
+        });
+        space.createdBy = user?.name!;
+      } catch (error) {}
+    };
+    fetch();
   }, [space, space.createdBy, user?.name]);
 
   const handleOpenModal = () => {

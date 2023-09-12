@@ -533,25 +533,29 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
    * Get the space from the device ID and set it as the selected space when editing a device
    */
   useEffect(() => {
-    if (props.deviceID) {
-      getSpaceFromDeviceId(props.deviceID, (space) => {
-        setSelectedSpace(getSpaceInfo(space));
-      });
-    }
+    const fetch = async () => {
+      if (props.deviceID) {
+        getSpaceFromDeviceId(props.deviceID, (space) => {
+          setSelectedSpace(getSpaceInfo(space));
+        });
+      }
+    };
+    fetch();
   }, [getSpaceInfo, props.deviceID]);
 
   /**
    * Get all the spaces to show them in the autocomplete for the space where the device will be added
    */
   useEffect(() => {
-    try {
-      getSpaces((allSpaces) => {
-        setSpaces(allSpaces);
-      });
-      setDataLoaded(false);
-    } catch (error) {
-      alert(error);
-    }
+    const fetch = async () => {
+      try {
+        await getSpaces((allSpaces) => {
+          setSpaces(allSpaces);
+        });
+        setDataLoaded(false);
+      } catch (error) {}
+    };
+    fetch();
   }, [props.deviceID, deviceToEdit]);
 
   /**
@@ -559,13 +563,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
    */
 
   useEffect(() => {
-    try {
-      getAllDevicesByUser(user!._id, (devices) => {
-        setAllDevices(devices);
-      });
-    } catch (error) {
-      alert(error);
-    }
+    const fetch = async () => {
+      try {
+        await getAllDevicesByUser(user!._id, (devices) => {
+          setAllDevices(devices);
+        });
+      } catch (error) {}
+    };
+    fetch();
   }, [user]);
 
   /**

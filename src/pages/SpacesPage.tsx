@@ -22,19 +22,20 @@ const SpacesPage = (): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
-    try {
-      getSpaces((allSpaces) => {
-        setSpaces(allSpaces);
-        setDataLoaded(true);
-      });
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
-    }
+    const fetch = async () => {
+      try {
+        await getSpaces((allSpaces) => {
+          setSpaces(allSpaces);
+          setDataLoaded(true);
+        });
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetch();
   }, []);
 
   return (

@@ -255,9 +255,7 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
       });
       // console.log(spaces);
       setDataLoaded(false);
-    } catch (error) {
-      alert(error);
-    }
+    } catch (error) {}
     if (props.spaceID && spaceToEdit) setDataLoaded(false);
   }, [props.spaceID, spaceToEdit]);
 

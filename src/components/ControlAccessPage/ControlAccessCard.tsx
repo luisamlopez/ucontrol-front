@@ -10,7 +10,6 @@ import {
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { Device, getDeviceById } from "../../api/Device";
 import { User, getUserById } from "../../api/User";
 
@@ -43,12 +42,15 @@ const ControlAccessCard = (space: Space): JSX.Element => {
   }, [space.devices]);
 
   useEffect(() => {
-    try {
-      getUserById(space.createdBy, (user) => {
-        setUser(user);
-      });
-      space.createdBy = user?.name!;
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getUserById(space.createdBy, (user) => {
+          setUser(user);
+        });
+        space.createdBy = user?.name!;
+      } catch (error) {}
+    };
+    fetch();
   }, [space, space.createdBy, user?.name]);
 
   return (

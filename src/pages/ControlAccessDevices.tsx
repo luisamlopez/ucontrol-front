@@ -1,25 +1,11 @@
-import {
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-  Fab,
-  Tooltip,
-  TextField,
-} from "@mui/material";
+import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
-import {
-  Device,
-  getAllDevicesBySpace,
-  getAllDevicesByUser,
-} from "../api/Device";
+import { Device, getAllDevicesBySpace } from "../api/Device";
 import { Sidebar } from "../components/Sidebar";
-import CardsContainer from "../components/CardsContainer";
-import DeviceCard from "../components/DevicesPage/DeviceCard";
-import { AddRounded } from "@mui/icons-material";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useUser } from "../contexts/authContext";
 import { Space, getSpaceById } from "../api/Space";
+import CADeviceCard from "../components/ControlAccessPage/CADevice";
 
 const ControlAccessDevices = (): JSX.Element => {
   const [allDevices, setDevices] = useState<Device[]>([]);
@@ -30,84 +16,98 @@ const ControlAccessDevices = (): JSX.Element => {
   const spaceId = useParams<{ spaceId: string }>().spaceId;
 
   useEffect(() => {
-    try {
-      getSpaceById(spaceId!, (space) => {
-        setSpace(space);
-      });
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getSpaceById(spaceId!, (space) => {
+          setSpace(space);
+        });
+      } catch (error) {}
+    };
+
+    fetch();
   }, [spaceId]);
 
   useEffect(() => {
-    try {
-      getAllDevicesBySpace(spaceId!, (devices) => {
-        console.log(devices);
-      });
-    } catch (error) {
-      alert(error);
-    } finally {
-      setDataLoaded(true);
-      setLoading(false);
-    }
+    const fetch = async () => {
+      try {
+        await getAllDevicesBySpace(spaceId!, (devices) => {
+          setDevices(
+            devices?.filter((device) => device.type === "controlAcceso")!
+          );
+          setLoading(false);
+          setDataLoaded(true);
+        });
+      } catch (error) {}
+    };
+    fetch();
   }, [spaceId]);
+
+  useEffect(() => {
+    console.log(allDevices);
+  }, [allDevices]);
 
   return (
     <>
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : !dataLoaded ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Box display="flex" alignItems="center" justifyContent="left">
-          <Sidebar />
-          <Box>
-            <Container sx={{ m: 0, p: 0 }}>
+      <Box display="flex" alignItems="center" justifyContent="left">
+        <Sidebar />
+        <Container sx={{ m: 0, p: 0 }}>
+          <Box
+            display={"flex"}
+            flexDirection="column"
+            sx={{
+              p: 2,
+            }}
+          >
+            <Typography
+              color="primary"
+              textAlign="left"
+              fontSize={{ xs: 24, sm: 48, lg: 48 }}
+              fontWeight={600}
+              p={0}
+              mt={{ xs: 6, sm: 0, lg: 0 }}
+              mb={2}
+            >
+              Dispositivos de control de acceso en {space?.name}
+            </Typography>
+            {loading ? (
               <Box
-                display={"flex"}
-                flexDirection="column"
                 sx={{
-                  p: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Typography
-                  color="primary"
-                  textAlign="left"
-                  fontSize={{ xs: 24, sm: 48, lg: 48 }}
-                  fontWeight={600}
-                  p={0}
-                  mt={{ xs: 6, sm: 0, lg: 0 }}
-                  mb={2}
-                >
-                  Dispositivos de control de acceso en {space?.name}
-                </Typography>
-
-                <Typography>
-                  aqui puede haber tarjetas de los dispositivos de contro de
-                  acceso del espacio y que cada una lleve a la pagina de
-                  detalles del dispositivo en donde se va a ver la lista de los
-                  usuarios que han pasado la tarjeta, nombre, timestamp y si fue
-                  concedido el acceso o no
-                </Typography>
+                <CircularProgress />
               </Box>
-            </Container>
+            ) : !dataLoaded ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  gap: "10px",
+                  width: "100%",
+                }}
+              >
+                {allDevices.map((device, i) => (
+                  <CADeviceCard key={i} device={device} />
+                ))}
+              </Box>
+            )}
           </Box>
-        </Box>
-      )}
+        </Container>
+      </Box>
     </>
   );
 };

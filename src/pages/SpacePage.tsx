@@ -54,9 +54,7 @@ const SpacePage = (): JSX.Element => {
           setLoading(false);
           setDataLoaded(true);
         });
-      } catch (error) {
-        alert(error);
-      }
+      } catch (error) {}
     };
     fetch();
   }, [spaceID]);
