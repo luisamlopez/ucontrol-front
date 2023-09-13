@@ -176,6 +176,7 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
+        printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,

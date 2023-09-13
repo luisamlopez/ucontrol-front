@@ -177,15 +177,16 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
+        printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "long",
+            timeStyle: "short",
           })} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "long",
+            timeStyle: "short",
           })}`,
           delimiter: ";",
           utf8WithBom: true,

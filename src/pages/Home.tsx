@@ -52,6 +52,9 @@ const Home = (): JSX.Element => {
               p={0}
               mt={{ xs: 6, sm: 0, lg: 0 }}
               mb={2}
+              sx={{
+                wordWrap: "break-word",
+              }}
             >
               Dashboard
             </Typography>
@@ -85,7 +88,8 @@ const Home = (): JSX.Element => {
                 mt={{ xs: 6, sm: 0, lg: 0 }}
                 mb={2}
               >
-                No hay ningún espacio cargado. Por favor, cree uno.
+                No hay ningún espacio cargado que contenga dispositivos. Por
+                favor, cree uno.
               </Typography>
             ) : (
               <DashboardAccordion spaces={spaces} />

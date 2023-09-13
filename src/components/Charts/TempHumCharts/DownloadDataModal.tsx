@@ -184,6 +184,7 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
+        printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos de ${deviceName} desde ${startDate.toLocaleString(
             "es-VE",

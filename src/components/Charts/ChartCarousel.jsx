@@ -40,14 +40,12 @@ const ChartCarousel = ({ device }) => {
       let queryT = `from(bucket: "ucontrol") 
 |>  range(start: ${device.createdOn}, stop:  ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${device.type}")
 |> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
       let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${device.type}")
 |> filter(fn: (r) =>  r["_field"] == "humidity")
 |> yield(name: "mean")`;
 
@@ -154,7 +152,7 @@ const ChartCarousel = ({ device }) => {
         influxQuery();
       } catch {}
     }
-  }, [device]);
+  }, [device, org, token, url]);
 
   /**
    * This effect is used to format the data for the temperature and humidity charts

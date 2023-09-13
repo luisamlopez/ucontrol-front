@@ -19,7 +19,6 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { KeyboardArrowDownRounded } from "@mui/icons-material";
 
 //Columns for the DataGrid are the user atributes
 const columns: any[] = [
@@ -39,14 +38,13 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   );
   const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now()));
   const [data, setData] = useState<any[]>([]);
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const data = [
           {
-            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-10T00:00:00.000Z"),
             name: "Juan Perez",
             state: "1",
             ci: "12345678",
@@ -55,7 +53,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             career: "Ingenieria de Sistemas",
           },
           {
-            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-10T00:00:00.000Z"),
             name: "Juan Perez",
             state: "0",
             ci: "12345678",
@@ -64,7 +62,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             career: "Ingenieria de Sistemas",
           },
           {
-            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-10T00:00:00.000Z"),
             name: "Juan Perez",
             state: "1",
             ci: "12345678",
@@ -73,7 +71,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             career: "Ingenieria de Sistemas",
           },
           {
-            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-10T00:00:00.000Z"),
             name: "Juan Perez",
             state: "1",
             ci: "12345678",
@@ -119,20 +117,6 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
     };
     fetch();
   }, [props.device]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    // Add event listener for window resize
-    window.addEventListener("resize", handleResize);
-
-    // Clean up event listener on unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   return (
     <Box
@@ -196,12 +180,12 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
         {data && data.length > 0 && (
           <>
             <DataGrid
-              rows={data.map((value, index) => ({
+              rows={filteredData.map((value, index) => ({
                 id: index,
                 timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
                   hour12: false,
                   dateStyle: "short",
-                  timeStyle: windowWidth < 960 ? "short" : "long",
+                  timeStyle: "long",
                 }),
                 name: value.name,
                 state:
@@ -214,7 +198,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
               columns={columns.map((column) => ({
                 field: column.field,
                 headerName: column.headerName,
-                width: windowWidth < 960 ? 80 : 150,
+                width: 150,
               }))}
               slots={{
                 toolbar: () => (
@@ -242,6 +226,7 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
+        printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,

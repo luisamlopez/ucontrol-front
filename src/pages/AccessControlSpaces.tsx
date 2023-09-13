@@ -48,6 +48,9 @@ const AccessControlSpaces = (): JSX.Element => {
               p={0}
               mt={{ xs: 6, sm: 0, lg: 0 }}
               mb={2}
+              sx={{
+                wordWrap: "break-word",
+              }}
             >
               Control de acceso
             </Typography>

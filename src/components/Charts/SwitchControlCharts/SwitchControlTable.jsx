@@ -249,7 +249,7 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
         show={openModal}
         handleClose={handleCloseModal}
         startDate={deviceStartDate}
-        endDate={Date.now()}
+        endDate={new Date(Date.now())}
         data={values}
         columns={columns}
       />

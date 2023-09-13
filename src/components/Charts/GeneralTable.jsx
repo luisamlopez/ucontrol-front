@@ -229,7 +229,7 @@ const GeneralTable = ({
         show={openModal}
         handleClose={handleCloseModal}
         startDate={deviceStartDate}
-        endDate={Date.now()}
+        endDate={new Date(Date.now())}
         data={values}
         columns={columns}
       />

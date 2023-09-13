@@ -190,7 +190,7 @@ const Modal = (props: DeviceModalProps) => {
       <DialogTitle
         fontWeight={"bold"}
         color="primary.main"
-        sx={{ m: 0, py: 0 }}
+        sx={{ m: 0, py: 0, wordWrap: "break-word" }}
       >
         {props.device && props.device.name}
 

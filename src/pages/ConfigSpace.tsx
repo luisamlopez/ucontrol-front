@@ -65,6 +65,9 @@ const ConfigDevice = (): JSX.Element => {
               textAlign="left"
               fontSize={{ xs: 24, sm: 48, lg: 48 }}
               fontWeight={600}
+              sx={{
+                wordWrap: "break-word",
+              }}
             >
               {action === "add" ? "Nuevo espacio" : "Editar espacio"}
             </Typography>
