@@ -150,3 +150,26 @@ export const deleteSpace = async (spaceId: string) => {
     return false;
   }
 };
+
+export const getACSpaces = async (
+  userId: string,
+  callback: (spaces: Space[]) => void
+) => {
+  try {
+    const response = await fetch(`${url}getSpacesWithAccessControl/${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    //   console.log(response);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const spaces = await response.json();
+    console.log(spaces.data);
+    callback(spaces.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
