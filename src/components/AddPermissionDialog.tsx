@@ -57,19 +57,23 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
     } catch (error) {}
   }, []);
 
-  const onSubmit = async (
-    { email, spaceId, permission }: PermissionValues,
-    { setSubmitting }: FormikHelpers<PermissionValues>
-  ) => {
-    setSubmitting(true);
-    const response = await createPermission(spaceId, permission, email);
-    if (!response) {
-      setSubmitting(false);
-      return enqueueSnackbar("Hubo un error", { variant: "error" });
-    }
-    enqueueSnackbar("¡Registro exitoso!", { variant: "success" });
-    closeDialog();
-  };
+	const onSubmit = async (
+		{ email, spaceId, permission }: PermissionValues,
+		{ setSubmitting }: FormikHelpers<PermissionValues>
+	) => {
+		setSubmitting(true);
+		const response = await createPermission(spaceId, permission, email);
+		if (response?.success) {
+			setSubmitting(false);
+			enqueueSnackbar(response?.message, {
+				variant: "success",
+			});
+			closeDialog();
+			return;
+		}
+		setSubmitting(false);
+		return enqueueSnackbar(response?.message, { variant: "error" });
+	};
 
   return (
     <Dialog open={isOpen} onClose={closeDialog}>
