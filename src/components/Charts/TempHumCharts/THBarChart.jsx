@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
 import { Box, Button, Paper } from "@mui/material";
+import { orgInflux, tokenInflux, urlInflux } from "../../../api/url";
 
 import { Bar } from "react-chartjs-2";
 import "chartjs-adapter-luxon";
@@ -26,10 +27,9 @@ ChartJS.register(
   StreamingPlugin
 );
 
-const token =
-  "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-const org = "UControl";
-const url = "http://172.29.91.241:8086";
+const token = tokenInflux;
+const org = orgInflux;
+const url = urlInflux;
 
 const columns = [
   {

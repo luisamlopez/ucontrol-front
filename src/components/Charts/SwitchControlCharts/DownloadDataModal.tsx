@@ -140,7 +140,7 @@ const DownloadDataModal = ({
                 dateStyle: "short",
                 timeStyle: "long",
               }),
-              state: value.state === "1" ? "Encendido" : "Apagado",
+              state: value.state === 1 ? "Encendido" : "Apagado",
             }))}
             columns={columns.map((column) => ({
               field: column.field,

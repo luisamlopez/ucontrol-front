@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
 import { Box, Button, Paper, Typography } from "@mui/material";
-
+import { orgInflux, tokenInflux, urlInflux } from "../../api/url";
 import DownloadDataModal from "./DownloadDataModal";
 
-const token =
-  "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-const org = "UControl";
-const url = "http://172.29.91.241:8086";
+const token = tokenInflux;
+const org = orgInflux;
+const url = urlInflux;
 
 const columns = [
   { field: "timestamp", headerName: "Fecha", width: 200 },
@@ -32,7 +31,7 @@ const GeneralValue = ({
   };
 
   let query = `from(bucket: "ucontrol")
-  |> range(start: -5m)
+  |> range(start: -1m)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
@@ -98,7 +97,7 @@ const GeneralValue = ({
       } catch (error) {}
     }, 60000);
     return () => clearInterval(interval);
-  }, [query, data]);
+  }, [query]);
 
   useEffect(() => {
     console.log(data);
@@ -162,15 +161,14 @@ const GeneralValue = ({
           }}
         >
           <Box>
-            {data && (
-              <Typography fontWeight={600} fontSize={24}>
-                {data === "1"
-                  ? "Presencia detectada"
-                  : "No hay presencia detectada"}
+            {(data === 1 || data === 0) && (
+              <Typography fontWeight={600} fontSize={18}>
+                {data === 1 ? "Presencia detectada" : "Presencia no detectada"}
               </Typography>
             )}
-
-            {(!data || !data[0]) && (
+          </Box>
+          <Box>
+            {!data && data.length === 0 && (
               <Typography
                 fontWeight={600}
                 fontSize={18}

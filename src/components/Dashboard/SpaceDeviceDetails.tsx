@@ -96,7 +96,9 @@ function Graph(props: { device: Device }): JSX.Element {
         mt: 1,
         ml: {
           lg: 1,
+          md: 1,
           sm: 0,
+          xs: 0,
         },
         borderRadius: "4px",
         height: "32rem",

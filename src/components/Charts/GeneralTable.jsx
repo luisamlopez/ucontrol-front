@@ -14,11 +14,11 @@ import {
 import { useState, useEffect } from "react";
 import DownloadDataModal from "./DownloadDataModal";
 import { InfluxDB } from "@influxdata/influxdb-client";
+import { orgInflux, tokenInflux, urlInflux } from "../../api/url";
 
-const token =
-  "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-const org = "UControl";
-const url = "http://172.29.91.241:8086";
+const token = tokenInflux;
+const org = orgInflux;
+const url = urlInflux;
 
 const GeneralTable = ({
   topic,
@@ -92,7 +92,6 @@ const GeneralTable = ({
             }
 
             setData(finalData);
-            console.log(data);
           },
           error(error) {
             console.log("temp query failed- ", error);
@@ -108,7 +107,11 @@ const GeneralTable = ({
       } catch (error) {}
     }, 60000);
     return () => clearInterval(interval);
-  }, [query, data]);
+  }, [query]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
@@ -171,6 +174,7 @@ const GeneralTable = ({
                 component={Paper}
                 sx={{
                   placeSelf: "center",
+                  alignSelf: "flex-start",
                 }}
               >
                 <TableMUI size="small">
@@ -197,7 +201,7 @@ const GeneralTable = ({
                           })}
                         </TableCell>
                         <TableCell align="center">
-                          {value.y === "1"
+                          {value.y === 1
                             ? "Presencia detectada"
                             : "No hay presencia detectada"}
                         </TableCell>
