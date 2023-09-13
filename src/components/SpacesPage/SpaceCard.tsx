@@ -156,13 +156,7 @@ const SpaceCard = (space: Space): JSX.Element => {
               <Box>
                 <ul>
                   {devices.map((device) => (
-                    <Typography
-                      textAlign={"left"}
-                      color={"black"}
-                      key={device._id}
-                    >
-                      {device.name}
-                    </Typography>
+                    <li key={device._id}>{device.name}</li>
                   ))}
                 </ul>
               </Box>

@@ -3,28 +3,30 @@ import { useState, useEffect } from "react";
 import { Space, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import AccessControlCard from "../components/AccessControlPage/ACCard";
+import { useUser } from "../contexts/authContext";
 
 const AccessControlSpaces = (): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+  const { user } = useUser();
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces((allSpaces) => {
-          //Filter spaces and keep only the ones that have a device with the property 'type' equal to 'controlAcceso'
+        await getSpaces(user?._id!, (allSpaces) => {
+          allSpaces = allSpaces.filter(
+            (space) => space.devices && space.devices.length > 0
+          );
+
           setSpaces(allSpaces);
-          setDataLoaded(true);
         });
-        //  console.log(spaces);
-      } catch (error) {
-      } finally {
+        setDataLoaded(true);
         setLoading(false);
-      }
+      } catch (error) {}
     };
     fetch();
-  }, []);
+  }, [user?._id]);
 
   return (
     <>

@@ -16,6 +16,7 @@ import { SoilGauge } from "./SoilCharts/SoilGauge";
 import { SoilLineChart } from "./SoilCharts/SoilLineChart";
 import GeneralTable from "./GeneralTable";
 import GeneralValue from "./GeneralValue";
+import { orgInflux, tokenInflux, urlInflux } from "../../api/url";
 
 const ChartCarousel = ({ device }) => {
   const [dataTemp, setDataTemp] = useState();
@@ -28,24 +29,22 @@ const ChartCarousel = ({ device }) => {
   const [SoilValues, setSoilValues] = useState([]);
   const [LightValues, setLightValues] = useState([]);
   const [values, setValues] = useState([]);
-
+  const token = tokenInflux;
+  const org = orgInflux;
+  const url = urlInflux;
   /**
    * This effect is used to query the database and get the data for the temperature and humidity charts
    */
   useEffect(() => {
     if (device.type === "tempHum") {
-      const token =
-        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-      const org = "UControl";
-      const url = "http://172.29.91.241:8086";
-      let queryT = `from(bucket: "ucontrol-arm21") 
+      let queryT = `from(bucket: "ucontrol") 
 |>  range(start: ${device.createdOn}, stop:  ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
   |> filter(fn: (r) => r["deviceType"] == "${device.type}")
 |> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
-      let queryH = `from(bucket: "ucontrol-arm21")
+      let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
   |> filter(fn: (r) => r["deviceType"] == "${device.type}")
@@ -188,12 +187,7 @@ const ChartCarousel = ({ device }) => {
 
   useEffect(() => {
     if (device.type === "hum") {
-      const token =
-        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-      const org = "UControl";
-      const url = "http://172.29.91.241:8086";
-
-      let queryH = `from(bucket: "ucontrol-arm21")
+      let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
   |> filter(fn: (r) => r["deviceType"] == "hum")
@@ -257,7 +251,7 @@ const ChartCarousel = ({ device }) => {
         influxQuery();
       } catch {}
     }
-  }, [device]);
+  }, [device, org, token, url]);
 
   /**
    * This effect is used to format the data for the soil moist charts
@@ -284,16 +278,10 @@ const ChartCarousel = ({ device }) => {
 
   useEffect(() => {
     if (device.type === "luz" || device.type === "aire") {
-      const token =
-        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-      const org = "UControl";
-      const url = "http://172.29.91.241:8086";
-
-      let queryH = `from(bucket: "ucontrol-arm21")
+      let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["_field"] == "switchStatus")
-  |> filter(fn: (r) => r["deviceType"] == "${device.type}")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
       let res = [];
       const influxQuery = async () => {
@@ -352,7 +340,7 @@ const ChartCarousel = ({ device }) => {
         influxQuery();
       } catch {}
     }
-  }, [device]);
+  }, [device, org, token, url]);
 
   /**
    * This effect is used to format the data for the  switch charts
@@ -387,16 +375,10 @@ const ChartCarousel = ({ device }) => {
       device.type === "movimiento" ||
       device.type === "vibraciones"
     ) {
-      const token =
-        "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
-      const org = "UControl";
-      const url = "http://172.29.91.241:8086";
-
-      let queryH = `from(bucket: "ucontrol-arm21")
+      let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["_field"] == "sensorStatus")
-  |> filter(fn: (r) => r["deviceType"] == "${device.type}")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
       let res = [];
       const influxQuery = async () => {
@@ -455,7 +437,7 @@ const ChartCarousel = ({ device }) => {
         influxQuery();
       } catch {}
     }
-  }, [device]);
+  }, [device, org, token, url]);
 
   /**
    * This effect is used to format the data for the rest of the charts

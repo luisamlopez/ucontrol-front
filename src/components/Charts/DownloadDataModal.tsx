@@ -141,7 +141,7 @@ const DownloadDataModal = ({
                 timeStyle: "long",
               }),
               state:
-                value.state === "1"
+                value.state === 1
                   ? "Presencia detectada"
                   : "No hay presencia detectada",
             }))}

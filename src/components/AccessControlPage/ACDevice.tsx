@@ -205,7 +205,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
                 }),
                 name: value.name,
                 state:
-                  value.state === "1" ? "Acceso concedido" : "Acceso denegado",
+                  value.state === 1 ? "Acceso concedido" : "Acceso denegado",
                 ci: value.ci,
                 email: value.email,
                 eCard: value.eCard,

@@ -549,14 +549,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces((allSpaces) => {
+        await getSpaces(user?._id!, (allSpaces) => {
           setSpaces(allSpaces);
         });
         setDataLoaded(false);
       } catch (error) {}
     };
     fetch();
-  }, [props.deviceID, deviceToEdit]);
+  }, [props.deviceID, deviceToEdit, user?._id]);
 
   /**
    * Get all the devices to show them in the autocomplete for the device to listen to

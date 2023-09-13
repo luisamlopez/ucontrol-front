@@ -67,9 +67,12 @@ export const getParentSpaces = async (
   }
 };
 
-export const getSpaces = async (callback: (spaces: Space[]) => void) => {
+export const getSpaces = async (
+  userId: string,
+  callback: (spaces: Space[]) => void
+) => {
   try {
-    const response = await fetch(`${url}getAllSpaces`, {
+    const response = await fetch(`${url}getUserSpaces/${userId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
@@ -80,8 +83,8 @@ export const getSpaces = async (callback: (spaces: Space[]) => void) => {
     }
 
     const spaces = await response.json();
-    console.log(spaces.spaces);
-    callback(spaces.spaces);
+    console.log(spaces.data);
+    callback(spaces.data);
   } catch (error) {
     console.log(error);
   }
