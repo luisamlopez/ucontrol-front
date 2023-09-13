@@ -31,7 +31,7 @@ ChartJS.register(
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
 const org = "UControl";
-const url = "http://172.29.91.241:8086/";
+const url = "http://172.29.91.241:8086";
 
 const columns = [
   {
@@ -48,31 +48,16 @@ const columns = [
   },
 ];
 
-export const THLineChart = ({ deviceName, topic, deviceStartDate }) => {
+export const THLineChart = ({
+  deviceName,
+  topic,
+  deviceStartDate,
+  values,
+  deviceType,
+}) => {
   const [dataTemp, setDataTemp] = useState([]);
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-
-  /**
-   * @todo Add the real values to the export data
-   */
-  const values = [
-    {
-      valueT: 28,
-      valueH: 23,
-      timestamp: new Date("2023-07-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 29.3,
-      valueH: 24,
-      timestamp: new Date("2023-08-02T18:18:07.434Z"),
-    },
-    {
-      valueT: 32,
-      valueH: 43.1,
-      timestamp: new Date("2023-08-12T18:18:07.434Z"),
-    },
-  ];
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -84,31 +69,17 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate }) => {
 
   let queryT = `from(bucket: "ucontrol-arm21") 
 |>  range(start: -5m, stop: 1h) 
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Temperature")
-|> filter(fn: (r) => r["topic"] == "${topic}")
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
+|> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol-arm21")
 |>  range(start: -5m, stop: 1h)
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Humidity")
-|> filter(fn: (r) => r["topic"] == "${topic}")
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
+|> filter(fn: (r) =>  r["_field"] == "humidity")
 |> yield(name: "mean")`;
-
-  const options = {
-    responsive: true,
-    // Establecer el tamaño deseado para el gráfico
-    maintainAspectRatio: false, // Esto permite ajustar el tamaño sin mantener la proporción
-    width: 3000, // Ancho en píxeles
-    height: 1500, // Alto en píxeles
-    plugins: {
-      title: {
-        display: true,
-        text: `Gráfico de barras de ${deviceName}`,
-      },
-    },
-  };
 
   const dataSet = {
     labels: dataTemp[0]?.data.map((value) =>
@@ -227,11 +198,14 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate }) => {
         },
       });
     };
+    influxQuery();
     const interval = setInterval(() => {
-      influxQuery();
-    }, 10000);
+      try {
+        influxQuery();
+      } catch (error) {}
+    }, 60000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum, dataTemp, queryH, queryT]);
 
   return (
     <>
@@ -281,23 +255,18 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate }) => {
             height: "25rem",
           }}
         >
-          <Line
-            data={dataSet}
-            width={2500}
-            height={1500}
-            //options={options}
-          />
+          <Line data={dataSet} width={2500} height={1500} />
         </Paper>
       </Box>
-      {/* <DownloadDataModal
+      <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        startDate={values[0].timestamp}
-        endDate={values[values.length - 1].timestamp}
+        startDate={deviceStartDate}
+        endDate={Date.now()}
         data={values}
         columns={columns}
         deviceName={deviceName}
-      /> */}
+      />
     </>
   );
 };

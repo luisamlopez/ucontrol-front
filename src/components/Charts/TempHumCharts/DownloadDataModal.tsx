@@ -53,7 +53,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = value.timestamp;
+        const timestamp = new Date(value.timestamp);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -94,7 +94,7 @@ const DownloadDataModal = ({
         color="primary.main"
         sx={{ m: 0, py: 0 }}
       >
-        Descargar datos de {deviceName} {data.length > 0 && "hola"}
+        Descargar datos de {deviceName}
       </DialogTitle>
 
       <Box
@@ -133,32 +133,39 @@ const DownloadDataModal = ({
             />
           </LocalizationProvider>
         </Box>
-        <DataGrid
-          rows={filteredData.map((value, index) => ({
-            id: index,
-            timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-            temperature: value.valueT,
-            humidity: value.valueH,
-          }))}
-          columns={columns.map((column) => ({
-            field: column.field,
-            headerName: column.headerName,
-            width: 200,
-          }))}
-          slots={{
-            toolbar: () => (
-              <CustomToolbar
-                startDate={startDate!}
-                endDate={endDate!}
-                deviceName={deviceName}
-              />
-            ),
-          }}
-        />
+
+        {data && data.length > 0 && (
+          <DataGrid
+            rows={filteredData.map((value, index) => ({
+              id: index,
+              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "long",
+              }),
+              temperature: Math.round(value.valueT * 100) / 100,
+              humidity: Math.round(value.valueH * 100) / 100,
+            }))}
+            columns={columns.map((column) => ({
+              field: column.field,
+              headerName: column.headerName,
+              width: 200,
+            }))}
+            slots={{
+              toolbar: () => (
+                <CustomToolbar
+                  startDate={startDate!}
+                  endDate={endDate!}
+                  deviceName={deviceName}
+                />
+              ),
+            }}
+          />
+        )}
+
+        {data && data.length === 0 && (
+          <Typography>No hay datos para mostrar</Typography>
+        )}
       </Box>
     </Dialog>
   );
@@ -183,12 +190,12 @@ function CustomToolbar({
             {
               hour12: false,
               dateStyle: "short",
-              timeStyle: "short",
+              timeStyle: "long",
             }
           )} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })}`,
           delimiter: ";",
           utf8WithBom: true,

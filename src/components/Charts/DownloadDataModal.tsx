@@ -51,7 +51,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = value.timestamp;
+        const timestamp = new Date(value.timestamp);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -131,27 +131,36 @@ const DownloadDataModal = ({
             />
           </LocalizationProvider>
         </Box>
-        <DataGrid
-          rows={filteredData.map((value, index) => ({
-            id: index,
-            timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-            state: value.state === 1 ? "Encendido" : "Apagado",
-          }))}
-          columns={columns.map((column) => ({
-            field: column.field,
-            headerName: column.headerName,
-            width: 200,
-          }))}
-          slots={{
-            toolbar: () => (
-              <CustomToolbar startDate={startDate!} endDate={endDate!} />
-            ),
-          }}
-        />
+        {data && data.length > 0 && (
+          <DataGrid
+            rows={filteredData.map((value, index) => ({
+              id: index,
+              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "long",
+              }),
+              state:
+                value.state === "1"
+                  ? "Presencia detectada"
+                  : "No hay presencia detectada",
+            }))}
+            columns={columns.map((column) => ({
+              field: column.field,
+              headerName: column.headerName,
+              width: 200,
+            }))}
+            slots={{
+              toolbar: () => (
+                <CustomToolbar startDate={startDate!} endDate={endDate!} />
+              ),
+            }}
+          />
+        )}
+
+        {data && data.length === 0 && (
+          <Typography>No hay datos para mostrar</Typography>
+        )}
       </Box>
     </Dialog>
   );
@@ -172,11 +181,11 @@ function CustomToolbar({
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })}`,
           delimiter: ";",
           utf8WithBom: true,

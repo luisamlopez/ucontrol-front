@@ -25,6 +25,7 @@ interface DownloadDataModalProps {
   data: any[];
   startDate: Date;
   endDate: Date;
+  deviceName: string;
 }
 
 const DownloadDataModal = ({
@@ -34,6 +35,7 @@ const DownloadDataModal = ({
   endDate: initialEndDate,
   data,
   columns,
+  deviceName,
 }: DownloadDataModalProps) => {
   const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
   const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
@@ -51,7 +53,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = value.timestamp;
+        const timestamp = new Date(value.timestamp);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -92,7 +94,7 @@ const DownloadDataModal = ({
         color="primary.main"
         sx={{ m: 0, py: 0 }}
       >
-        Descargar datos
+        Descargar datos de {deviceName}
       </DialogTitle>
 
       <Box
@@ -131,27 +133,37 @@ const DownloadDataModal = ({
             />
           </LocalizationProvider>
         </Box>
-        <DataGrid
-          rows={filteredData.map((value, index) => ({
-            id: index,
-            timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            }),
-            humidity: value.value,
-          }))}
-          columns={columns.map((column) => ({
-            field: column.field,
-            headerName: column.headerName,
-            width: 200,
-          }))}
-          slots={{
-            toolbar: () => (
-              <CustomToolbar startDate={startDate!} endDate={endDate!} />
-            ),
-          }}
-        />
+
+        {data && data.length > 0 && (
+          <DataGrid
+            rows={filteredData.map((value, index) => ({
+              id: index,
+              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "long",
+              }),
+              humidity: Math.round(value.valueH * 100) / 100,
+            }))}
+            columns={columns.map((column) => ({
+              field: column.field,
+              headerName: column.headerName,
+              width: 200,
+            }))}
+            slots={{
+              toolbar: () => (
+                <CustomToolbar
+                  startDate={startDate!}
+                  endDate={endDate!}
+                  deviceName={deviceName}
+                />
+              ),
+            }}
+          />
+        )}
+        {data && data.length === 0 && (
+          <Typography>No hay datos para mostrar</Typography>
+        )}
       </Box>
     </Dialog>
   );
@@ -161,22 +173,27 @@ export default DownloadDataModal;
 function CustomToolbar({
   startDate,
   endDate,
+  deviceName,
 }: {
   startDate: Date;
   endDate: Date;
+  deviceName: string;
 }) {
   return (
     <GridToolbarContainer>
       <GridToolbarExport
         csvOptions={{
-          fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
+          fileName: `Datos de ${deviceName} desde ${startDate.toLocaleString(
+            "es-VE",
+            {
+              hour12: false,
+              dateStyle: "short",
+              timeStyle: "long",
+            }
+          )} hasta ${endDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "short",
-          })} hasta ${endDate.toLocaleString("es-VE", {
-            hour12: false,
-            dateStyle: "short",
-            timeStyle: "short",
+            timeStyle: "long",
           })}`,
           delimiter: ";",
           utf8WithBom: true,

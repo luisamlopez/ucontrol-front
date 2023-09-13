@@ -21,12 +21,15 @@ const DeviceCard = (device: Device): JSX.Element => {
   const routeRef = useRef<string>(""); // Create a ref to store the route value
 
   useEffect(() => {
-    try {
-      getUserById(device.createdBy, (user) => {
-        setUser(user);
-      });
-      device.createdBy = user?.name!;
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getUserById(device.createdBy, (user) => {
+          setUser(user);
+        });
+        device.createdBy = user?.name!;
+      } catch (error) {}
+    };
+    fetch();
   }, [device, user?.name]);
 
   const handleOpenModal = () => {
@@ -38,11 +41,14 @@ const DeviceCard = (device: Device): JSX.Element => {
   };
 
   useEffect(() => {
-    try {
-      getSpaceFromDeviceId(device._id!, (space) => {
-        setSpaceId(space);
-      });
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getSpaceFromDeviceId(device._id!, (space) => {
+          setSpaceId(space);
+        });
+      } catch (error) {}
+    };
+    fetch();
   }, [device._id]);
 
   useEffect(() => {

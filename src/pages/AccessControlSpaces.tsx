@@ -1,34 +1,24 @@
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
-import { Sidebar } from "../components/Sidebar";
-import DashboardAccordion from "../components/Dashboard/DashboardAccordion";
+import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import { useState, useEffect } from "react";
 import { Space, getSpaces } from "../api/Space";
-import { useEffect, useState } from "react";
-import { useUser } from "../contexts/authContext";
+import { Sidebar } from "../components/Sidebar";
+import AccessControlCard from "../components/AccessControlPage/ACCard";
 
-const Home = (): JSX.Element => {
-  const { user } = useUser();
+const AccessControlSpaces = (): JSX.Element => {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
 
-  /**
-   * Get spaces from API but only save spaces with devices
-   */
   useEffect(() => {
     const fetch = async () => {
       try {
         await getSpaces((allSpaces) => {
-          //Get spaces with devices only
-          allSpaces = allSpaces.filter(
-            (space) => space.devices && space.devices.length > 0
-          );
-
+          //Filter spaces and keep only the ones that have a device with the property 'type' equal to 'controlAcceso'
           setSpaces(allSpaces);
           setDataLoaded(true);
         });
         //  console.log(spaces);
       } catch (error) {
-        alert(error);
       } finally {
         setLoading(false);
       }
@@ -57,7 +47,7 @@ const Home = (): JSX.Element => {
               mt={{ xs: 6, sm: 0, lg: 0 }}
               mb={2}
             >
-              Dashboard
+              Control de acceso
             </Typography>
             {loading ? (
               <Box
@@ -89,10 +79,25 @@ const Home = (): JSX.Element => {
                 mt={{ xs: 6, sm: 0, lg: 0 }}
                 mb={2}
               >
-                No hay ningún espacio cargado. Por favor, cree uno.
+                No hay espacios registrados que contengan dispositivos de
+                control de acceso. Agrega uno nuevo en el módulo de Administrar
+                de espacios.
               </Typography>
             ) : (
-              <DashboardAccordion spaces={spaces} />
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  gap: "10px",
+                  width: "100%",
+                }}
+              >
+                {spaces.map((space) => (
+                  <AccessControlCard key={space._id} {...space} />
+                ))}
+              </Box>
             )}
           </Box>
         </Container>
@@ -101,4 +106,4 @@ const Home = (): JSX.Element => {
   );
 };
 
-export default Home;
+export default AccessControlSpaces;

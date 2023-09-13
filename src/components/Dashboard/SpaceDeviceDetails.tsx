@@ -94,7 +94,10 @@ function Graph(props: { device: Device }): JSX.Element {
         backgroundColor: "white",
         p: 1,
         mt: 1,
-        ml: 1,
+        ml: {
+          lg: 1,
+          sm: 0,
+        },
         borderRadius: "4px",
         height: "32rem",
       }}
@@ -105,11 +108,6 @@ function Graph(props: { device: Device }): JSX.Element {
 }
 
 const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
-  const [checked, setChecked] = useState(true);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
   return (
     <Box
       sx={{
@@ -167,11 +165,7 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
             }}
           >
             <Details device={device} />
-            {(device.type === "luz" || device.type === "aire") && (
-              <>
-                <Switch checked={checked} onChange={handleChange} />
-              </>
-            )}
+
             <Graph device={device} />
           </Box>
         </Box>

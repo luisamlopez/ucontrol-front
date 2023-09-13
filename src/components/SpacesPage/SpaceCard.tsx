@@ -36,24 +36,23 @@ const SpaceCard = (space: Space): JSX.Element => {
           });
         }
         setDevices(dev);
-        console.log(devices);
         setDevicesLoaded(true);
       } catch (error) {
         console.log(error);
       }
     }
-  }, []);
+  }, [space.devices]);
 
   useEffect(() => {
-    try {
-      getUserById(space.createdBy, (user) => {
-        setUser(user);
-      });
-      space.createdBy = user?.name!;
-      if (user?.name) {
-        console.log("CREADO POR " + user?.name!);
-      }
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getUserById(space.createdBy, (user) => {
+          setUser(user);
+        });
+        space.createdBy = user?.name!;
+      } catch (error) {}
+    };
+    fetch();
   }, [space, space.createdBy, user?.name]);
 
   const handleOpenModal = () => {
@@ -154,13 +153,19 @@ const SpaceCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
                 Dispositivos:
               </Typography>
-              <Typography textAlign={"left"} color={"black"}>
+              <Box>
                 <ul>
                   {devices.map((device) => (
-                    <li key={device._id}>{device.name}</li>
+                    <Typography
+                      textAlign={"left"}
+                      color={"black"}
+                      key={device._id}
+                    >
+                      {device.name}
+                    </Typography>
                   ))}
                 </ul>
-              </Typography>
+              </Box>
             </Box>
           )}
 

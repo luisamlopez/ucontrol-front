@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
@@ -10,31 +10,19 @@ const org = "UControl";
 const url = "http://172.29.91.241:8086";
 
 const columns = [
-  {
-    field: "timestamp",
-    headerName: "Fecha",
-  },
-  {
-    field: "temperature",
-    headerName: "Temperatura",
-  },
-  {
-    field: "humidity",
-    headerName: "Humedad",
-  },
+  { field: "timestamp", headerName: "Fecha", width: 200 },
+  { field: "state", headerName: "Estado", width: 200 },
 ];
 
-export const THValue = ({
+const GeneralValue = ({
   deviceName,
   topic,
   deviceStartDate,
   values,
   deviceType,
 }) => {
-  const [dataTemp, setDataTemp] = useState([]);
-  const [dataHum, setDataHum] = useState([]);
+  const [data, setData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -43,32 +31,20 @@ export const THValue = ({
     setOpenModal(true);
   };
 
-  let queryT = `from(bucket: "ucontrol-arm21") 
-|>  range(start: -5m) 
+  let query = `from(bucket: "ucontrol-arm21")
+  |> range(start: -5m)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
-|> filter(fn: (r) =>  r["_field"] == "temperature")
-|> yield(name: "mean")`;
-
-  let queryH = `from(bucket: "ucontrol-arm21")
-|>  range(start: -5m)
-  |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
-|> filter(fn: (r) =>  r["_field"] == "humidity")
-|> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "sensorStatus")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")`;
 
   useEffect(() => {
-    let resT = [];
-    let resH = [];
+    let res = [];
     const influxQuery = async () => {
-      //create InfluxDB client
       const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
-      //make query
-      await queryApi.queryRows(queryT, {
+      await queryApi.queryRows(query, {
         next(row, tableMeta) {
           const o = tableMeta.toObject(row);
-          //push rows from query into an array object
-          resT.push(o);
+          res.push(o);
         },
         complete() {
           let finalData = [];
@@ -77,25 +53,25 @@ export const THValue = ({
           var exists = false;
 
           //nested for loops aren't ideal, this could be optimized but gets the job done
-          for (let i = 0; i < resT.length; i++) {
+          for (let i = 0; i < res.length; i++) {
             for (let j = 0; j < finalData.length; j++) {
               //check if the sensor ID is already in the array, if true we want to add the current data point to the array
-              if (resT[i]["sensor_id"] === finalData[j]["id"]) {
+              if (res[i]["sensor_id"] === finalData[j]["id"]) {
                 exists = true;
                 let point = {};
-                point["x"] = resT[i]["_time"];
-                point["y"] = resT[i]["_value"];
+                point["x"] = res[i]["_time"];
+                point["y"] = res[i]["_value"];
                 finalData[j]["data"].push(point);
               }
             }
             //if the ID does not exist, create the key and append first data point to array
             if (!exists) {
               let d = {};
-              d["id"] = resT[i]["sensor_id"];
+              d["id"] = res[i]["sensor_id"];
               d["data"] = [];
               let point = {};
-              point["x"] = resT[i]["_time"];
-              point["y"] = resT[i]["_value"];
+              point["x"] = res[i]["_time"];
+              point["y"] = res[i]["_value"];
               d["data"].push(point);
               finalData.push(d);
             }
@@ -105,62 +81,15 @@ export const THValue = ({
           if (
             finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
           ) {
-            setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+            setData(finalData[0].data[finalData[0].data.length - 1].y);
           }
         },
         error(error) {
           console.log("temp query failed- ", error);
         },
       });
-      await queryApi.queryRows(queryH, {
-        next(row, tableMeta) {
-          const o = tableMeta.toObject(row);
-          //push rows from query into an array object
-          resH.push(o);
-        },
-        complete() {
-          let finalData = [];
-
-          //variable is used to track if the current ID already has a key
-          var exists = false;
-
-          //nested for loops aren't ideal, this could be optimized but gets the job done
-          for (let i = 0; i < resH.length; i++) {
-            for (let j = 0; j < finalData.length; j++) {
-              //check if the sensor ID is already in the array, if true we want to add the current data point to the array
-              if (resH[i]["sensor_id"] === finalData[j]["id"]) {
-                exists = true;
-                let point = {};
-                point["x"] = resH[i]["_time"];
-                point["y"] = resH[i]["_value"];
-                finalData[j]["data"].push(point);
-              }
-            }
-            //if the ID does not exist, create the key and append first data point to array
-            if (!exists) {
-              let d = {};
-              d["id"] = resH[i]["sensor_id"];
-              d["data"] = [];
-              let point = {};
-              point["x"] = resH[i]["_time"];
-              point["y"] = resH[i]["_value"];
-              d["data"].push(point);
-              finalData.push(d);
-            }
-            //need to set this back to false
-            exists = false;
-          }
-          if (
-            finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
-          ) {
-            setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
-          }
-        },
-        error(error) {
-          console.log("hum query failed- ", error);
-        },
-      });
     };
+
     influxQuery();
     const interval = setInterval(() => {
       try {
@@ -168,7 +97,11 @@ export const THValue = ({
       } catch (error) {}
     }, 60000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp, queryH, queryT]);
+  }, [query, data]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
@@ -228,14 +161,24 @@ export const THValue = ({
           }}
         >
           <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Temperatura: {dataTemp} °C &nbsp;
-            </Typography>
-          </Box>
-          <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Humedad: {dataHum} %
-            </Typography>
+            {data && (
+              <Typography fontWeight={600} fontSize={24}>
+                {data === "1"
+                  ? "Presencia detectada"
+                  : "No hay presencia detectada"}
+              </Typography>
+            )}
+
+            {(!data || !data[0]) && (
+              <Typography
+                fontWeight={600}
+                fontSize={18}
+                textAlign={"center"}
+                sx={{ mt: 2 }}
+              >
+                No hay datos para mostrar
+              </Typography>
+            )}
           </Box>
         </Paper>
       </Box>
@@ -251,3 +194,5 @@ export const THValue = ({
     </>
   );
 };
+
+export default GeneralValue;

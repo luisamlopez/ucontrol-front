@@ -22,9 +22,17 @@ export const createPermission = async (
 				permission: permission,
 			}),
 		});
-		console.log(response);
-		if (response.ok) return true;
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.message);
+		}
+
+		if (response.ok)
+			return { success: true, message: "Se ha creado el permiso exitosamente" };
 	} catch (error) {
-		return false;
+		if (error instanceof Error) {
+			return { success: false, message: error.message };
+		} else return { success: false, message: "Hubo un error desconocido" };
 	}
 };

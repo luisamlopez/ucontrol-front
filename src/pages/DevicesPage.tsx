@@ -35,7 +35,6 @@ const DevicesPage = (): JSX.Element => {
         setDevices(devices);
       });
     } catch (error) {
-      alert(error);
     } finally {
       setDataLoaded(true);
       setLoading(false);

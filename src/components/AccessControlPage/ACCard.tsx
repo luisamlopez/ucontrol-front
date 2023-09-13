@@ -10,11 +10,10 @@ import {
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { Device, getDeviceById } from "../../api/Device";
 import { User, getUserById } from "../../api/User";
 
-const ControlAccessCard = (space: Space): JSX.Element => {
+const AccessControlCard = (space: Space): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [devicesLoaded, setDevicesLoaded] = useState(false);
   const [user, setUser] = useState<User>();
@@ -35,24 +34,23 @@ const ControlAccessCard = (space: Space): JSX.Element => {
           });
         }
         setDevices(dev);
-        console.log(devices);
         setDevicesLoaded(true);
       } catch (error) {
         console.log(error);
       }
     }
-  }, []);
+  }, [space.devices]);
 
   useEffect(() => {
-    try {
-      getUserById(space.createdBy, (user) => {
-        setUser(user);
-      });
-      space.createdBy = user?.name!;
-      if (user?.name) {
-        console.log("CREADO POR " + user?.name!);
-      }
-    } catch (error) {}
+    const fetch = async () => {
+      try {
+        await getUserById(space.createdBy, (user) => {
+          setUser(user);
+        });
+        space.createdBy = user?.name!;
+      } catch (error) {}
+    };
+    fetch();
   }, [space, space.createdBy, user?.name]);
 
   return (
@@ -138,13 +136,13 @@ const ControlAccessCard = (space: Space): JSX.Element => {
               <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
                 Dispositivos:
               </Typography>
-              <Typography textAlign={"left"} color={"black"}>
+              <Box textAlign={"left"} color={"black"}>
                 <ul>
                   {devices.map((device) => (
                     <li key={device._id}>{device.name}</li>
                   ))}
                 </ul>
-              </Typography>
+              </Box>
             </Box>
           )}
 
@@ -178,4 +176,4 @@ const ControlAccessCard = (space: Space): JSX.Element => {
   );
 };
 
-export default ControlAccessCard;
+export default AccessControlCard;

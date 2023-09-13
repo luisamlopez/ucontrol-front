@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
@@ -6,7 +6,6 @@ import "chartjs-adapter-luxon";
 
 import { Chart as ChartJS, Title, Legend, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import StreamingPlugin from "chartjs-plugin-streaming";
 import DownloadDataModal from "./DownloadDataModal";
 
 const legendMarginPlugin = {
@@ -26,7 +25,7 @@ ChartJS.register(ArcElement, Title, Legend, legendMarginPlugin);
 const token =
   "piyiVDqu8Utmz54tMTVPLHX5AC380BPE6-pS5rpMfqDW2JPzaKFFwGLwRaj2W6HNpmUSV9mNlUshQTM4tqwLMw==";
 const org = "UControl";
-const url = "http://172.29.91.241:8086/";
+const url = "http://172.29.91.241:8086";
 
 const columns = [
   {
@@ -43,7 +42,13 @@ const columns = [
   },
 ];
 
-export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
+export const THGauge = ({
+  deviceName,
+  topic,
+  deviceStartDate,
+  values,
+  deviceType,
+}) => {
   const [dataTemp, setDataTemp] = useState();
   const [dataHum, setDataHum] = useState();
   const [openModal, setOpenModal] = useState(false);
@@ -58,16 +63,16 @@ export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
 
   let queryT = `from(bucket: "ucontrol-arm21") 
 |>  range(start: -5m, stop: 1h) 
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Temperature")
-|> filter(fn: (r) => r["topic"] == "${topic}")
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
+|> filter(fn: (r) =>  r["_field"] == "temperature")
 |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol-arm21")
 |>  range(start: -5m, stop: 1h)
-|> filter(fn: (r) => r["_measurement"] == "measurements")
-|> filter(fn: (r) =>  r["_field"] == "Humidity")
-|> filter(fn: (r) => r["topic"] == "${topic}")
+  |> filter(fn: (r) => r["_measurement"] == "${topic}")
+  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
+|> filter(fn: (r) =>  r["_field"] == "humidity")
 |> yield(name: "mean")`;
 
   useEffect(() => {
@@ -116,7 +121,11 @@ export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
             exists = false;
           }
 
-          setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+          if (
+            finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
+          ) {
+            setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+          }
         },
         error(error) {
           console.log("temp query failed- ", error);
@@ -160,19 +169,25 @@ export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
             //need to set this back to false
             exists = false;
           }
-
-          setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+          if (
+            finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
+          ) {
+            setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+          }
         },
         error(error) {
           console.log("hum query failed- ", error);
         },
       });
     };
+    influxQuery();
     const interval = setInterval(() => {
-      influxQuery();
-    }, 10000);
+      try {
+        influxQuery();
+      } catch (error) {}
+    }, 60000);
     return () => clearInterval(interval);
-  }, [dataHum, dataTemp]);
+  }, [dataHum, dataTemp, queryH, queryT]);
 
   const options = {
     responsive: true,
@@ -255,36 +270,6 @@ export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
         hoverOffset: -20,
       },
     ],
-  };
-
-  const temperatureValue = {
-    beforeDraw(chart) {
-      const {
-        ctx,
-        chartArea: { left, top, width, height },
-      } = chart;
-      const temperatureLabel = `Temperatura: ${dataTemp ? dataTemp : "0"}°C`;
-      ctx.fillStyle = "black"; // Set the color for the label
-      ctx.font = "bold 16px Arial"; // Set the font style for the label
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(temperatureLabel, left + width / 2, top + height - 60);
-    },
-  };
-
-  const humidityValue = {
-    beforeDraw(chart) {
-      const {
-        ctx,
-        chartArea: { left, top, width, height },
-      } = chart;
-      const humidityLabel = `Humedad: ${dataHum ? dataHum : "0"}%`;
-      ctx.fillStyle = "black"; // Set the color for the label
-      ctx.font = "bold 16px Arial"; // Set the font style for the label
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(humidityLabel, left + width / 2, top + height - 80);
-    },
   };
 
   return (
