@@ -248,27 +248,34 @@ const SpaceForm = (props: SpaceFormProps): JSX.Element => {
   }, [findRoute, selectedSpace]);
 
   useEffect(() => {
-    try {
-      getSpaces((allSpaces) => {
-        setSpaces(allSpaces);
-        // console.log(allSpaces);
-      });
-      // console.log(spaces);
-      setDataLoaded(false);
-    } catch (error) {}
+    const fetchData = async () => {
+      try {
+        await getSpaces(user?._id!, (allSpaces) => {
+          setSpaces(allSpaces);
+          // console.log(allSpaces);
+        });
+        // console.log(spaces);
+        setDataLoaded(false);
+      } catch (error) {}
+    };
+    fetchData();
+
     if (props.spaceID && spaceToEdit) setDataLoaded(false);
-  }, [props.spaceID, spaceToEdit]);
+  }, [props.spaceID, spaceToEdit, user?._id]);
 
   useEffect(() => {
-    if (props.spaceID) {
-      try {
-        getSpaceById(props.spaceID, (space) => {
-          setSpaceToEdit(space);
-        });
-      } catch (error) {
-        console.log(error);
+    const fetchData = async () => {
+      if (props.spaceID) {
+        try {
+          getSpaceById(props.spaceID, (space) => {
+            setSpaceToEdit(space);
+          });
+        } catch (error) {
+          console.log(error);
+        }
       }
-    }
+    };
+    fetchData();
   }, [props.spaceID]);
 
   const initialFormValues: FormValues = props.spaceID

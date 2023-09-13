@@ -31,11 +31,10 @@ const GeneralValue = ({
     setOpenModal(true);
   };
 
-  let query = `from(bucket: "ucontrol-arm21")
+  let query = `from(bucket: "ucontrol")
   |> range(start: -5m)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["_field"] == "sensorStatus")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   useEffect(() => {
     let res = [];

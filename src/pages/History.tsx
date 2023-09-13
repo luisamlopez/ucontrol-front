@@ -21,16 +21,12 @@ const History = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces((allSpaces) => {
-          //Get spaces with devices only
+        await getSpaces(user?._id!, (allSpaces) => {
           allSpaces = allSpaces.filter(
             (space) => space.history && space.history.length > 0
           );
-          // Invert order of array
-          allSpaces = allSpaces.reverse();
           setSpaces(allSpaces);
         });
-
         await getAllDevicesByUser(user!._id!, (allDevices) => {
           //Get devices with history only
           allDevices = allDevices.filter(
@@ -40,15 +36,11 @@ const History = (): JSX.Element => {
           allDevices = allDevices.reverse();
           setDevices(allDevices);
         });
-
-        setDataLoaded(true);
-        //  console.log(spaces);
-      } catch (error) {
-        alert(error);
-      }
+        setDataLoaded(false);
+      } catch (error) {}
     };
     fetch();
-  }, [user]);
+  }, [user, user?._id]);
 
   useEffect(() => {
     const handleResize = () => {

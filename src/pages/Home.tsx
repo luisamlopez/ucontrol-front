@@ -17,24 +17,18 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces((allSpaces) => {
-          //Get spaces with devices only
+        await getSpaces(user?._id!, (allSpaces) => {
           allSpaces = allSpaces.filter(
             (space) => space.devices && space.devices.length > 0
           );
 
           setSpaces(allSpaces);
-          setDataLoaded(true);
         });
-        //  console.log(spaces);
-      } catch (error) {
-        alert(error);
-      } finally {
-        setLoading(false);
-      }
+        setDataLoaded(false);
+      } catch (error) {}
     };
     fetch();
-  }, []);
+  }, [user?._id]);
 
   return (
     <>

@@ -26,17 +26,14 @@ const SpacesPage = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces((allSpaces) => {
+        await getSpaces(user?._id!, (allSpaces) => {
           setSpaces(allSpaces);
-          setDataLoaded(true);
         });
-      } catch (error) {
-      } finally {
-        setLoading(false);
-      }
+        setDataLoaded(false);
+      } catch (error) {}
     };
     fetch();
-  }, []);
+  }, [user?._id]);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">

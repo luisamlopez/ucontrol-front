@@ -43,11 +43,10 @@ const GeneralTable = ({
     setOpenModal(true);
   };
 
-  let query = `from(bucket: "ucontrol-arm21")
+  let query = `from(bucket: "ucontrol")
   |> range(start: -24h)
-  |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["_field"] == "sensorStatus")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")`;
+  |> filter(fn: (r) => r["_measurement"] == "Escuela de Ingeniería Civil / Oficina Profe Yolanda / Sensor de agua")
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   useEffect(() => {
     let res = [];
