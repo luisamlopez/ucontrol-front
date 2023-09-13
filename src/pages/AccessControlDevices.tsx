@@ -153,16 +153,7 @@ const AccessControlDevices = (): JSX.Element => {
               >
                 {allDevices.map((device, i) => (
                   <>
-                    {windowWidth < 600 && (
-                      <ACCMobileDevice key={i} device={device} />
-                    )}
-                    {windowWidth >= 600 && windowWidth < 960 && (
-                      <ACCMobileDevice key={i} device={device} />
-                    )}
-
-                    {windowWidth >= 960 && (
-                      <CADeviceCard key={i} device={device} />
-                    )}
+                    <CADeviceCard key={i} device={device} />
                   </>
                 ))}
               </Box>

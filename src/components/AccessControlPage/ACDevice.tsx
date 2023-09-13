@@ -180,6 +180,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
         {data && data.length > 0 && (
           <>
             <DataGrid
+              sx={{ width: "100%" }}
               rows={filteredData.map((value, index) => ({
                 id: index,
                 timestamp: new Date(value.timestamp).toLocaleString("es-VE", {

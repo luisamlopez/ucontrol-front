@@ -4,6 +4,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Box,
   Dialog,
+  DialogContent,
   DialogTitle,
   IconButton,
   Tooltip,
@@ -94,7 +95,7 @@ const DownloadDataModal = ({
         Descargar datos
       </DialogTitle>
 
-      <Box
+      <DialogContent
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -102,6 +103,7 @@ const DownloadDataModal = ({
           justifyContent: "center",
           m: 2,
           p: 2,
+          width: "350px",
         }}
       >
         <Typography>
@@ -132,6 +134,7 @@ const DownloadDataModal = ({
         </Box>
         {data && data.length > 0 && (
           <DataGrid
+            sx={{ width: "100%" }}
             rows={filteredData.map((value, index) => ({
               id: index,
               timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
@@ -149,7 +152,7 @@ const DownloadDataModal = ({
             columns={columns.map((column) => ({
               field: column.field,
               headerName: column.headerName,
-              width: 200,
+              width: 100,
             }))}
             slots={{
               toolbar: () => (
@@ -162,7 +165,7 @@ const DownloadDataModal = ({
         {data && data.length === 0 && (
           <Typography>No hay datos para mostrar</Typography>
         )}
-      </Box>
+      </DialogContent>
     </Dialog>
   );
 };
@@ -178,7 +181,7 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
-        printOptions={{ disableToolbarButton: true }}
+        // printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,
