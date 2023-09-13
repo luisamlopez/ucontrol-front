@@ -1,4 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Table,
+  TableBody,
+  Typography,
+} from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useEffect, useState } from "react";
@@ -11,16 +19,17 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
+import { KeyboardArrowDownRounded } from "@mui/icons-material";
 
 //Columns for the DataGrid are the user atributes
 const columns: any[] = [
-  { field: "timestamp", headerName: "Fecha", width: 200 },
-  { field: "name", headerName: "Nombre", width: 200 },
-  { field: "state", headerName: "Acceso", width: 200 },
-  { field: "ci", headerName: "Cédula", width: 200 },
-  { field: "email", headerName: "Correo", width: 200 },
-  { field: "eCard", headerName: "Código de carnet", width: 200 },
-  { field: "career", headerName: "Carrera", width: 200 },
+  { field: "timestamp", headerName: "Fecha", width: 20 },
+  { field: "name", headerName: "Nombre", width: 70 },
+  { field: "state", headerName: "Acceso", width: 20 },
+  { field: "ci", headerName: "Cédula", width: 50 },
+  { field: "email", headerName: "Correo", width: 20 },
+  { field: "eCard", headerName: "Código de carnet", width: 20 },
+  { field: "career", headerName: "Carrera", width: 20 },
 ];
 
 const CADeviceCard = (props: { device: Device }): JSX.Element => {
@@ -30,7 +39,54 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   );
   const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now()));
   const [data, setData] = useState<any[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const data = [
+          {
+            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            name: "Juan Perez",
+            state: "1",
+            ci: "12345678",
+            email: "juan@mail.com",
+            eCard: "12345678",
+            career: "Ingenieria de Sistemas",
+          },
+          {
+            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            name: "Juan Perez",
+            state: "0",
+            ci: "12345678",
+            email: "juan@mail.com",
+            eCard: "12345678",
+            career: "Ingenieria de Sistemas",
+          },
+          {
+            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            name: "Juan Perez",
+            state: "1",
+            ci: "12345678",
+            email: "juan@mail.com",
+            eCard: "12345678",
+            career: "Ingenieria de Sistemas",
+          },
+          {
+            timestamp: new Date("2021-10-10T00:00:00.000Z"),
+            name: "Juan Perez",
+            state: "1",
+            ci: "12345678",
+            email: "juan@mail.com",
+            eCard: "12345678",
+            career: "Ingenieria de Sistemas",
+          },
+        ];
+        setData(data);
+      } catch (error) {}
+    };
+    fetch();
+  }, [props.device]);
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
   };
@@ -63,6 +119,20 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
     };
     fetch();
   }, [props.device]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Clean up event listener on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <Box
@@ -105,7 +175,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "center",
             gap: 2,
             m: 2,
           }}
@@ -124,30 +194,35 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           </LocalizationProvider>
         </Box>
         {data && data.length > 0 && (
-          <DataGrid
-            rows={filteredData.map((value, index) => ({
-              id: index,
-              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
-                hour12: false,
-                dateStyle: "short",
-                timeStyle: "long",
-              }),
-              state:
-                value.state === "1"
-                  ? "Presencia detectada"
-                  : "No hay presencia detectada",
-            }))}
-            columns={columns.map((column) => ({
-              field: column.field,
-              headerName: column.headerName,
-              width: 200,
-            }))}
-            slots={{
-              toolbar: () => (
-                <CustomToolbar startDate={startDate!} endDate={endDate!} />
-              ),
-            }}
-          />
+          <>
+            <DataGrid
+              rows={data.map((value, index) => ({
+                id: index,
+                timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                  hour12: false,
+                  dateStyle: "short",
+                  timeStyle: windowWidth < 960 ? "short" : "long",
+                }),
+                name: value.name,
+                state:
+                  value.state === "1" ? "Acceso concedido" : "Acceso denegado",
+                ci: value.ci,
+                email: value.email,
+                eCard: value.eCard,
+                career: value.career,
+              }))}
+              columns={columns.map((column) => ({
+                field: column.field,
+                headerName: column.headerName,
+                width: windowWidth < 960 ? 80 : 150,
+              }))}
+              slots={{
+                toolbar: () => (
+                  <CustomToolbar startDate={startDate!} endDate={endDate!} />
+                ),
+              }}
+            />
+          </>
         )}
         {data && data.length === 0 && (
           <Typography>No hay datos para mostrar</Typography>
