@@ -68,6 +68,7 @@ function DevicesDetails({ devices }: { devices: Device[] }): JSX.Element {
 
 const DashboardAccordion = ({ spaces }: AccordionProps): JSX.Element => {
   const [data, setData] = useState<Data[]>([]);
+  console.log(spaces);
 
   useEffect(() => {
     const fetchData = async () => {

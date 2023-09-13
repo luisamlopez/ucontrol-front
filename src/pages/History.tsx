@@ -36,7 +36,7 @@ const History = (): JSX.Element => {
           allDevices = allDevices.reverse();
           setDevices(allDevices);
         });
-        setDataLoaded(false);
+        setDataLoaded(true);
       } catch (error) {}
     };
     fetch();

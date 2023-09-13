@@ -83,8 +83,8 @@ export const getSpaces = async (
     }
 
     const spaces = await response.json();
-    console.log(spaces.spaces);
-    callback(spaces.spaces);
+    console.log(spaces.data);
+    callback(spaces.data);
   } catch (error) {
     console.log(error);
   }

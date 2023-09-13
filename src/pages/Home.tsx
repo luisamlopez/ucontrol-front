@@ -21,11 +21,13 @@ const Home = (): JSX.Element => {
           allSpaces = allSpaces.filter(
             (space) => space.devices && space.devices.length > 0
           );
-
           setSpaces(allSpaces);
         });
-        setDataLoaded(false);
-      } catch (error) {}
+        setDataLoaded(true);
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
     };
     fetch();
   }, [user?._id]);

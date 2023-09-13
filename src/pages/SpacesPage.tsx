@@ -29,7 +29,8 @@ const SpacesPage = (): JSX.Element => {
         await getSpaces(user?._id!, (allSpaces) => {
           setSpaces(allSpaces);
         });
-        setDataLoaded(false);
+        setDataLoaded(true);
+        setLoading(false);
       } catch (error) {}
     };
     fetch();

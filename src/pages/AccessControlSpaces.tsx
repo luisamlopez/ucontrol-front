@@ -21,7 +21,8 @@ const AccessControlSpaces = (): JSX.Element => {
 
           setSpaces(allSpaces);
         });
-        setDataLoaded(false);
+        setDataLoaded(true);
+        setLoading(false);
       } catch (error) {}
     };
     fetch();
