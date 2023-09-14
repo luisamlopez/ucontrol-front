@@ -55,6 +55,7 @@ export const Sidebar = (props: Props) => {
   const location = useLocation();
   const [activeOption, setActiveOption] = useState("");
   const { logout } = useUser();
+  const { user } = useUser();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -138,6 +139,15 @@ export const Sidebar = (props: Props) => {
           }}
         />
       </Box>
+      <Typography
+        sx={{
+          textAlign: "center",
+          mt: 2,
+          color: "#fff",
+        }}
+      >
+        Hola, {user?.name}
+      </Typography>
       <List>
         {options.map((option, index) => (
           <ListItemButton key={index}>
