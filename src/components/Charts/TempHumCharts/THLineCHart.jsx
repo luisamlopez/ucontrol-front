@@ -67,19 +67,17 @@ export const THLineChart = ({
     setOpenModal(true);
   };
 
-  let queryT = `from(bucket: "ucontrol-arm21") 
+  let queryT = `from(bucket: "ucontrol") 
 |>  range(start: -5m, stop: 1h) 
-  |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
-|> filter(fn: (r) =>  r["_field"] == "temperature")
-|> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_measurement"] == "${topic} / Temperatura")
+  |> filter(fn: (r) => r["_field"] == "value")
+  |> yield(name: "mean")`;
 
-  let queryH = `from(bucket: "ucontrol-arm21")
+  let queryH = `from(bucket: "ucontrol")
 |>  range(start: -5m, stop: 1h)
-  |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
-|> filter(fn: (r) =>  r["_field"] == "humidity")
-|> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_measurement"] == "${topic} / Humedad")
+  |> filter(fn: (r) => r["_field"] == "value")
+  |> yield(name: "mean")`;
 
   const dataSet = {
     labels: dataTemp[0]?.data.map((value) =>

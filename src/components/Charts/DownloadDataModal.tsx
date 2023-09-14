@@ -4,6 +4,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Box,
   Dialog,
+  DialogContent,
   DialogTitle,
   IconButton,
   Tooltip,
@@ -95,7 +96,7 @@ const DownloadDataModal = ({
         Descargar datos
       </DialogTitle>
 
-      <Box
+      <DialogContent
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -103,6 +104,13 @@ const DownloadDataModal = ({
           justifyContent: "center",
           m: 2,
           p: 2,
+          placeSelf: "center",
+          width: {
+            xs: "350px",
+            sm: "350px",
+            md: "80%",
+            lg: "85%",
+          },
         }}
       >
         <Typography>
@@ -133,6 +141,7 @@ const DownloadDataModal = ({
         </Box>
         {data && data.length > 0 && (
           <DataGrid
+            sx={{ width: "100%" }}
             rows={filteredData.map((value, index) => ({
               id: index,
               timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
@@ -161,7 +170,7 @@ const DownloadDataModal = ({
         {data && data.length === 0 && (
           <Typography>No hay datos para mostrar</Typography>
         )}
-      </Box>
+      </DialogContent>
     </Dialog>
   );
 };

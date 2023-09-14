@@ -103,11 +103,12 @@ const DownloadDataModal = ({
           justifyContent: "center",
           m: 2,
           p: 2,
+          placeSelf: "center",
           width: {
             xs: "350px",
             sm: "350px",
-            md: "380px",
-            lg: "410px",
+            md: "80%",
+            lg: "85%",
           },
         }}
       >

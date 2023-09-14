@@ -56,11 +56,10 @@ export const SoilGauge = ({
     setOpenModal(true);
   };
 
-  let queryH = `from(bucket: "ucontrol-arm21")
-  |> range(start: -5m, stop: 1h)
+  let queryH = `from(bucket: "ucontrol")
+  |> range(start: -5m)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
-  |> filter(fn: (r) => r["_field"] == "soilValue")
+  |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
 
   useEffect(() => {
