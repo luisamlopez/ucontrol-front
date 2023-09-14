@@ -75,6 +75,9 @@ const History = (): JSX.Element => {
             p={0}
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
+            sx={{
+              wordWrap: "break-word",
+            }}
           >
             Historial de dispositivos
           </Typography>

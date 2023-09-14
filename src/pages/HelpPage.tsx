@@ -25,6 +25,9 @@ const HelpPage = (): JSX.Element => {
             p={0}
             mt={{ xs: 6, sm: 0, lg: 0 }}
             mb={2}
+            sx={{
+              wordWrap: "break-word",
+            }}
           >
             Centro de ayuda
           </Typography>

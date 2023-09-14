@@ -17,16 +17,14 @@ import {
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { Columns } from "../../../api/ChartData";
 
 interface DownloadDataModalProps {
   show: boolean;
   handleClose: () => void;
-  columns: Columns[];
+  columns: any[];
   data: any[];
   startDate: Date;
   endDate: Date;
-  deviceName: string;
 }
 
 const DownloadDataModal = ({
@@ -36,7 +34,6 @@ const DownloadDataModal = ({
   endDate: initialEndDate,
   data,
   columns,
-  deviceName,
 }: DownloadDataModalProps) => {
   const [startDate, setStartDate] = useState<Date | null>(initialStartDate);
   const [endDate, setEndDate] = useState<Date | null>(initialEndDate);
@@ -95,7 +92,7 @@ const DownloadDataModal = ({
         color="primary.main"
         sx={{ m: 0, py: 0 }}
       >
-        Descargar datos de {deviceName}
+        Descargar datos
       </DialogTitle>
 
       <DialogContent
@@ -141,7 +138,6 @@ const DownloadDataModal = ({
             />
           </LocalizationProvider>
         </Box>
-
         {data && data.length > 0 && (
           <DataGrid
             sx={{ width: "100%" }}
@@ -152,21 +148,21 @@ const DownloadDataModal = ({
                 dateStyle: "short",
                 timeStyle: "long",
               }),
-              temperature: Math.round(value.valueT * 100) / 100,
-              humidity: Math.round(value.valueH * 100) / 100,
+              name: value.name,
+              state: value.state === 1 ? "Acceso concedido" : "Acceso denegado",
+              ci: value.ci,
+              email: value.email,
+              eCard: value.eCard,
+              career: value.career,
             }))}
             columns={columns.map((column) => ({
               field: column.field,
               headerName: column.headerName,
-              width: 200,
+              width: 100,
             }))}
             slots={{
               toolbar: () => (
-                <CustomToolbar
-                  startDate={startDate!}
-                  endDate={endDate!}
-                  deviceName={deviceName}
-                />
+                <CustomToolbar startDate={startDate!} endDate={endDate!} />
               ),
             }}
           />
@@ -184,28 +180,23 @@ export default DownloadDataModal;
 function CustomToolbar({
   startDate,
   endDate,
-  deviceName,
 }: {
   startDate: Date;
   endDate: Date;
-  deviceName: string;
 }) {
   return (
     <GridToolbarContainer>
       <GridToolbarExport
-        printOptions={{ disableToolbarButton: true }}
+        // printOptions={{ disableToolbarButton: true }}
         csvOptions={{
-          fileName: `Datos de ${deviceName} desde ${startDate.toLocaleString(
-            "es-VE",
-            {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "long",
-            }
-          )} hasta ${endDate.toLocaleString("es-VE", {
+          fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
-            timeStyle: "long",
+            timeStyle: "short",
+          })} hasta ${endDate.toLocaleString("es-VE", {
+            hour12: false,
+            dateStyle: "short",
+            timeStyle: "short",
           })}`,
           delimiter: ";",
           utf8WithBom: true,

@@ -39,17 +39,15 @@ const ChartCarousel = ({ device }) => {
     if (device.type === "tempHum") {
       let queryT = `from(bucket: "ucontrol") 
 |>  range(start: ${device.createdOn}, stop:  ${Date.now()})
-  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${device.type}")
-|> filter(fn: (r) =>  r["_field"] == "temperature")
-|> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Temperatura")
+  |> filter(fn: (r) => r["_field"] == "value")
+  |> yield(name: "mean")`;
 
       let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
-  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${device.type}")
-|> filter(fn: (r) =>  r["_field"] == "humidity")
-|> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Humedad")
+  |> filter(fn: (r) => r["_field"] == "value")
+  |> yield(name: "mean")`;
 
       let resT = [];
       let resH = [];
@@ -154,7 +152,7 @@ const ChartCarousel = ({ device }) => {
         influxQuery();
       } catch {}
     }
-  }, [device]);
+  }, [device, org, token, url]);
 
   /**
    * This effect is used to format the data for the temperature and humidity charts
@@ -189,9 +187,8 @@ const ChartCarousel = ({ device }) => {
     if (device.type === "hum") {
       let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
-  |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
-  |> filter(fn: (r) => r["deviceType"] == "hum")
-  |> filter(fn: (r) => r["_field"] == "soilValue")
+|> filter(fn: (r) => r["_measurement"] == "${device.topic}")
+|> filter(fn: (r) => r["_field"] == "value")
 |> yield(name: "mean")`;
 
       let resH = [];

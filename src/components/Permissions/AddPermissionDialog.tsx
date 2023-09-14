@@ -11,15 +11,18 @@ import {
   FormControlLabel,
   FormLabel,
   Radio,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { RadioGroup, TextField } from "formik-mui";
 import { DatePicker } from "formik-mui-lab";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
-import { createPermission } from "../api/Permissions";
-import { useUser } from "../contexts/authContext";
-import { Space, getParentSpaces } from "../api/Space";
+import { createPermission } from "../../api/Permissions";
+import { useUser } from "../../contexts/authContext";
+import { Space, getParentSpaces } from "../../api/Space";
+import { CloseRounded } from "@mui/icons-material";
 
 interface PermissionValues {
   email: string;
@@ -57,26 +60,56 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
     } catch (error) {}
   }, []);
 
-	const onSubmit = async (
-		{ email, spaceId, permission }: PermissionValues,
-		{ setSubmitting }: FormikHelpers<PermissionValues>
-	) => {
-		setSubmitting(true);
-		const response = await createPermission(spaceId, permission, email);
-		if (response?.success) {
-			setSubmitting(false);
-			enqueueSnackbar(response?.message, {
-				variant: "success",
-			});
-			closeDialog();
-			return;
-		}
-		setSubmitting(false);
-		return enqueueSnackbar(response?.message, { variant: "error" });
-	};
+  const onSubmit = async (
+    { email, spaceId, permission }: PermissionValues,
+    { setSubmitting }: FormikHelpers<PermissionValues>
+  ) => {
+    if (spaceId === "") {
+      return enqueueSnackbar("Seleccione un espacio", { variant: "error" });
+    } else {
+      setSubmitting(true);
+      const response = await createPermission(spaceId, permission, email);
+      if (response?.success) {
+        setSubmitting(false);
+        enqueueSnackbar(response?.message, {
+          variant: "success",
+        });
+        closeDialog();
+        window.location.reload();
+        return;
+      }
+      setSubmitting(false);
+      return enqueueSnackbar(response?.message, { variant: "error" });
+    }
+  };
 
   return (
-    <Dialog open={isOpen} onClose={closeDialog}>
+    <Dialog
+      open={isOpen}
+      onClose={closeDialog}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        p: 2,
+        borderRadius: "8px",
+        alignItems: "center",
+        justifyContent: "center",
+        m: 2,
+      }}
+    >
+      <Tooltip title="Cerrar">
+        <IconButton
+          onClick={closeDialog}
+          sx={{
+            alignSelf: "flex-end",
+            mb: 0.5,
+          }}
+        >
+          <CloseRounded />
+        </IconButton>
+      </Tooltip>
+
+      <DialogTitle>Crear permiso</DialogTitle>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -84,14 +117,26 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
       >
         {() => (
           <Stack component={Form} spacing={2}>
-            <DialogTitle>Crear permiso</DialogTitle>
-            <DialogContent sx={{ maxWidth: "300pt" }}>
+            <DialogContent
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                m: 2,
+                p: 2,
+                gap: "10pt",
+                placeSelf: "center",
+                width: "330px",
+              }}
+            >
               <Field
                 component={TextField}
                 name="email"
                 type="email"
                 label="Email"
                 required
+                sx={{ width: "290px", m: 0 }}
               />
 
               <Field
@@ -99,6 +144,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                 component={TextField}
                 label="Espacio"
                 name="spaceId"
+                sx={{ width: "290px", m: 0 }}
               >
                 {spaces.map((space) => {
                   return (
@@ -112,7 +158,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                 sx={{
                   marginTop: "10pt",
                   marginBottom: "10pt",
-                  width: "100%",
+                  width: "290px",
                 }}
               >
                 <FormLabel id="permission">Tipo de permiso</FormLabel>

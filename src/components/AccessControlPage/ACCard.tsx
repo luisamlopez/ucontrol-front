@@ -83,27 +83,75 @@ const AccessControlCard = (space: Space): JSX.Element => {
             gap: "5px",
           }}
         >
-          <Typography
-            fontSize={{
-              xs: "1rem",
-              sm: "1rem",
-              md: "1.2rem",
-              lg: "1.2rem",
-            }}
-            fontWeight={"bold"}
-            color={"primary.main"}
-            mb={1}
+          <Box
             sx={{
-              minHeight: { xs: "50px", sm: "50px", md: "50px", lg: "auto" },
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "wrap",
-              wordBreak: "break-word",
-              minWidth: "100%",
+              display: "flex",
+              flexDirection: {
+                xs: "column",
+                sm: "column",
+                md: "row",
+                lg: "row",
+              },
+              alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            {space.name}
-          </Typography>
+            <Typography
+              fontSize="1.2rem"
+              fontWeight={"bold"}
+              color={"primary.main"}
+              mb={1}
+              sx={{
+                width: "90%",
+                minHeight: { xs: "50px", sm: "50px", md: "50px", lg: "auto" },
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {space.name}
+            </Typography>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: {
+                  xs: "column",
+                  sm: "column",
+                  md: "row",
+                  lg: "row",
+                },
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                fullWidth
+                onClick={() => {
+                  alert("Activar acceso al espacio");
+                }}
+                variant="contained"
+              >
+                <Typography textTransform={"none"}>
+                  Activar acceso al espacio
+                </Typography>
+              </Button>
+
+              <Button
+                fullWidth
+                onClick={() => {
+                  alert("Desactivar acceso al espacio");
+                }}
+              >
+                <Typography textTransform={"none"}>
+                  Desactivar acceso al espacio
+                </Typography>
+              </Button>
+            </Box>
+          </Box>
+
           {space.description && (
             <Box
               sx={{
@@ -162,6 +210,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
           }}
         >
           <Button
+            variant="outlined"
             onClick={() => {
               navigate(`/controlAccess/${space._id}`);
             }}

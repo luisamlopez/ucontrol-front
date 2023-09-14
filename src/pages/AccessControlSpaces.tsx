@@ -1,6 +1,6 @@
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Space, getSpaces } from "../api/Space";
+import { Space, getACSpaces, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import AccessControlCard from "../components/AccessControlPage/ACCard";
 import { useUser } from "../contexts/authContext";
@@ -14,7 +14,7 @@ const AccessControlSpaces = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces(user?._id!, (allSpaces) => {
+        await getACSpaces(user?._id!, (allSpaces) => {
           allSpaces = allSpaces.filter(
             (space) => space.devices && space.devices.length > 0
           );
@@ -48,6 +48,9 @@ const AccessControlSpaces = (): JSX.Element => {
               p={0}
               mt={{ xs: 6, sm: 0, lg: 0 }}
               mb={2}
+              sx={{
+                wordWrap: "break-word",
+              }}
             >
               Control de acceso
             </Typography>

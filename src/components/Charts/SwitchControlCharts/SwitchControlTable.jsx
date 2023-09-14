@@ -44,11 +44,10 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
     setOpenModal(true);
   };
 
-  let query = `from(bucket: "ucontrol-arm21")
+  let query = `from(bucket: "ucontrol")
   |> range(start: -24h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["_field"] == "switchStatus")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   useEffect(() => {
     let res = [];
@@ -249,7 +248,7 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
         show={openModal}
         handleClose={handleCloseModal}
         startDate={deviceStartDate}
-        endDate={Date.now()}
+        endDate={new Date(Date.now())}
         data={values}
         columns={columns}
       />

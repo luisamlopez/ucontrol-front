@@ -60,11 +60,10 @@ export const SoilBarChart = ({
   const handleOpenModal = () => {
     setOpenModal(true);
   };
-  let queryH = `from(bucket: "ucontrol-arm21")
+  let queryH = `from(bucket: "ucontrol")
   |> range(start: -5m, stop: 1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["deviceType"] == "${deviceType}")
-  |> filter(fn: (r) => r["_field"] == "soilValue")
+  |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
 
   useEffect(() => {
@@ -196,7 +195,7 @@ export const SoilBarChart = ({
         show={openModal}
         handleClose={handleCloseModal}
         startDate={deviceStartDate}
-        endDate={Date.now()}
+        endDate={new Date(Date.now())}
         data={values}
         columns={columns}
         deviceName={deviceName}
