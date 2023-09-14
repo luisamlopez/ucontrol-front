@@ -3,6 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  IconButton,
   Table,
   TableBody,
   Typography,
@@ -19,6 +20,8 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
+import { KeyboardArrowLeftRounded } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 //Columns for the DataGrid are the user atributes
 const columns: any[] = [
@@ -33,18 +36,23 @@ const columns: any[] = [
 
 const CADeviceCard = (props: { device: Device }): JSX.Element => {
   const [user, setUser] = useState<User>();
+  const navigate = useNavigate();
+
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(props.device.createdOn!)
   );
-  const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now()));
+  const [endDate, setEndDate] = useState<Date | null>(
+    new Date(Date.now() + 1000 * 60 * 60 * 24)
+  );
   const [data, setData] = useState<any[]>([]);
+  const [outData, setOutData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const data = [
           {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-14T00:10:00.000Z"),
             name: "Juan Perez",
             state: "1",
             ci: "12345678",
@@ -53,7 +61,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             career: "Ingenieria de Sistemas",
           },
           {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-14T00:00:00.000Z"),
             name: "Juan Perez",
             state: "0",
             ci: "12345678",
@@ -62,7 +70,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             career: "Ingenieria de Sistemas",
           },
           {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-14T00:00:00.000Z"),
             name: "Juan Perez",
             state: "1",
             ci: "12345678",
@@ -71,7 +79,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             career: "Ingenieria de Sistemas",
           },
           {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
+            timestamp: new Date("2023-09-14T05:00:00.000Z"),
             name: "Juan Perez",
             state: "1",
             ci: "12345678",
@@ -81,6 +89,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           },
         ];
         setData(data);
+        setOutData(data);
       } catch (error) {}
     };
     fetch();
@@ -121,8 +130,6 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   return (
     <Box
       sx={{
-        backgroundColor: "#ECEEEF",
-        borderRadius: "8px",
         marginBottom: "10px",
         display: "flex",
         flexDirection: "column",
@@ -131,6 +138,50 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
         width: "100%",
       }}
     >
+      <Box
+        display={"flex"}
+        flexDirection="row"
+        sx={{
+          p: 2,
+        }}
+      >
+        <IconButton
+          sx={{
+            display: {
+              lg: "none",
+            },
+            fontSize: "large",
+            p: 0,
+            mt: 0.5,
+          }}
+          onClick={() => navigate(-1)}
+        >
+          <KeyboardArrowLeftRounded
+            fontSize="large"
+            color="secondary"
+            sx={{
+              display: {
+                lg: "none",
+              },
+            }}
+          />
+        </IconButton>
+        <Typography
+          color="primary"
+          textAlign="left"
+          fontSize={{ xs: 24, sm: 48, lg: 48 }}
+          fontWeight={600}
+          p={0}
+          mt={{ xs: 6, sm: 0, lg: 0 }}
+          mb={2}
+          sx={{
+            wordWrap: "break-word",
+          }}
+        >
+          Control de acceso controlado por {props.device?.name}
+        </Typography>
+      </Box>
+
       <DevicesDetailsText title="Nombre" value={props.device.name} />
       <DevicesDetailsText title="Tipo" value={"Control de Acceso"} />
       <DevicesDetailsText
@@ -150,8 +201,6 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           backgroundColor: "white",
           p: 1,
           mt: 1,
-          borderRadius: "4px",
-          height: "32rem",
         }}
       >
         <Box
@@ -183,14 +232,13 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
               sx={{ width: "100%" }}
               rows={filteredData.map((value, index) => ({
                 id: index,
-                timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                timestamp: new Date(value.timestamp).toLocaleString("VET", {
                   hour12: false,
                   dateStyle: "short",
                   timeStyle: "long",
                 }),
                 name: value.name,
-                state:
-                  value.state === 1 ? "Acceso concedido" : "Acceso denegado",
+                state: value.state,
                 ci: value.ci,
                 email: value.email,
                 eCard: value.eCard,
@@ -210,6 +258,38 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           </>
         )}
         {data && data.length === 0 && (
+          <Typography>No hay datos para mostrar</Typography>
+        )}
+        <Typography sx={{ my: 2, fontWeight: 600 }}>
+          Usuarios que se encuentran en el espacio
+        </Typography>
+        {outData && outData.length > 0 && (
+          <>
+            <DataGrid
+              sx={{ width: "100%" }}
+              rows={outData.map((value, index) => ({
+                id: index,
+                timestamp: new Date(value.timestamp).toLocaleString("VET", {
+                  hour12: false,
+                  dateStyle: "short",
+                  timeStyle: "long",
+                }),
+                name: value.name,
+                state: value.state,
+                ci: value.ci,
+                email: value.email,
+                eCard: value.eCard,
+                career: value.career,
+              }))}
+              columns={columns.map((column) => ({
+                field: column.field,
+                headerName: column.headerName,
+                width: 150,
+              }))}
+            />
+          </>
+        )}
+        {outData && outData.length === 0 && (
           <Typography>No hay datos para mostrar</Typography>
         )}
       </Box>

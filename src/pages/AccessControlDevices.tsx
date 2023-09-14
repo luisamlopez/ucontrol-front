@@ -23,7 +23,6 @@ const AccessControlDevices = (): JSX.Element => {
   const { user } = useUser();
   const spaceId = useParams<{ spaceId: string }>().spaceId;
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetch = async () => {
@@ -76,50 +75,6 @@ const AccessControlDevices = (): JSX.Element => {
         <Sidebar />
         <Container sx={{ m: 0, p: 0 }}>
           <Box display={"flex"} flexDirection="column">
-            <Box
-              display={"flex"}
-              flexDirection="row"
-              sx={{
-                p: 2,
-              }}
-            >
-              <IconButton
-                sx={{
-                  display: {
-                    lg: "none",
-                  },
-                  fontSize: "large",
-                  p: 0,
-                  mt: 0.5,
-                }}
-                onClick={() => navigate(-1)}
-              >
-                <KeyboardArrowLeftRounded
-                  fontSize="large"
-                  color="secondary"
-                  sx={{
-                    display: {
-                      lg: "none",
-                    },
-                  }}
-                />
-              </IconButton>
-              <Typography
-                color="primary"
-                textAlign="left"
-                fontSize={{ xs: 24, sm: 48, lg: 48 }}
-                fontWeight={600}
-                p={0}
-                mt={{ xs: 6, sm: 0, lg: 0 }}
-                mb={2}
-                sx={{
-                  wordWrap: "break-word",
-                }}
-              >
-                Dispositivos de control de acceso en {space?.name}
-              </Typography>
-            </Box>
-
             {loading ? (
               <Box
                 sx={{

@@ -174,6 +174,29 @@ export const getACSpaces = async (
   }
 };
 
+export const getNoACSpaces = async (
+  userId: string,
+  callback: (spaces: Space[]) => void
+) => {
+  try {
+    const response = await fetch(`${url}getSpacesWithAccessControl/${userId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    //   console.log(response);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    const spaces = await response.json();
+    console.log(spaces.data);
+    callback(spaces.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const updateStatusSpace = async (spaceId: string, status: boolean) => {
   try {
     const response = await fetch(`${url}changeStatusSpace/${spaceId}`, {

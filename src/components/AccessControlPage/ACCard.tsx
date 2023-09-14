@@ -201,7 +201,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
 
           <DevicesDetailsText
             title="Creado el"
-            value={new Date(space.createdOn!).toLocaleString("es-VE", {
+            value={new Date(space.createdOn!).toLocaleString("VET", {
               hour12: false,
               dateStyle: "short",
               timeStyle: "short",

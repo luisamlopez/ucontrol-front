@@ -1,7 +1,7 @@
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Sidebar } from "../components/Sidebar";
 import DashboardAccordion from "../components/Dashboard/DashboardAccordion";
-import { Space, getSpaces } from "../api/Space";
+import { Space, getNoACSpaces, getSpaces } from "../api/Space";
 import { useEffect, useState } from "react";
 import { useUser } from "../contexts/authContext";
 
@@ -17,7 +17,7 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaces(user?._id!, (allSpaces) => {
+        await getNoACSpaces(user?._id!, (allSpaces) => {
           allSpaces = allSpaces.filter(
             (space) => space.devices && space.devices.length > 0
           );
