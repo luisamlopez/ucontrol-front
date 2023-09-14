@@ -973,7 +973,10 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           name="listenerDevice"
                           // Filter the devices to only show the ones that are not type luz or aire
                           options={allDevices.filter(
-                            (obj) => obj.type !== "luz" && obj.type !== "aire"
+                            (obj) =>
+                              obj.type !== "luz" &&
+                              obj.type !== "aire" &&
+                              obj.type !== "controlAcceso"
                           )}
                           getOptionLabel={(option: Device) => option.name || ""}
                           onChange={(event: any, newValue: Device | null) => {

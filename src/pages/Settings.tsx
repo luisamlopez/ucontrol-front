@@ -1,12 +1,7 @@
 import {
   Box,
   Container,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
-  TextField as MuiTextField,
   Typography,
   CircularProgress,
   Stack,
@@ -14,21 +9,19 @@ import {
   FormLabel,
   Radio,
 } from "@mui/material";
-import HistoryAccordion from "../components/HistoryPage/HistoryAccordion";
-import HistoryTable from "../components/HistoryPage/HistoryTable";
 import { Sidebar } from "../components/Sidebar";
 import { useUser } from "../contexts/authContext";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { RadioGroup, TextField } from "formik-mui";
+import { Field, Formik, FormikHelpers } from "formik";
+import { RadioGroup } from "formik-mui";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import PasswordField from "../components/Fields/PasswordField";
 import { LoadingButton } from "@mui/lab";
-import useAutosave from "../hooks/useAutosave.hook";
-import { Space, getSpaces } from "../api/Space";
-import { createPermission } from "../api/Permissions";
-import AddPermissionDialog from "../components/AddPermissionDialog";
+import AddPermissionDialog from "../components/Permissions/AddPermissionDialog";
+import PermissionsTable from "../components/Permissions/PermissionsTable";
+import { Permission, PermissionInfo } from "../api/Permissions";
+import { getUserPermissions } from "../api/Permissions";
 
 interface ChangePaswordFormValues {
   oldPassword: string;
@@ -44,6 +37,7 @@ const SettingsPage = (): JSX.Element => {
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [data, setData] = useState<PermissionInfo[]>([]);
 
   const changePasswordInitialValues = {
     oldPassword: "",
@@ -112,6 +106,17 @@ const SettingsPage = (): JSX.Element => {
     actions.setSubmitting(true);
     alert(values.notifications);
   };
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        await getUserPermissions(user?._id!, (permissions) => {
+          setData(permissions);
+        });
+      } catch (error) {}
+    };
+    fetch();
+  }, [user]);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
@@ -250,6 +255,17 @@ const SettingsPage = (): JSX.Element => {
             </Formik>
           </Box>
           <Box>
+            <Typography
+              sx={{
+                mb: 2,
+                fontSize: "18px",
+                fontStyle: "normal",
+                fontWeight: 500,
+              }}
+            >
+              Lista de permisos autorizados
+            </Typography>
+
             {/* Button to open the permission dialog */}
             <Button
               variant="outlined"
@@ -259,6 +275,8 @@ const SettingsPage = (): JSX.Element => {
             >
               Crear permiso
             </Button>
+
+            <PermissionsTable data={data} />
             <AddPermissionDialog
               closeDialog={() => {
                 setIsOpen(false);
