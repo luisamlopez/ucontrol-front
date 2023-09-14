@@ -17,7 +17,7 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getNoACSpaces(user?._id!, (allSpaces) => {
+        await getSpaces(user?._id!, (allSpaces) => {
           allSpaces = allSpaces.filter(
             (space) => space.devices && space.devices.length > 0
           );
