@@ -173,3 +173,22 @@ export const getACSpaces = async (
     console.log(error);
   }
 };
+
+export const updateStatusSpace = async (spaceId: string, status: boolean) => {
+  try {
+    const response = await fetch(`${url}changeStatusSpace/${spaceId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: status,
+      }),
+    });
+    console.log(response);
+    if (response.ok) return true;
+    if (!response.ok) {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+};
