@@ -60,7 +60,9 @@ interface FormValues {
     cond?: Options;
     condValue?: Options;
     condValueTemp?: Options;
+    // instruction?: Options;
   };
+  instruction?: Options;
   listenerDevice?: string;
 }
 
@@ -83,6 +85,10 @@ const initialValues = {
       value: "",
     },
     condValueTemp: {
+      label: "",
+      value: "",
+    },
+    instruction: {
       label: "",
       value: "",
     },
@@ -129,6 +135,10 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [isNumeric, setIsNumeric] = useState<boolean>(false);
   const [isTempHum, setIsTempHum] = useState<boolean>(false);
   const [listenerDevice, setListenerDevice] = useState<Device | undefined>();
+  const [instructionsOptions, setInstruction] = useState<Options[]>([
+    { label: "Encendido", value: "1" },
+    { label: "Apagado", value: "0" },
+  ]);
 
   useEffect(() => {
     switch (deviceType) {
@@ -161,6 +171,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   }, [deviceType]);
 
+  useEffect(() => {
+    console.log(allDevices);
+  }, [allDevices]);
   /**
    * @description Get the information of a space given its id
    * @param id
@@ -222,16 +235,21 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     try {
       if (conditions) {
         const cons = {
-          listenerDevice: values.listenerDevice ? values.listenerDevice : "",
+          listenerDevice: values.listenerDevice
+            ? listenerDevice?.type === "tempHum"
+              ? listenerDevice?.topic + " / Temperatura"
+              : values.listenerDevice
+            : "",
           condition: values.cons!.cond?.value!,
           conditionValue:
-            values.cons!.cond?.value!.includes("yes") ||
-            values.cons!.cond?.value!.includes("no")
+            values.cons!.cond?.value!.includes("1") ||
+            values.cons!.cond?.value!.includes("0")
               ? ""
               : isTempHum
               ? values.cons!.condValueTemp?.value!
               : values.cons!.condValue?.value!,
           secondConditionValue: isTempHum ? values.cons!.condValue?.value! : "",
+          instruction: values.instruction?.value!,
         };
 
         const deviceData: Device = {
@@ -312,16 +330,25 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       } else {
         if (conditions) {
           const cons = {
-            listenerDevice: values.listenerDevice ? values.listenerDevice : "",
+            listenerDevice: values.listenerDevice
+              ? listenerDevice?.type === "tempHum"
+                ? listenerDevice?.topic + " / Temperatura"
+                : values.listenerDevice
+              : "",
             condition: values.cons!.cond?.value!,
             conditionValue:
-              values.cons!.cond?.value!.includes("yes") ||
-              values.cons!.cond?.value!.includes("no")
+              values.cons!.cond?.value!.includes("1") ||
+              values.cons!.cond?.value!.includes("0")
                 ? ""
                 : isTempHum
                 ? values.cons!.condValueTemp?.value!
                 : values.cons!.condValue?.value!,
+            secondConditionValue: isTempHum
+              ? values.cons!.condValue?.value!
+              : "",
+            instruction: values.instruction?.value!,
           };
+
           const deviceData: Device = {
             _id: props.deviceID!,
             name: values.name,
@@ -374,7 +401,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
               deviceData.conditions?.condition !==
                 deviceToEdit?.conditions?.condition ||
               deviceData.conditions?.conditionValue !==
-                deviceToEdit?.conditions?.conditionValue
+                deviceToEdit?.conditions?.conditionValue ||
+              deviceData.conditions?.secondConditionValue !==
+                deviceToEdit?.conditions?.secondConditionValue ||
+              deviceData.conditions?.instruction !==
+                deviceToEdit?.conditions?.instruction
             ) {
               fields.push("Cambio de condición/regla");
             }
@@ -578,7 +609,15 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     const fetch = async () => {
       try {
         await getAllDevicesByUser(user!._id, (devices) => {
-          setAllDevices(devices);
+          console.log(devices);
+          setAllDevices(
+            devices.filter(
+              (obj) =>
+                obj.type !== "luz" &&
+                obj.type !== "aire" &&
+                obj.type !== "controlAcceso"
+            )
+          );
         });
       } catch (error) {}
     };
@@ -620,8 +659,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       setIsNumeric(false);
       setIsTempHum(false);
       setConditionsOptions([
-        { label: "Detecta presencia", value: "yes" },
-        { label: "No detecta presencia", value: "no" },
+        { label: "Detecta presencia", value: "1" },
+        { label: "No detecta presencia", value: "0" },
       ]);
     }
   }
@@ -901,8 +940,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       <Typography>
                         Este dispositivo tiene una condición asociada, escucha a{" "}
                         {listenerDevice?.name} y cambia de estado cuando detecta{" "}
-                        {deviceToEdit?.conditions?.condition === "yes" ||
-                        deviceToEdit?.conditions?.condition === "no"
+                        {deviceToEdit?.conditions?.condition === "1" ||
+                        deviceToEdit?.conditions?.condition === "0"
                           ? "o no presencia"
                           : deviceToEdit?.conditions?.condition}{" "}
                         {deviceToEdit?.conditions?.conditionValue
@@ -989,24 +1028,48 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           },
                         }}
                       >
-                        <Typography gutterBottom>
+                        {/* <Typography gutterBottom>
                           Cambiar el estado de {values.name} cuando:
-                        </Typography>
+                        </Typography> */}
 
+                        <Field
+                          component={Autocomplete}
+                          name="instruction"
+                          // Filter the devices to only show the ones that are not type luz or aire
+                          options={instructionsOptions}
+                          getOptionLabel={(option: Options) =>
+                            option.label || ""
+                          }
+                          onChange={(event: any, newValue: Options | null) => {
+                            setFieldValue("instruction", newValue);
+                          }}
+                          fullWidth
+                          renderInput={(
+                            params: AutocompleteRenderInputParams
+                          ) => (
+                            <TextFieldMUI
+                              {...params}
+                              label="Acción a realizar"
+                              variant="outlined"
+                              fullWidth
+                              autoComplete="on"
+                              required
+                              sx={{
+                                my: 2,
+                              }}
+                            />
+                          )}
+                        />
                         <Field
                           component={Autocomplete}
                           name="listenerDevice"
                           // Filter the devices to only show the ones that are not type luz or aire
-                          options={allDevices.filter(
-                            (obj) =>
-                              obj.type !== "luz" &&
-                              obj.type !== "aire" &&
-                              obj.type !== "controlAcceso"
-                          )}
+                          options={allDevices}
                           getOptionLabel={(option: Device) => option.name || ""}
                           onChange={(event: any, newValue: Device | null) => {
                             onChangeSetConditionsOptions(newValue?.type!);
                             setFieldValue("listenerDevice", newValue?.topic);
+                            setListenerDevice(newValue as Device);
                           }}
                           fullWidth
                           renderInput={(

@@ -23,6 +23,7 @@ export interface Device {
     condition?: string;
     conditionValue?: string;
     secondConditionValue?: string;
+    instruction?: string;
   };
   topic: string;
   /**
