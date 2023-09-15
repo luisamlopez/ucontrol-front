@@ -231,6 +231,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
               : isTempHum
               ? values.cons!.condValueTemp?.value!
               : values.cons!.condValue?.value!,
+          secondConditionValue: isTempHum ? values.cons!.condValue?.value! : "",
         };
 
         const deviceData: Device = {
@@ -311,12 +312,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       } else {
         if (conditions) {
           const cons = {
-            listenerDevice: values.listenerDevice!,
+            listenerDevice: values.listenerDevice ? values.listenerDevice : "",
             condition: values.cons!.cond?.value!,
             conditionValue:
               values.cons!.cond?.value!.includes("yes") ||
               values.cons!.cond?.value!.includes("no")
                 ? ""
+                : isTempHum
+                ? values.cons!.condValueTemp?.value!
                 : values.cons!.condValue?.value!,
           };
           const deviceData: Device = {
@@ -1003,7 +1006,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           getOptionLabel={(option: Device) => option.name || ""}
                           onChange={(event: any, newValue: Device | null) => {
                             onChangeSetConditionsOptions(newValue?.type!);
-                            setFieldValue("listenerDevice", newValue?._id);
+                            setFieldValue("listenerDevice", newValue?.topic);
                           }}
                           fullWidth
                           renderInput={(

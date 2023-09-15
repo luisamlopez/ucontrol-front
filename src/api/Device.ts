@@ -22,6 +22,7 @@ export interface Device {
     listenerDevice?: string;
     condition?: string;
     conditionValue?: string;
+    secondConditionValue?: string;
   };
   topic: string;
   /**
@@ -244,4 +245,17 @@ export const getSpaceFromDeviceId = async (
       throw new Error(error.message);
     }
   } catch (error) {}
+};
+
+export const sendInstruction = async (topic: string, instruction: string) => {
+  try {
+    const response = await fetch(`${url}sendInstruction`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic: topic, instruction: instruction }),
+    });
+    if (response.ok) return true;
+  } catch (error) {
+    console.log(error);
+  }
 };

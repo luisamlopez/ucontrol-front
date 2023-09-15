@@ -95,15 +95,15 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
 
   useEffect(() => {
     if (startDate && endDate) {
-      const filtered = data.filter((value) => {
+      const filtered = dataPerRow.filter((value) => {
         const timestamp = new Date(value.timestamp);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
     } else {
-      setFilteredData(data);
+      setFilteredData(dataPerRow);
     }
-  }, [startDate, endDate, data]);
+  }, [startDate, endDate, dataPerRow]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -175,34 +175,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
         width: "100%",
       }}
     >
-      <Box
-        display={"flex"}
-        flexDirection="row"
-        sx={{
-          p: 2,
-        }}
-      >
-        <IconButton
-          sx={{
-            display: {
-              lg: "none",
-            },
-            fontSize: "large",
-            p: 0,
-            mt: 0.5,
-          }}
-          onClick={() => navigate(-1)}
-        >
-          <KeyboardArrowLeftRounded
-            fontSize="large"
-            color="secondary"
-            sx={{
-              display: {
-                lg: "none",
-              },
-            }}
-          />
-        </IconButton>
+      <Box display={"flex"} flexDirection="row">
         <Typography
           color="primary"
           textAlign="left"
@@ -275,15 +248,14 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
                   dateStyle: "short",
                   timeStyle: "long",
                 }),
-                timestampOut: value.timestampOut
-                  ? new Date(value.timestampOut).toLocaleString("VET", {
-                      hour12: false,
-                      dateStyle: "short",
-                      timeStyle: "long",
-                    })
-                  : value.state === "Acceso denegado"
-                  ? "Acceso denegado"
-                  : "Salida no registrada",
+                timestampOut:
+                  !value.timestampOut || value.state === "Acceso denegado"
+                    ? ""
+                    : new Date(value.timestampOut).toLocaleString("VET", {
+                        hour12: false,
+                        dateStyle: "short",
+                        timeStyle: "long",
+                      }),
                 name: value.name,
                 state: value.state,
                 ci: value.ci,
