@@ -59,6 +59,7 @@ interface FormValues {
     listenerDevice?: string;
     cond?: Options;
     condValue?: Options;
+    condValueTemp?: Options;
   };
   listenerDevice?: string;
 }
@@ -78,6 +79,10 @@ const initialValues = {
       value: "",
     },
     condValue: {
+      label: "",
+      value: "",
+    },
+    condValueTemp: {
       label: "",
       value: "",
     },
@@ -120,7 +125,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [deviceType, setDeviceType] = useState<String>();
   const [conditionsOptions, setConditionsOptions] = useState<Options[]>([]);
   const [condValueOptions, setCondValueOptions] = useState<Options[]>([]);
+  const [condValueHum, setCondValueHum] = useState<Options[]>([]);
   const [isNumeric, setIsNumeric] = useState<boolean>(false);
+  const [isTempHum, setIsTempHum] = useState<boolean>(false);
   const [listenerDevice, setListenerDevice] = useState<Device | undefined>();
 
   useEffect(() => {
@@ -221,6 +228,8 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
             values.cons!.cond?.value!.includes("yes") ||
             values.cons!.cond?.value!.includes("no")
               ? ""
+              : isTempHum
+              ? values.cons!.condValueTemp?.value!
               : values.cons!.condValue?.value!,
         };
 
@@ -579,6 +588,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   function onChangeSetConditionsOptions(type: string) {
     if (type === "tempHum" || type === "hum") {
       setIsNumeric(true);
+      setIsTempHum(type === "tempHum" ? true : false);
       setConditionsOptions([
         { label: ">", value: ">" },
         { label: "<", value: "<" },
@@ -586,14 +596,26 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
       ]);
-      setCondValueOptions([
+      setCondValueHum([
         { label: "20", value: "20" },
         { label: "30", value: "30" },
         { label: "40", value: "40" },
         { label: "50", value: "50" },
       ]);
+      setCondValueOptions([
+        { label: "20", value: "20" },
+        { label: "30", value: "30" },
+        { label: "40", value: "40" },
+        { label: "50", value: "50" },
+        { label: "60", value: "60" },
+        { label: "70", value: "70" },
+        { label: "80", value: "80" },
+        { label: "90", value: "90" },
+        { label: "100", value: "100" },
+      ]);
     } else {
       setIsNumeric(false);
+      setIsTempHum(false);
       setConditionsOptions([
         { label: "Detecta presencia", value: "yes" },
         { label: "No detecta presencia", value: "no" },
@@ -1042,7 +1064,34 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                             ) => (
                               <TextFieldMUI
                                 {...params}
-                                label="Valor"
+                                label={isTempHum ? "Valor de humedad" : "Valor"}
+                                variant="outlined"
+                                fullWidth
+                                autoComplete="on"
+                                required
+                                sx={{
+                                  my: 2,
+                                }}
+                              />
+                            )}
+                          />
+                        )}
+                        {isNumeric && isTempHum && (
+                          <Field
+                            component={Autocomplete}
+                            name="cons.condValueTemp"
+                            options={condValueHum}
+                            getOptionLabel={(option: any) => option.label || ""}
+                            fullWidth
+                            onChange={(event: any, newValue: Options) => {
+                              setFieldValue("cons.condValueTemp", newValue);
+                            }}
+                            renderInput={(
+                              params: AutocompleteRenderInputParams
+                            ) => (
+                              <TextFieldMUI
+                                {...params}
+                                label={"Valor de temperatura"}
                                 variant="outlined"
                                 fullWidth
                                 autoComplete="on"

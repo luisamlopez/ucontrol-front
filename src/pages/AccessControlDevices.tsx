@@ -52,10 +52,6 @@ const AccessControlDevices = (): JSX.Element => {
   }, [spaceId]);
 
   useEffect(() => {
-    console.log(allDevices);
-  }, [allDevices]);
-
-  useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
@@ -107,7 +103,7 @@ const AccessControlDevices = (): JSX.Element => {
                 }}
               >
                 {allDevices.map((device, i) => (
-                  <>
+                  <Box m={0} key={i}>
                     {windowWidth < 600 && (
                       <ACCMobileDevice key={i} device={device} />
                     )}
@@ -118,7 +114,7 @@ const AccessControlDevices = (): JSX.Element => {
                     {windowWidth >= 960 && (
                       <CADeviceCard key={i} device={device} />
                     )}
-                  </>
+                  </Box>
                 ))}
               </Box>
             )}

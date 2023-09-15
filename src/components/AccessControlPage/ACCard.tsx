@@ -154,6 +154,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
                 width: "100%",
                 alignItems: "center",
                 justifyContent: "space-between",
+                gap: "5px",
               }}
             >
               <Button
@@ -169,6 +170,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
               </Button>
 
               <Button
+                variant="outlined"
                 fullWidth
                 onClick={() => {
                   handleDeactivate();
@@ -215,7 +217,6 @@ const AccessControlCard = (space: Space): JSX.Element => {
           }}
         >
           <Button
-            variant="outlined"
             onClick={() => {
               navigate(`/controlAccess/${space._id}`);
             }}

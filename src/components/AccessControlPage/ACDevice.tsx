@@ -22,12 +22,25 @@ import {
 } from "@mui/x-data-grid";
 import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import {
+  getAccessControlSpaceUserHistory,
+  getAccessControlSpaceUsers,
+} from "../../api/AccessControlUser";
 
 //Columns for the DataGrid are the user atributes
 const columns: any[] = [
-  { field: "timestamp", headerName: "Fecha", width: 20 },
+  { field: "timestampIn", headerName: "Entrada", width: 20 },
+  { field: "timestampOut", headerName: "Salida", width: 20 },
   { field: "name", headerName: "Nombre", width: 70 },
   { field: "state", headerName: "Acceso", width: 20 },
+  { field: "ci", headerName: "Cédula", width: 50 },
+  { field: "email", headerName: "Correo", width: 20 },
+  { field: "eCard", headerName: "Código de carnet", width: 20 },
+  { field: "career", headerName: "Carrera", width: 20 },
+];
+
+const columnsOut: any[] = [
+  { field: "name", headerName: "Nombre", width: 70 },
   { field: "ci", headerName: "Cédula", width: 50 },
   { field: "email", headerName: "Correo", width: 20 },
   { field: "eCard", headerName: "Código de carnet", width: 20 },
@@ -46,54 +59,30 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   );
   const [data, setData] = useState<any[]>([]);
   const [outData, setOutData] = useState<any[]>([]);
+  const [dataPerRow, setDataPerRow] = useState<any[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = [
-          {
-            timestamp: new Date("2023-09-14T00:10:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-14T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "0",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-14T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-14T05:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-        ];
-        setData(data);
-        setOutData(data);
+        await getAccessControlSpaceUserHistory(props.device._id!, (d) => {
+          setData(d);
+        });
+      } catch (error) {}
+
+      try {
+        await getAccessControlSpaceUsers(props.device._id!, (d) => {
+          setOutData(d);
+        });
       } catch (error) {}
     };
     fetch();
+
+    const interval = setInterval(() => {
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
   }, [props.device]);
+
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
   };
@@ -102,7 +91,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
     setEndDate(date);
   };
 
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState(dataPerRow);
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -126,6 +115,54 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
     };
     fetch();
   }, [props.device]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let aux: any[] = [{}];
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].entered.length; j++) {
+          aux.push({
+            timestampIn: data[i].entered[j],
+            timestampOut: data[i].gotOut[j],
+            name: data[i].name,
+            email: data[i].email,
+            career: data[i].career,
+            eCard: data[i].eCard,
+            ci: data[i].ci,
+            state: data[i].state,
+          });
+        }
+        for (let j = 0; j < data[i].gotOut.length; j++) {
+          aux.push({
+            timestampIn: data[i].entered[j],
+            timestampOut: data[i].gotOut[j],
+            name: data[i].name,
+            email: data[i].email,
+            career: data[i].career,
+            eCard: data[i].eCard,
+            ci: data[i].ci,
+            state: data[i].state,
+          });
+        }
+        if (!aux[0].name) {
+          //delete aux[0];
+          aux.shift();
+        }
+        setDataPerRow(aux);
+      }
+    };
+    fetch();
+
+    const interval = setInterval(() => {
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [data]);
+
+  useEffect(() => {
+    console.log(dataPerRow);
+    console.log(outData);
+  }, [dataPerRow, outData]);
 
   return (
     <Box
@@ -174,6 +211,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           p={0}
           mt={{ xs: 6, sm: 0, lg: 0 }}
           mb={2}
+          ml={0}
           sx={{
             wordWrap: "break-word",
           }}
@@ -226,17 +264,26 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             />
           </LocalizationProvider>
         </Box>
-        {data && data.length > 0 && (
+        {dataPerRow && dataPerRow.length > 0 && (
           <>
             <DataGrid
               sx={{ width: "100%" }}
-              rows={filteredData.map((value, index) => ({
+              rows={dataPerRow.map((value, index) => ({
                 id: index,
-                timestamp: new Date(value.timestamp).toLocaleString("VET", {
+                timestampIn: new Date(value.timestampIn).toLocaleString("VET", {
                   hour12: false,
                   dateStyle: "short",
                   timeStyle: "long",
                 }),
+                timestampOut: value.timestampOut
+                  ? new Date(value.timestampOut).toLocaleString("VET", {
+                      hour12: false,
+                      dateStyle: "short",
+                      timeStyle: "long",
+                    })
+                  : value.state === "Acceso denegado"
+                  ? "Acceso denegado"
+                  : "Salida no registrada",
                 name: value.name,
                 state: value.state,
                 ci: value.ci,
@@ -247,7 +294,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
               columns={columns.map((column) => ({
                 field: column.field,
                 headerName: column.headerName,
-                width: 150,
+                width: 132,
               }))}
               slots={{
                 toolbar: () => (
@@ -257,7 +304,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             />
           </>
         )}
-        {data && data.length === 0 && (
+        {dataPerRow && dataPerRow.length === 0 && (
           <Typography>No hay datos para mostrar</Typography>
         )}
         <Typography sx={{ my: 2, fontWeight: 600 }}>
@@ -269,28 +316,23 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
               sx={{ width: "100%" }}
               rows={outData.map((value, index) => ({
                 id: index,
-                timestamp: new Date(value.timestamp).toLocaleString("VET", {
-                  hour12: false,
-                  dateStyle: "short",
-                  timeStyle: "long",
-                }),
-                name: value.name,
-                state: value.state,
-                ci: value.ci,
-                email: value.email,
-                eCard: value.eCard,
-                career: value.career,
+                name: value.userName,
+                ci: value.userCi,
+                email: value.userEmail,
+                eCard: value.userECard,
+                career: value.userCareer,
               }))}
-              columns={columns.map((column) => ({
+              columns={columnsOut.map((column) => ({
                 field: column.field,
                 headerName: column.headerName,
-                width: 150,
+                width: 200,
               }))}
+              pageSizeOptions={[5, 10, 25]}
             />
           </>
         )}
         {outData && outData.length === 0 && (
-          <Typography>No hay datos para mostrar</Typography>
+          <Typography>No hay usuarios dentro del espacio</Typography>
         )}
       </Box>
     </Box>

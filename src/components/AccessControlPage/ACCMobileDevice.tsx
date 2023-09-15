@@ -11,23 +11,19 @@ import {
 } from "@mui/material";
 import { Device } from "../../api/Device";
 import { useState, useEffect } from "react";
-import { LocalizationProvider } from "@mui/lab";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DatePicker } from "formik-mui-lab";
-import {
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarExport,
-} from "@mui/x-data-grid";
-import CADeviceCard from "./ACDevice";
 import DevicesDetailsText from "../DeviceDetailsText";
 import { User, getUserById } from "../../api/User";
 import DownloadDataModal from "./DownloadDataModal";
 import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import {
+  getAccessControlSpaceUserHistory,
+  getAccessControlSpaceUsers,
+} from "../../api/AccessControlUser";
 
 const columns: any[] = [
-  { field: "timestamp", headerName: "Fecha", width: 20 },
+  { field: "timestampIn", headerName: "Entrada", width: 20 },
+  { field: "timestampOut", headerName: "Salida", width: 20 },
   { field: "name", headerName: "Nombre", width: 70 },
   { field: "state", headerName: "Acceso", width: 20 },
   { field: "ci", headerName: "Cédula", width: 50 },
@@ -42,6 +38,7 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
 
   const [data, setData] = useState<any[]>([]);
   const [outData, setOutData] = useState<any[]>([]);
+  const [dataPerRow, setDataPerRow] = useState<any[]>([]);
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -55,49 +52,78 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = [
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "0",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-        ];
-        setData(data);
+        await getAccessControlSpaceUserHistory(device.device._id!, (d) => {
+          setData(d);
+        });
+      } catch (error) {}
+
+      try {
+        await getAccessControlSpaceUsers(device.device._id!, (d) => {
+          setOutData(d);
+        });
+      } catch (error) {}
+    };
+    fetch();
+
+    const interval = setInterval(() => {
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [device.device]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        await getUserById(device.device.createdBy!, (user) => {
+          setUser(user);
+        });
       } catch (error) {}
     };
     fetch();
   }, [device.device]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let aux: any[] = [{}];
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].entered.length; j++) {
+          aux.push({
+            timestampIn: data[i].entered[j],
+            timestampOut: data[i].gotOut[j],
+            name: data[i].name,
+            email: data[i].email,
+            career: data[i].career,
+            eCard: data[i].eCard,
+            ci: data[i].ci,
+            state: data[i].state,
+          });
+        }
+        for (let j = 0; j < data[i].gotOut.length; j++) {
+          aux.push({
+            timestampIn: data[i].entered[j],
+            timestampOut: data[i].gotOut[j],
+            name: data[i].name,
+            email: data[i].email,
+            career: data[i].career,
+            eCard: data[i].eCard,
+            ci: data[i].ci,
+            state: data[i].state,
+          });
+        }
+        if (!aux[0].name) {
+          //delete aux[0];
+          aux.shift();
+        }
+        setDataPerRow(aux);
+      }
+    };
+    fetch();
+
+    const interval = setInterval(() => {
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [data]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -200,32 +226,30 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
             mt: 1,
           }}
         >
-          {data && data.length > 0 && (
+          {dataPerRow && dataPerRow.length > 0 && (
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Fecha</TableCell>
-                  <TableCell align="right">Nombre</TableCell>
-                  <TableCell align="right">Cédula</TableCell>
-                  <TableCell align="right">Acceso</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Cédula</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((value, index) => (
+                {dataPerRow.map((value, index) => (
                   <TableRow
                     key={index}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {new Date(value.timestamp).toLocaleString("es-VE", {
+                      {new Date(value.timestampIn).toLocaleString("es-VE", {
                         hour12: false,
                         dateStyle: "short",
                         timeStyle: "long",
                       })}
                     </TableCell>
-                    <TableCell align="right">{value.name}</TableCell>
-                    <TableCell align="right">{value.ci}</TableCell>
-                    <TableCell align="right"> {value.state}</TableCell>
+                    <TableCell>{value.name}</TableCell>
+                    <TableCell>{value.ci}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -241,28 +265,15 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell align="right">Nombre</TableCell>
-                  <TableCell align="right">Cédula</TableCell>
-                  <TableCell align="right">Acceso</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Cédula</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {outData.map((value, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {new Date(value.timestamp).toLocaleString("es-VE", {
-                        hour12: false,
-                        dateStyle: "short",
-                        timeStyle: "long",
-                      })}
-                    </TableCell>
-                    <TableCell align="right">{value.name}</TableCell>
-                    <TableCell align="right">{value.ci}</TableCell>
-                    <TableCell align="right"> {value.state}</TableCell>
+                  <TableRow key={index}>
+                    <TableCell>{value.userName}</TableCell>
+                    <TableCell>{value.userCi}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -274,8 +285,8 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
         show={openModal}
         handleClose={handleCloseModal}
         startDate={new Date(device.device.createdOn!)}
-        endDate={new Date(Date.now())}
-        data={data}
+        endDate={new Date(Date.now() + 1000 * 60 * 60 * 24)}
+        data={dataPerRow}
         columns={columns}
       />
     </>

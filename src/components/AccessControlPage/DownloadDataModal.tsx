@@ -141,15 +141,24 @@ const DownloadDataModal = ({
         {data && data.length > 0 && (
           <DataGrid
             sx={{ width: "100%" }}
-            rows={filteredData.map((value, index) => ({
+            rows={data.map((value, index) => ({
               id: index,
-              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+              timestampIn: new Date(value.timestampIn).toLocaleString("VET", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "long",
               }),
+              timestampOut: value.timestampOut
+                ? new Date(value.timestampOut).toLocaleString("VET", {
+                    hour12: false,
+                    dateStyle: "short",
+                    timeStyle: "long",
+                  })
+                : value.state === "Acceso denegado"
+                ? "Acceso denegado"
+                : "Salida no registrada",
               name: value.name,
-              state: value.state === 1 ? "Acceso concedido" : "Acceso denegado",
+              state: value.state,
               ci: value.ci,
               email: value.email,
               eCard: value.eCard,
