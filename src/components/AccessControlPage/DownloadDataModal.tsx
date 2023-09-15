@@ -51,7 +51,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = new Date(value.timestamp);
+        const timestamp = new Date(value.timestampIn);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -141,7 +141,7 @@ const DownloadDataModal = ({
         {data && data.length > 0 && (
           <DataGrid
             sx={{ width: "100%" }}
-            rows={data.map((value, index) => ({
+            rows={filteredData.map((value, index) => ({
               id: index,
               timestampIn: new Date(value.timestampIn).toLocaleString("VET", {
                 hour12: false,
@@ -196,7 +196,7 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
-        // printOptions={{ disableToolbarButton: true }}
+        printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,

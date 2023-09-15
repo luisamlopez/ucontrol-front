@@ -96,7 +96,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = dataPerRow.filter((value) => {
-        const timestamp = new Date(value.timestamp);
+        const timestamp = new Date(value.timestampIn);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -241,7 +241,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           <>
             <DataGrid
               sx={{ width: "100%" }}
-              rows={dataPerRow.map((value, index) => ({
+              rows={filteredData.map((value, index) => ({
                 id: index,
                 timestampIn: new Date(value.timestampIn).toLocaleString("VET", {
                   hour12: false,
