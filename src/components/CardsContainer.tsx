@@ -10,7 +10,7 @@ const CardsContainer = ({ children }: CardsContainerProps): JSX.Element => {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         {React.Children.map(children, (child, i) => (
-          <Grid item xs={8} md={6} margin={"0 auto"} key={i}>
+          <Grid item key={i}>
             {child}
           </Grid>
         ))}

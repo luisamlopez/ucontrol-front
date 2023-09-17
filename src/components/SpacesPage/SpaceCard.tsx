@@ -77,15 +77,12 @@ const SpaceCard = (space: Space): JSX.Element => {
           height: {
             xs: "380px",
             sm: "380px",
-            md: "440px",
-            lg: "440px",
+            md: "460px",
+            lg: "460px",
           },
           p: 1,
-          width: "100%",
-          maxWidth: "300px",
+          width: "350px",
           m: " 0 auto",
-          mb: 2,
-          marginInline: 1,
         }}
       >
         <CardContent

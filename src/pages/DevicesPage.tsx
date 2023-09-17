@@ -102,26 +102,26 @@ const DevicesPage = (): JSX.Element => {
                 No hay dispositivos registrados en tu cuenta, agrega uno.
               </Typography>
             ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <CardsContainer>
-                  {allDevices.map(
-                    (device) => (
-                      // device.name
-                      //   .toLowerCase()
-                      //   .includes(searchValue.toLowerCase()) ? (
-                      <DeviceCard key={device._id} {...device} />
-                    )
-                    // ) : null
-                  )}
-                </CardsContainer>
-              </Box>
+              // <Box
+              //   sx={{
+              //     display: "flex",
+              //     alignItems: "center",
+              //     justifyContent: "center",
+              //     flexDirection: "column",
+              //   }}
+              // >
+              <CardsContainer>
+                {allDevices.map(
+                  (device) => (
+                    // device.name
+                    //   .toLowerCase()
+                    //   .includes(searchValue.toLowerCase()) ? (
+                    <DeviceCard key={device._id} {...device} />
+                  )
+                  // ) : null
+                )}
+              </CardsContainer>
+              //  </Box>
             )}
           </Box>
         </Container>

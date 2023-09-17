@@ -20,6 +20,7 @@ export interface Device {
   }[];
   conditions?: {
     listenerDevice?: string;
+    secondTopic?: string;
     condition?: string;
     conditionValue?: string;
     secondConditionValue?: string;
