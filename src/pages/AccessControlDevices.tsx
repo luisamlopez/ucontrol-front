@@ -1,40 +1,17 @@
-import {
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-  IconButton,
-} from "@mui/material";
+import { Box, Container, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device, getAllDevicesBySpace } from "../api/Device";
 import { Sidebar } from "../components/Sidebar";
-import { useNavigate, useParams } from "react-router-dom";
-import { useUser } from "../contexts/authContext";
-import { Space, getSpaceById } from "../api/Space";
+import { useParams } from "react-router-dom";
 import CADeviceCard from "../components/AccessControlPage/ACDevice";
 import ACCMobileDevice from "../components/AccessControlPage/ACCMobileDevice";
-import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 
 const AccessControlDevices = (): JSX.Element => {
   const [allDevices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  const [space, setSpace] = useState<Space>();
-  const { user } = useUser();
   const spaceId = useParams<{ spaceId: string }>().spaceId;
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        await getSpaceById(spaceId!, (space) => {
-          setSpace(space);
-        });
-      } catch (error) {}
-    };
-
-    fetch();
-  }, [spaceId]);
 
   useEffect(() => {
     const fetch = async () => {

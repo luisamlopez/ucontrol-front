@@ -15,6 +15,7 @@ export interface Space {
   }[];
   parentSpace?: string;
   subSpaces?: string[];
+  status?: any;
 }
 
 export const createSpace = async (spaceData: Space, userId: string) => {

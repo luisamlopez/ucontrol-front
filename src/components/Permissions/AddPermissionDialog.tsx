@@ -43,7 +43,7 @@ const PermissionValidationSchema = yup.object().shape({
   email: yup.string().required("Ingrese el correo por favor"),
 
   spaceId: yup.string().required("Seleccione el espacio por favor"),
-  permission: yup.string().required("Seleccione el tipo de permiso por favor"),
+  //permission: yup.string().required("Seleccione el tipo de permiso por favor"),
 });
 
 const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
@@ -58,7 +58,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
         console.log(allSpaces);
       });
     } catch (error) {}
-  }, []);
+  }, [user?._id]);
 
   const onSubmit = async (
     { email, spaceId, permission }: PermissionValues,
@@ -68,7 +68,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
       return enqueueSnackbar("Seleccione un espacio", { variant: "error" });
     } else {
       setSubmitting(true);
-      const response = await createPermission(spaceId, permission, email);
+      const response = await createPermission(spaceId, "readWrite", email);
       if (response?.success) {
         setSubmitting(false);
         enqueueSnackbar(response?.message, {
@@ -123,8 +123,6 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                m: 2,
-                p: 2,
                 gap: "10pt",
                 placeSelf: "center",
                 width: "330px",
@@ -136,7 +134,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                 type="email"
                 label="Email"
                 required
-                sx={{ width: "290px", m: 0 }}
+                sx={{ width: "280px", m: 0 }}
               />
 
               <Field
@@ -144,7 +142,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                 component={TextField}
                 label="Espacio"
                 name="spaceId"
-                sx={{ width: "290px", m: 0 }}
+                sx={{ width: "280px", m: 0 }}
               >
                 {spaces.map((space) => {
                   return (
@@ -154,11 +152,11 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                   );
                 })}
               </Field>
-              <FormControl
+              {/* <FormControl
                 sx={{
                   marginTop: "10pt",
                   marginBottom: "10pt",
-                  width: "290px",
+                  width: "280px",
                 }}
               >
                 <FormLabel id="permission">Tipo de permiso</FormLabel>
@@ -179,7 +177,7 @@ const AddPermissionDialog = ({ closeDialog, isOpen }: DialogProps) => {
                     label="Edición"
                   />
                 </Field>
-              </FormControl>
+              </FormControl> */}
             </DialogContent>
             <DialogActions>
               <Button color="error" onClick={() => closeDialog()}>

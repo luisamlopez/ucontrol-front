@@ -16,15 +16,10 @@ import { useSnackbar } from "notistack";
 
 const AccessControlCard = (space: Space): JSX.Element => {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [devicesLoaded, setDevicesLoaded] = useState(false);
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   // Verifica y convierte la propiedad 'createdOn' a tipo Date
-  let modifiedSpace = { ...space }; // Crea un nuevo objeto a partir del objeto original
-  if (modifiedSpace.createdOn && !(modifiedSpace.createdOn instanceof Date)) {
-    modifiedSpace.createdOn = new Date(modifiedSpace.createdOn);
-  }
 
   useEffect(() => {
     if (space.devices && space.devices.length > 0) {
@@ -36,7 +31,6 @@ const AccessControlCard = (space: Space): JSX.Element => {
           });
         }
         setDevices(dev);
-        setDevicesLoaded(true);
       } catch (error) {
         console.log(error);
       }
@@ -60,6 +54,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
       const response = await updateStatusSpace(devices[0]._id!, true);
       if (response) {
         enqueueSnackbar("Espacio activado", { variant: "success" });
+        window.location.reload();
       } else {
         enqueueSnackbar(
           "Error al activar el espacio, este ya se encuentra activo",
@@ -74,6 +69,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
       const response = await updateStatusSpace(devices[0]._id!, false);
       if (response) {
         enqueueSnackbar("Espacio desactivado", { variant: "success" });
+        window.location.reload();
       } else {
         enqueueSnackbar(
           "Error al desactivar el espacio, este ya se encuentra desactivo",
@@ -181,6 +177,19 @@ const AccessControlCard = (space: Space): JSX.Element => {
                 </Typography>
               </Button>
             </Box>
+          </Box>
+
+          <Box
+            sx={{
+              minHeight: "auto",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "wrap",
+              wordBreak: "break-word",
+              minWidth: "100%",
+            }}
+          >
+            <DevicesDetailsText title="Estado" value={space.status} />
           </Box>
 
           {space.description && (
