@@ -22,6 +22,7 @@ import AddPermissionDialog from "../components/Permissions/AddPermissionDialog";
 import PermissionsTable from "../components/Permissions/PermissionsTable";
 import { Permission, PermissionInfo } from "../api/Permissions";
 import { getUserPermissions } from "../api/Permissions";
+import PermissionsMobile from "../components/Permissions/PermissionsMobile";
 
 interface ChangePaswordFormValues {
   oldPassword: string;
@@ -291,7 +292,14 @@ const SettingsPage = (): JSX.Element => {
               Crear permiso
             </Button>
 
-            <PermissionsTable data={data} />
+            {windowWidth > 960 && <PermissionsTable data={data} />}
+            {windowWidth <= 960 && (
+              <>
+                {data.map((d) => (
+                  <PermissionsMobile data={d} key={d.id} />
+                ))}
+              </>
+            )}
             <AddPermissionDialog
               closeDialog={() => {
                 setIsOpen(false);

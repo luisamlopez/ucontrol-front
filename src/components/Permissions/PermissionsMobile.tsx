@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   IconButton,
   Table,
@@ -6,17 +9,31 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { PermissionInfo, deletePermission } from "../../api/Permissions";
-import { DeleteRounded, EditRounded } from "@mui/icons-material";
+import {
+  DeleteRounded,
+  EditRounded,
+  KeyboardArrowDownRounded,
+} from "@mui/icons-material";
 import { useSnackbar } from "notistack";
+import { useState } from "react";
+import { Device } from "../../api/Device";
 
 interface PermissionsMobileProps {
-  data: PermissionInfo[];
+  data: PermissionInfo;
 }
 
 const PermissionsMobile = ({ data }: PermissionsMobileProps): JSX.Element => {
   const { enqueueSnackbar } = useSnackbar();
+
+  const [expanded, setExpanded] = useState<string | false>(false);
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
 
   const handleDelete = async (id: string) => {
     try {
@@ -32,55 +49,91 @@ const PermissionsMobile = ({ data }: PermissionsMobileProps): JSX.Element => {
   };
 
   const handleEdit = async (id: string) => {};
-  return (
-    <Box
-      sx={{
-        width: "100%",
-      }}
-    >
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Nombre</TableCell>
-            <TableCell>Correo</TableCell>
-            <TableCell>Espacio</TableCell>
-            <TableCell>Permiso</TableCell>
-            <TableCell>Acciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.userName}</TableCell>
-              <TableCell>{row.userEmail}</TableCell>
-              <TableCell>{row.spaceName}</TableCell>
-              <TableCell>
-                {row.type === "readWrite" ? "Lectura y Escritura" : "Escritura"}
-              </TableCell>
-              <TableCell>
-                <IconButton
-                  color="error"
-                  onClick={() => {
-                    handleDelete(row.id);
-                  }}
-                >
-                  <DeleteRounded />
-                </IconButton>
 
-                <IconButton
-                  color="secondary"
-                  onClick={() => {
-                    handleEdit(row.id);
-                  }}
-                >
-                  <EditRounded />
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Box>
+  return (
+    <>
+      <Accordion
+        expanded={expanded === data.id}
+        onChange={handleChange(data.id!)}
+        sx={{ mr: 1 }}
+      >
+        <AccordionSummary
+          expandIcon={<KeyboardArrowDownRounded />}
+          id={`${data.id}-header`}
+        >
+          <Typography
+            sx={{
+              width: "33%",
+              flexShrink: 0,
+              color: "primary.main",
+              fontWeight: "bold",
+            }}
+          >
+            Usuario: {data.userName}
+          </Typography>
+
+          <Typography
+            sx={{
+              width: "33%",
+              flexShrink: 0,
+              color: "primary.main",
+              fontWeight: "bold",
+            }}
+          >
+            Espacio: {data.spaceName}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "left",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                width: "33%",
+                flexShrink: 0,
+                color: "primary.main",
+                fontWeight: "bold",
+              }}
+            >
+              Correo: {data.userEmail}
+            </Typography>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "end",
+                justifyContent: "flex-end",
+                gap: 2,
+              }}
+            >
+              <IconButton
+                color="error"
+                onClick={() => {
+                  handleDelete(data.id);
+                }}
+              >
+                <DeleteRounded />
+              </IconButton>
+              {/* <IconButton
+              color="secondary"
+              onClick={() => {
+                handleEdit(data.id);
+              }}
+            >
+              <EditRounded />
+            </IconButton> */}
+            </Box>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+    </>
   );
 };
 

@@ -144,9 +144,7 @@ function DeviceDetails(device: Device) {
 
 function SpaceDetails(space: Space) {
   const [expanded, setExpanded] = useState<string | false>(false);
-  // const formattedUpdatedOn = space.history![space.history!.length - 1].updatedOn
-  //   ? format(space.history![space.history!.length - 1].updatedOn, "dd/MM/yyyy")
-  //   : formattedCreatedOn;
+
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);

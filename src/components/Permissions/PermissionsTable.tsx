@@ -67,14 +67,14 @@ const PermissionsTable = ({ data }: PermissionsTableProps): JSX.Element => {
                   <DeleteRounded />
                 </IconButton>
 
-                <IconButton
+                {/* <IconButton
                   color="secondary"
                   onClick={() => {
                     handleEdit(row.id);
                   }}
                 >
                   <EditRounded />
-                </IconButton>
+                </IconButton> */}
               </TableCell>
             </TableRow>
           ))}
