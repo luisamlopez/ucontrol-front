@@ -16,6 +16,18 @@ export interface Space {
   parentSpace?: string;
   subSpaces?: string[];
   status?: any;
+  deviceId?: string;
+}
+
+export interface ACSpace {
+  _id?: string;
+  deviceId?: string;
+  topic?: string;
+  name: string;
+  description?: string;
+  status?: boolean;
+  createdBy: string;
+  createdOn?: Date;
 }
 
 export const createSpace = async (spaceData: Space, userId: string) => {
@@ -191,5 +203,28 @@ export const updateStatusSpace = async (spaceId: string, status: boolean) => {
     }
   } catch (error) {
     return false;
+  }
+};
+
+export const getAccessControlSpace = async (
+  spaceId: string,
+  callback: (space: Space) => void
+) => {
+  try {
+    const response = await fetch(`${url}getAccessControlSpace/${spaceId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    } else {
+      const data = await response.json();
+      //   console.log(data.data);
+
+      callback(data.data);
+    }
+  } catch (error) {
+    console.log(error);
   }
 };

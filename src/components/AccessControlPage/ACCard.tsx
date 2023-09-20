@@ -1,4 +1,9 @@
-import { Space, updateStatusSpace } from "../../api/Space";
+import {
+  ACSpace,
+  Space,
+  getAccessControlSpace,
+  updateStatusSpace,
+} from "../../api/Space";
 import {
   Box,
   Button,
@@ -15,7 +20,7 @@ import { User, getUserById } from "../../api/User";
 import { useSnackbar } from "notistack";
 
 const AccessControlCard = (space: Space): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<ACSpace>();
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -24,13 +29,11 @@ const AccessControlCard = (space: Space): JSX.Element => {
   useEffect(() => {
     if (space.devices && space.devices.length > 0) {
       try {
-        const dev: Device[] = [];
         for (let i = 0; i < space.devices.length; i++) {
-          getDeviceById(space.devices[i], (device) => {
-            if (device.type === "controlAcceso") dev.push(device);
+          getAccessControlSpace(space.devices[i], (dev) => {
+            setDevices(dev);
           });
         }
-        setDevices(dev);
       } catch (error) {
         console.log(error);
       }
@@ -51,7 +54,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
 
   const handleActivate = async () => {
     try {
-      const response = await updateStatusSpace(devices[0]._id!, true);
+      const response = await updateStatusSpace(devices?.deviceId!, true);
       if (response) {
         enqueueSnackbar("Espacio activado", { variant: "success" });
         window.location.reload();
@@ -66,7 +69,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
 
   const handleDeactivate = async () => {
     try {
-      const response = await updateStatusSpace(devices[0]._id!, false);
+      const response = await updateStatusSpace(devices?.deviceId!, false);
       if (response) {
         enqueueSnackbar("Espacio desactivado", { variant: "success" });
         window.location.reload();
@@ -189,36 +192,43 @@ const AccessControlCard = (space: Space): JSX.Element => {
               minWidth: "100%",
             }}
           >
-            <DevicesDetailsText title="Estado" value={space.status} />
+            <DevicesDetailsText
+              title="Estado"
+              value={devices?.status ? "Activo" : "Inactivo"}
+            />
+
+            {/* <Typography fontWeight={"bold"} color={"primary.main"}>
+              Estado: {devices.status ? "Activo" : "Inactivo"}
+            </Typography> */}
+
+            {devices?.description && (
+              <Box
+                sx={{
+                  minHeight: "auto",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "wrap",
+                  wordBreak: "break-word",
+                  minWidth: "100%",
+                }}
+              >
+                <DevicesDetailsText
+                  title="Descripción"
+                  value={devices.description!}
+                />
+              </Box>
+            )}
+
+            <DevicesDetailsText
+              title="Creado el"
+              value={new Date(devices?.createdOn!).toLocaleString("VET", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
+            />
+            <DevicesDetailsText title="Creado por" value={user?.name!} />
           </Box>
-
-          {space.description && (
-            <Box
-              sx={{
-                minHeight: "auto",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "wrap",
-                wordBreak: "break-word",
-                minWidth: "100%",
-              }}
-            >
-              <DevicesDetailsText
-                title="Descripción"
-                value={space.description!}
-              />
-            </Box>
-          )}
-
-          <DevicesDetailsText
-            title="Creado el"
-            value={new Date(space.createdOn!).toLocaleString("VET", {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            })}
-          />
-          <DevicesDetailsText title="Creado por" value={user?.name!} />
         </CardContent>
         <CardActions
           sx={{
@@ -227,7 +237,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
         >
           <Button
             onClick={() => {
-              navigate(`/controlAccess/${space._id}`);
+              navigate(`/controlAccess/${devices?._id}`);
             }}
           >
             <Typography fontSize={18} color={"primary.main"} fontWeight="bold">

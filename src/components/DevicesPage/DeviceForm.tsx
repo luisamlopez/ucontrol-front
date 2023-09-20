@@ -57,6 +57,7 @@ interface FormValues {
   type: string;
   cons?: {
     listenerDevice?: string;
+    secondTopic?: string;
     cond?: Options;
     condValue?: Options;
     condValueTemp?: Options;
@@ -76,10 +77,12 @@ const initialValues = {
   type: "",
   cons: {
     listenerDevice: "",
+    secondTopic: "",
     cond: {
       label: "",
       value: "",
     },
+
     condValue: {
       label: "",
       value: "",
@@ -240,6 +243,10 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
               ? listenerDevice?.topic + " / Temperatura"
               : values.listenerDevice
             : "",
+          secondTopic:
+            values.listenerDevice && listenerDevice?.type === "tempHum"
+              ? listenerDevice?.topic + " / Humedad"
+              : values.listenerDevice,
           condition: values.cons!.cond?.value!,
           conditionValue:
             values.cons!.cond?.value!.includes("1") ||
@@ -335,6 +342,10 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                 ? listenerDevice?.topic + " / Temperatura"
                 : values.listenerDevice
               : "",
+            secondTopic:
+              values.listenerDevice && listenerDevice?.type === "tempHum"
+                ? listenerDevice?.topic + " / Humedad"
+                : values.listenerDevice,
             condition: values.cons!.cond?.value!,
             conditionValue:
               values.cons!.cond?.value!.includes("1") ||
@@ -934,27 +945,25 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       </FieldArray>
                     </>
                   )}
-                  {props.deviceID &&
-                    deviceToEdit?.conditions &&
-                    listenerDevice && (
-                      <Typography>
-                        Este dispositivo tiene una condición asociada, escucha a{" "}
-                        {listenerDevice?.name} y cambia de estado cuando detecta{" "}
-                        {deviceToEdit?.conditions?.condition === "1" ||
-                        deviceToEdit?.conditions?.condition === "0"
-                          ? "o no presencia"
-                          : deviceToEdit?.conditions?.condition}{" "}
-                        {deviceToEdit?.conditions?.conditionValue
-                          ? deviceToEdit?.conditions?.conditionValue
-                          : ""}
-                        {listenerDevice.type === "tempHum"
-                          ? "°C"
-                          : listenerDevice.type === "hum"
-                          ? "%"
-                          : ""}
-                        .
-                      </Typography>
-                    )}
+                  {props.deviceID && deviceToEdit?.conditions && (
+                    <Typography>
+                      Este dispositivo tiene una condición asociada
+                      {/* {listenerDevice?.name} y cambia de estado cuando detecta{" "}
+                      {deviceToEdit?.conditions?.condition === "1" ||
+                      deviceToEdit?.conditions?.condition === "0"
+                        ? "o no presencia"
+                        : deviceToEdit?.conditions?.condition}{" "}
+                      {deviceToEdit?.conditions?.conditionValue
+                        ? deviceToEdit?.conditions?.conditionValue
+                        : ""}
+                      {listenerDevice.type === "tempHum"
+                        ? "°C"
+                        : listenerDevice.type === "hum"
+                        ? "%"
+                        : ""} */}
+                      .
+                    </Typography>
+                  )}
                   {(deviceType === "luz" || deviceType === "aire") && (
                     <Field
                       component={RadioGroup}
