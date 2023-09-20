@@ -78,13 +78,7 @@ const DeviceCard = (device: Device): JSX.Element => {
             lg: "460px",
           },
           p: 1,
-          width: "100%",
-          maxWidth: {
-            lg: "550px",
-            md: "500px",
-            sm: "300px",
-            xs: "300px",
-          },
+          width: "350px",
           m: " 0 auto",
         }}
       >

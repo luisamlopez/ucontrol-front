@@ -1,4 +1,9 @@
-import { Space } from "../../api/Space";
+import {
+  ACSpace,
+  Space,
+  getAccessControlSpace,
+  updateStatusSpace,
+} from "../../api/Space";
 import {
   Box,
   Button,
@@ -10,49 +15,67 @@ import {
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Device, getDeviceById } from "../../api/Device";
 import { User, getUserById } from "../../api/User";
+import { useSnackbar } from "notistack";
 
-const AccessControlCard = (space: Space): JSX.Element => {
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [devicesLoaded, setDevicesLoaded] = useState(false);
+const ACCard = (space: Space): JSX.Element => {
+  const [devices, setDevices] = useState<ACSpace>();
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   // Verifica y convierte la propiedad 'createdOn' a tipo Date
-  let modifiedSpace = { ...space }; // Crea un nuevo objeto a partir del objeto original
-  if (modifiedSpace.createdOn && !(modifiedSpace.createdOn instanceof Date)) {
-    modifiedSpace.createdOn = new Date(modifiedSpace.createdOn);
-  }
-
-  useEffect(() => {
-    if (space.devices && space.devices.length > 0) {
-      try {
-        const dev: Device[] = [];
-        for (let i = 0; i < space.devices.length; i++) {
-          getDeviceById(space.devices[i], (device) => {
-            dev.push(device);
-          });
-        }
-        setDevices(dev);
-        setDevicesLoaded(true);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [space.devices]);
 
   useEffect(() => {
     const fetch = async () => {
-      try {
-        await getUserById(space.createdBy, (user) => {
-          setUser(user);
-        });
-        space.createdBy = user?.name!;
-      } catch (error) {}
+      if (space.devices && space.devices.length > 0) {
+        try {
+          for (let i = 0; i < space.devices.length; i++) {
+            await getAccessControlSpace(space.devices[i], (dev) => {
+              setDevices(dev);
+            });
+          }
+          await getUserById(space.createdBy, (user) => {
+            setUser(user);
+          });
+          space.createdBy = user?.name!;
+        } catch (error) {
+          console.log(error);
+        }
+      }
     };
-    fetch();
-  }, [space, space.createdBy, user?.name]);
 
+    fetch();
+  }, [space, space.devices, user?.name]);
+
+  const handleActivate = async () => {
+    try {
+      const response = await updateStatusSpace(devices?.deviceId!, true);
+      if (response) {
+        enqueueSnackbar("Espacio activado", { variant: "success" });
+        window.location.reload();
+      } else {
+        enqueueSnackbar(
+          "Error al activar el espacio, este ya se encuentra activo",
+          { variant: "error" }
+        );
+      }
+    } catch (error) {}
+  };
+
+  const handleDeactivate = async () => {
+    try {
+      const response = await updateStatusSpace(devices?.deviceId!, false);
+      if (response) {
+        enqueueSnackbar("Espacio desactivado", { variant: "success" });
+        window.location.reload();
+      } else {
+        enqueueSnackbar(
+          "Error al desactivar el espacio, este ya se encuentra desactivo",
+          { variant: "error" }
+        );
+      }
+    } catch (error) {}
+  };
   return (
     <>
       <Card
@@ -125,12 +148,13 @@ const AccessControlCard = (space: Space): JSX.Element => {
                 width: "100%",
                 alignItems: "center",
                 justifyContent: "space-between",
+                gap: "5px",
               }}
             >
               <Button
                 fullWidth
                 onClick={() => {
-                  alert("Activar acceso al espacio");
+                  handleActivate();
                 }}
                 variant="contained"
               >
@@ -140,9 +164,10 @@ const AccessControlCard = (space: Space): JSX.Element => {
               </Button>
 
               <Button
+                variant="outlined"
                 fullWidth
                 onClick={() => {
-                  alert("Desactivar acceso al espacio");
+                  handleDeactivate();
                 }}
               >
                 <Typography textTransform={"none"}>
@@ -152,57 +177,53 @@ const AccessControlCard = (space: Space): JSX.Element => {
             </Box>
           </Box>
 
-          {space.description && (
-            <Box
-              sx={{
-                minHeight: "auto",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "wrap",
-                wordBreak: "break-word",
-                minWidth: "100%",
-              }}
-            >
-              <DevicesDetailsText
-                title="Descripción"
-                value={space.description!}
-              />
-            </Box>
-          )}
+          <Box
+            sx={{
+              minHeight: "auto",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "wrap",
+              wordBreak: "break-word",
+              minWidth: "100%",
+            }}
+          >
+            <DevicesDetailsText
+              title="Estado"
+              value={devices?.status ? "Activo" : "Inactivo"}
+            />
 
-          {devicesLoaded && (
-            <Box
-              sx={{
-                minHeight: "auto",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "wrap",
-                wordBreak: "break-word",
-                minWidth: "100%",
-              }}
-            >
-              <Typography textAlign={"left"} fontWeight="bold" color={"black"}>
-                Dispositivos:
-              </Typography>
-              <Box textAlign={"left"} color={"black"}>
-                <ul>
-                  {devices.map((device) => (
-                    <li key={device._id}>{device.name}</li>
-                  ))}
-                </ul>
+            {/* <Typography fontWeight={"bold"} color={"primary.main"}>
+              Estado: {devices.status ? "Activo" : "Inactivo"}
+            </Typography> */}
+
+            {devices?.description && (
+              <Box
+                sx={{
+                  minHeight: "auto",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "wrap",
+                  wordBreak: "break-word",
+                  minWidth: "100%",
+                }}
+              >
+                <DevicesDetailsText
+                  title="Descripción"
+                  value={devices.description!}
+                />
               </Box>
-            </Box>
-          )}
+            )}
 
-          <DevicesDetailsText
-            title="Creado el"
-            value={new Date(space.createdOn!).toLocaleString("es-VE", {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "short",
-            })}
-          />
-          <DevicesDetailsText title="Creado por" value={user?.name!} />
+            <DevicesDetailsText
+              title="Creado el"
+              value={new Date(devices?.createdOn!).toLocaleString("VET", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
+            />
+            <DevicesDetailsText title="Creado por" value={user?.name!} />
+          </Box>
         </CardContent>
         <CardActions
           sx={{
@@ -210,9 +231,8 @@ const AccessControlCard = (space: Space): JSX.Element => {
           }}
         >
           <Button
-            variant="outlined"
             onClick={() => {
-              navigate(`/controlAccess/${space._id}`);
+              navigate(`/controlAccess/${devices?.deviceId!}`);
             }}
           >
             <Typography fontSize={18} color={"primary.main"} fontWeight="bold">
@@ -225,4 +245,4 @@ const AccessControlCard = (space: Space): JSX.Element => {
   );
 };
 
-export default AccessControlCard;
+export default ACCard;

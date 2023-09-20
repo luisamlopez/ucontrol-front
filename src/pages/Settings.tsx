@@ -22,6 +22,7 @@ import AddPermissionDialog from "../components/Permissions/AddPermissionDialog";
 import PermissionsTable from "../components/Permissions/PermissionsTable";
 import { Permission, PermissionInfo } from "../api/Permissions";
 import { getUserPermissions } from "../api/Permissions";
+import PermissionsMobile from "../components/Permissions/PermissionsMobile";
 
 interface ChangePaswordFormValues {
   oldPassword: string;
@@ -38,6 +39,7 @@ const SettingsPage = (): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [data, setData] = useState<PermissionInfo[]>([]);
+  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
 
   const changePasswordInitialValues = {
     oldPassword: "",
@@ -117,6 +119,20 @@ const SettingsPage = (): JSX.Element => {
     };
     fetch();
   }, [user]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    // Add event listener for window resize
+    window.addEventListener("resize", handleResize);
+
+    // Clean up event listener on unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <Box display="flex" alignItems="center" justifyContent="left">
@@ -276,7 +292,14 @@ const SettingsPage = (): JSX.Element => {
               Crear permiso
             </Button>
 
-            <PermissionsTable data={data} />
+            {windowWidth > 960 && <PermissionsTable data={data} />}
+            {windowWidth <= 960 && (
+              <>
+                {data.map((d) => (
+                  <PermissionsMobile data={d} key={d.id} />
+                ))}
+              </>
+            )}
             <AddPermissionDialog
               closeDialog={() => {
                 setIsOpen(false);

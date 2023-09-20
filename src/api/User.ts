@@ -23,7 +23,7 @@ export const signIn = async (logData: Log) => {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -49,7 +49,7 @@ export const sendCode = async (email: string) => {
       const error = await response.json();
       console.log("pato");
       console.log(error);
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -75,7 +75,7 @@ export const signUp = async (signUpData: Log) => {
       const error = await response.json();
 
       console.log(error);
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -100,7 +100,7 @@ export const getUserById = async (
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();

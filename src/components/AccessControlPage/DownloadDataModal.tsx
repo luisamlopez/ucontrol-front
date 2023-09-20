@@ -51,7 +51,7 @@ const DownloadDataModal = ({
   useEffect(() => {
     if (startDate && endDate) {
       const filtered = data.filter((value) => {
-        const timestamp = new Date(value.timestamp);
+        const timestamp = new Date(value.timestampIn);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
@@ -143,13 +143,22 @@ const DownloadDataModal = ({
             sx={{ width: "100%" }}
             rows={filteredData.map((value, index) => ({
               id: index,
-              timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+              timestampIn: new Date(value.timestampIn).toLocaleString("VET", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "long",
               }),
+              timestampOut: value.timestampOut
+                ? new Date(value.timestampOut).toLocaleString("VET", {
+                    hour12: false,
+                    dateStyle: "short",
+                    timeStyle: "long",
+                  })
+                : value.state === "Acceso denegado"
+                ? "Acceso denegado"
+                : "Salida no registrada",
               name: value.name,
-              state: value.state === 1 ? "Acceso concedido" : "Acceso denegado",
+              state: value.state,
               ci: value.ci,
               email: value.email,
               eCard: value.eCard,
@@ -187,7 +196,7 @@ function CustomToolbar({
   return (
     <GridToolbarContainer>
       <GridToolbarExport
-        // printOptions={{ disableToolbarButton: true }}
+        printOptions={{ disableToolbarButton: true }}
         csvOptions={{
           fileName: `Datos desde ${startDate.toLocaleString("es-VE", {
             hour12: false,

@@ -20,8 +20,11 @@ export interface Device {
   }[];
   conditions?: {
     listenerDevice?: string;
+    secondTopic?: string;
     condition?: string;
     conditionValue?: string;
+    secondConditionValue?: string;
+    instruction?: string;
   };
   topic: string;
   /**
@@ -118,10 +121,10 @@ export const getAllDevicesBySpace = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ spaceId }), // Send spaceId in the request body
     });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+    // if (!response.ok) {
+    //   const error = await response.json();
+    //   console.log(error.message);
+    // }
 
     const data = await response.json();
 
@@ -146,10 +149,10 @@ export const getDeviceById = async (
 
       callback(data.data);
     }
-    if (!response.ok) {
-      const error = await response.json();
-      console.log(deviceId);
-    }
+    // if (!response.ok) {
+    //   const error = await response.json();
+    //   console.log(error);
+    // }
   } catch (error) {}
 };
 
@@ -165,7 +168,7 @@ export const getAllDevicesByUser = async (
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -241,7 +244,20 @@ export const getSpaceFromDeviceId = async (
     }
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
   } catch (error) {}
+};
+
+export const sendInstruction = async (topic: string, instruction: string) => {
+  try {
+    const response = await fetch(`${url}sendInstruction`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic: topic, instruction: instruction }),
+    });
+    if (response.ok) return true;
+  } catch (error) {
+    console.log(error);
+  }
 };

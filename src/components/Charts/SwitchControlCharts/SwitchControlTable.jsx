@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import DownloadDataModal from "./DownloadDataModal";
 import { InfluxDB } from "@influxdata/influxdb-client";
 import { orgInflux, tokenInflux, urlInflux } from "../../../api/url";
+import { sendInstruction } from "../../../api/Device";
 
 const token = tokenInflux;
 const org = orgInflux;
@@ -29,11 +30,28 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(
+    data[0] && data[0].data[data[0].data.length - 1].y === 1
+  );
 
-  const handleChange = (event) => {
-    setChecked(event.target.checked);
+  const handleChange = async (event) => {
+    try {
+      const response = await sendInstruction(
+        topic,
+        event.target.checked ? "1" : "0"
+      );
+      if (response) {
+        // setLoading(true);
+        // setTimeout(() => {
+        //   setChecked(!event.target.checked);
+        //   setLoading(false);
+        // }, 40000);
+
+        setChecked(!event.target.checked);
+      }
+    } catch (error) {}
   };
 
   const handleCloseModal = () => {
@@ -106,7 +124,7 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
       try {
         influxQuery();
       } catch (error) {}
-    }, 60000);
+    }, 20000);
     return () => clearInterval(interval);
   }, [query, data]);
 
@@ -134,10 +152,19 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
               <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
                 OFF
               </Typography>
-              <Switch checked={checked} onChange={handleChange} />
+              <Switch
+                checked={checked}
+                onChange={handleChange}
+                content="Control del estado del dispositivo"
+              />
               <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
                 ON
               </Typography>
+              {/* <Typography>
+                {data[0] && data[0].data[data[0].data.length - 1].y === 1
+                  ? "encendido"
+                  : "apagado"}
+              </Typography> */}
             </Box>
           </>
         )}

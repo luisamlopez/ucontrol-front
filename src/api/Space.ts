@@ -15,6 +15,19 @@ export interface Space {
   }[];
   parentSpace?: string;
   subSpaces?: string[];
+  status?: any;
+  deviceId?: string;
+}
+
+export interface ACSpace {
+  _id?: string;
+  deviceId?: string;
+  topic?: string;
+  name: string;
+  description?: string;
+  status?: boolean;
+  createdBy: string;
+  createdOn?: Date;
 }
 
 export const createSpace = async (spaceData: Space, userId: string) => {
@@ -57,7 +70,7 @@ export const getParentSpaces = async (
     //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const spaces = await response.json();
@@ -79,7 +92,7 @@ export const getSpaces = async (
     //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const spaces = await response.json();
@@ -127,7 +140,7 @@ export const getSpaceById = async (
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -163,12 +176,54 @@ export const getACSpaces = async (
     //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const spaces = await response.json();
     console.log(spaces.data);
     callback(spaces.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateStatusSpace = async (spaceId: string, status: boolean) => {
+  try {
+    const response = await fetch(`${url}changeStatusSpace/${spaceId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        status: status,
+      }),
+    });
+    console.log(response);
+    if (response.ok) return true;
+    if (!response.ok) {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+};
+
+export const getAccessControlSpace = async (
+  spaceId: string,
+  callback: (space: Space) => void
+) => {
+  try {
+    const response = await fetch(`${url}getAccessControlSpace/${spaceId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      console.log(error.message);
+    } else {
+      const data = await response.json();
+      //   console.log(data.data);
+
+      callback(data.data);
+    }
   } catch (error) {
     console.log(error);
   }

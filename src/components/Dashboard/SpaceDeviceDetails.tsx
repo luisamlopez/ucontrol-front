@@ -122,55 +122,71 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
       }}
     >
       {devices.map((device, index) => (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            backgroundColor: "#ECEEEF",
-            borderRadius: "8px",
-            p: 1,
-            mb: 1,
-          }}
-          key={index}
-        >
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+        <>
+          {device.type === "controlAcceso" && (
             <Typography
               fontWeight={"bold"}
               textAlign={"left"}
-              fontSize={{ xs: 14, sm: 18, lg: 18 }}
+              color={"primary.main"}
+              mb={2}
             >
-              {device.name}
+              Por ser "{device.name}" un dispositivo de control de acceso, no se
+              muestra en este módulo, por favor diríjase a la sección de
+              "Control de Acceso" para ver sus valores.
             </Typography>
-          </Box>
+          )}
+          {device.type !== "controlAcceso" && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                backgroundColor: "#ECEEEF",
+                borderRadius: "8px",
+                p: 1,
+                mb: 1,
+              }}
+              key={index}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography
+                  fontWeight={"bold"}
+                  textAlign={"left"}
+                  fontSize={{ xs: 14, sm: 18, lg: 18 }}
+                >
+                  {device.name}
+                </Typography>
+              </Box>
 
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: {
-                xs: "column",
-                sm: "column",
-                md: "row",
-                lg: "row",
-              },
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Details device={device} />
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: {
+                    xs: "column",
+                    sm: "column",
+                    md: "row",
+                    lg: "row",
+                  },
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Details device={device} />
 
-            <Graph device={device} />
-          </Box>
-        </Box>
+                <Graph device={device} />
+              </Box>
+            </Box>
+          )}
+        </>
       ))}
     </Box>
   );

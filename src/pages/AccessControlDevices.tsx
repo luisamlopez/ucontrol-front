@@ -1,60 +1,33 @@
-import {
-  Box,
-  Container,
-  Typography,
-  CircularProgress,
-  IconButton,
-} from "@mui/material";
+import { Box, Container, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Device, getAllDevicesBySpace } from "../api/Device";
 import { Sidebar } from "../components/Sidebar";
-import { useNavigate, useParams } from "react-router-dom";
-import { useUser } from "../contexts/authContext";
-import { Space, getSpaceById } from "../api/Space";
+import { useParams } from "react-router-dom";
 import CADeviceCard from "../components/AccessControlPage/ACDevice";
 import ACCMobileDevice from "../components/AccessControlPage/ACCMobileDevice";
-import { KeyboardArrowLeftRounded } from "@mui/icons-material";
+import { ACSpace, getAccessControlSpace } from "../api/Space";
 
 const AccessControlDevices = (): JSX.Element => {
-  const [allDevices, setDevices] = useState<Device[]>([]);
+  const [device, setDevice] = useState<ACSpace>();
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  const [space, setSpace] = useState<Space>();
-  const { user } = useUser();
   const spaceId = useParams<{ spaceId: string }>().spaceId;
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getSpaceById(spaceId!, (space) => {
-          setSpace(space);
+        await getAccessControlSpace(spaceId!, (dev) => {
+          setDevice(dev);
         });
-      } catch (error) {}
-    };
-
-    fetch();
-  }, [spaceId]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        await getAllDevicesBySpace(spaceId!, (devices) => {
-          setDevices(
-            devices?.filter((device) => device.type === "controlAcceso")!
-          );
-          setLoading(false);
-          setDataLoaded(true);
-        });
-      } catch (error) {}
+        setLoading(false);
+        setDataLoaded(true);
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetch();
   }, [spaceId]);
-
-  useEffect(() => {
-    console.log(allDevices);
-  }, [allDevices]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -76,50 +49,6 @@ const AccessControlDevices = (): JSX.Element => {
         <Sidebar />
         <Container sx={{ m: 0, p: 0 }}>
           <Box display={"flex"} flexDirection="column">
-            <Box
-              display={"flex"}
-              flexDirection="row"
-              sx={{
-                p: 2,
-              }}
-            >
-              <IconButton
-                sx={{
-                  display: {
-                    lg: "none",
-                  },
-                  fontSize: "large",
-                  p: 0,
-                  mt: 0.5,
-                }}
-                onClick={() => navigate(-1)}
-              >
-                <KeyboardArrowLeftRounded
-                  fontSize="large"
-                  color="secondary"
-                  sx={{
-                    display: {
-                      lg: "none",
-                    },
-                  }}
-                />
-              </IconButton>
-              <Typography
-                color="primary"
-                textAlign="left"
-                fontSize={{ xs: 24, sm: 48, lg: 48 }}
-                fontWeight={600}
-                p={0}
-                mt={{ xs: 6, sm: 0, lg: 0 }}
-                mb={2}
-                sx={{
-                  wordWrap: "break-word",
-                }}
-              >
-                Dispositivos de control de acceso en {space?.name}
-              </Typography>
-            </Box>
-
             {loading ? (
               <Box
                 sx={{
@@ -151,20 +80,16 @@ const AccessControlDevices = (): JSX.Element => {
                   width: "100%",
                 }}
               >
-                {allDevices.map((device, i) => (
-                  <>
-                    {windowWidth < 600 && (
-                      <ACCMobileDevice key={i} device={device} />
-                    )}
+                {device && (
+                  <Box m={0}>
+                    {windowWidth < 600 && <ACCMobileDevice space={device} />}
                     {windowWidth >= 600 && windowWidth < 960 && (
-                      <ACCMobileDevice key={i} device={device} />
+                      <ACCMobileDevice space={device} />
                     )}
 
-                    {windowWidth >= 960 && (
-                      <CADeviceCard key={i} device={device} />
-                    )}
-                  </>
-                ))}
+                    {windowWidth >= 960 && <CADeviceCard space={device} />}
+                  </Box>
+                )}
               </Box>
             )}
           </Box>

@@ -1,12 +1,4 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Table,
-  TableBody,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useEffect, useState } from "react";
@@ -19,10 +11,17 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
+import {
+  getAccessControlSpaceUserHistory,
+  getAccessControlSpaceUsers,
+} from "../../api/AccessControlUser";
+import { ACSpace } from "../../api/Space";
 
 //Columns for the DataGrid are the user atributes
 const columns: any[] = [
-  { field: "timestamp", headerName: "Fecha", width: 20 },
+  { field: "timestampIn", headerName: "Entrada", width: 20 },
+  { field: "timestampOut", headerName: "Salida", width: 20 },
   { field: "name", headerName: "Nombre", width: 70 },
   { field: "state", headerName: "Acceso", width: 20 },
   { field: "ci", headerName: "Cédula", width: 50 },
@@ -31,60 +30,49 @@ const columns: any[] = [
   { field: "career", headerName: "Carrera", width: 20 },
 ];
 
-const CADeviceCard = (props: { device: Device }): JSX.Element => {
+const columnsOut: any[] = [
+  { field: "name", headerName: "Nombre", width: 70 },
+  { field: "ci", headerName: "Cédula", width: 50 },
+  { field: "email", headerName: "Correo", width: 20 },
+  { field: "eCard", headerName: "Código de carnet", width: 20 },
+  { field: "career", headerName: "Carrera", width: 20 },
+];
+
+const CADeviceCard = (space: { space: ACSpace }): JSX.Element => {
   const [user, setUser] = useState<User>();
+
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date(props.device.createdOn!)
+    new Date(space.space.createdOn!)
   );
-  const [endDate, setEndDate] = useState<Date | null>(new Date(Date.now()));
+  const [endDate, setEndDate] = useState<Date | null>(
+    new Date(Date.now() + 1000 * 60 * 60 * 24)
+  );
   const [data, setData] = useState<any[]>([]);
+  const [outData, setOutData] = useState<any[]>([]);
+  const [dataPerRow, setDataPerRow] = useState<any[]>([]);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = [
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "0",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-          {
-            timestamp: new Date("2023-09-10T00:00:00.000Z"),
-            name: "Juan Perez",
-            state: "1",
-            ci: "12345678",
-            email: "juan@mail.com",
-            eCard: "12345678",
-            career: "Ingenieria de Sistemas",
-          },
-        ];
-        setData(data);
+        await getAccessControlSpaceUserHistory(space.space.deviceId!, (d) => {
+          setData(d);
+        });
+      } catch (error) {}
+
+      try {
+        await getAccessControlSpaceUsers(space.space.deviceId!, (d) => {
+          setOutData(d);
+        });
       } catch (error) {}
     };
     fetch();
-  }, [props.device]);
+
+    const interval = setInterval(() => {
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [space.space.deviceId]);
+
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
   };
@@ -93,36 +81,82 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
     setEndDate(date);
   };
 
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState(dataPerRow);
 
   useEffect(() => {
     if (startDate && endDate) {
-      const filtered = data.filter((value) => {
-        const timestamp = new Date(value.timestamp);
+      const filtered = dataPerRow.filter((value) => {
+        const timestamp = new Date(value.timestampIn);
         return timestamp >= startDate && timestamp <= endDate;
       });
       setFilteredData(filtered);
     } else {
-      setFilteredData(data);
+      setFilteredData(dataPerRow);
     }
-  }, [startDate, endDate, data]);
+  }, [startDate, endDate, dataPerRow]);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getUserById(props.device.createdBy!, (user) => {
+        await getUserById(space.space.createdBy!, (user) => {
           setUser(user);
         });
       } catch (error) {}
     };
     fetch();
-  }, [props.device]);
+  }, [space.space]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let aux: any[] = [{}];
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].entered.length; j++) {
+          aux.push({
+            timestampIn: data[i].entered[j],
+            timestampOut: data[i].gotOut[j],
+            name: data[i].name,
+            email: data[i].email,
+            career: data[i].career,
+            eCard: data[i].eCard,
+            ci: data[i].ci,
+            state: data[i].state,
+          });
+        }
+        for (let j = 0; j < data[i].gotOut.length; j++) {
+          aux.push({
+            timestampIn: data[i].entered[j],
+            timestampOut: data[i].gotOut[j],
+            name: data[i].name,
+            email: data[i].email,
+            career: data[i].career,
+            eCard: data[i].eCard,
+            ci: data[i].ci,
+            state: data[i].state,
+          });
+        }
+        if (!aux[0].name) {
+          //delete aux[0];
+          aux.shift();
+        }
+        setDataPerRow(aux);
+      }
+    };
+    fetch();
+
+    const interval = setInterval(() => {
+      fetch();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [data]);
+
+  useEffect(() => {
+    console.log(dataPerRow);
+    console.log(outData);
+  }, [dataPerRow, outData]);
 
   return (
     <Box
       sx={{
-        backgroundColor: "#ECEEEF",
-        borderRadius: "8px",
         marginBottom: "10px",
         display: "flex",
         flexDirection: "column",
@@ -131,11 +165,29 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
         width: "100%",
       }}
     >
-      <DevicesDetailsText title="Nombre" value={props.device.name} />
+      <Box display={"flex"} flexDirection="row">
+        <Typography
+          color="primary"
+          textAlign="left"
+          fontSize={{ xs: 24, sm: 48, lg: 48 }}
+          fontWeight={600}
+          p={0}
+          mt={{ xs: 6, sm: 0, lg: 0 }}
+          mb={2}
+          ml={0}
+          sx={{
+            wordWrap: "break-word",
+          }}
+        >
+          Control de acceso controlado por "{space.space?.name}"
+        </Typography>
+      </Box>
+
+      <DevicesDetailsText title="Nombre" value={space.space.name} />
       <DevicesDetailsText title="Tipo" value={"Control de Acceso"} />
       <DevicesDetailsText
         title="Fecha de creación"
-        value={new Date(props.device.createdOn!).toLocaleString("es-VE", {
+        value={new Date(space.space.createdOn!).toLocaleString("es-VE", {
           hour12: false,
           dateStyle: "short",
           timeStyle: "short",
@@ -150,8 +202,6 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
           backgroundColor: "white",
           p: 1,
           mt: 1,
-          borderRadius: "4px",
-          height: "32rem",
         }}
       >
         <Box
@@ -177,20 +227,27 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             />
           </LocalizationProvider>
         </Box>
-        {data && data.length > 0 && (
+        {dataPerRow && dataPerRow.length > 0 && (
           <>
             <DataGrid
               sx={{ width: "100%" }}
               rows={filteredData.map((value, index) => ({
                 id: index,
-                timestamp: new Date(value.timestamp).toLocaleString("es-VE", {
+                timestampIn: new Date(value.timestampIn).toLocaleString("VET", {
                   hour12: false,
                   dateStyle: "short",
                   timeStyle: "long",
                 }),
+                timestampOut:
+                  !value.timestampOut || value.state === "Acceso denegado"
+                    ? ""
+                    : new Date(value.timestampOut).toLocaleString("VET", {
+                        hour12: false,
+                        dateStyle: "short",
+                        timeStyle: "long",
+                      }),
                 name: value.name,
-                state:
-                  value.state === 1 ? "Acceso concedido" : "Acceso denegado",
+                state: value.state,
                 ci: value.ci,
                 email: value.email,
                 eCard: value.eCard,
@@ -199,7 +256,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
               columns={columns.map((column) => ({
                 field: column.field,
                 headerName: column.headerName,
-                width: 150,
+                width: 132,
               }))}
               slots={{
                 toolbar: () => (
@@ -209,8 +266,35 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             />
           </>
         )}
-        {data && data.length === 0 && (
+        {dataPerRow && dataPerRow.length === 0 && (
           <Typography>No hay datos para mostrar</Typography>
+        )}
+        <Typography sx={{ my: 2, fontWeight: 600 }}>
+          Usuarios que se encuentran en el espacio
+        </Typography>
+        {outData && outData.length > 0 && (
+          <>
+            <DataGrid
+              sx={{ width: "100%" }}
+              rows={outData.map((value, index) => ({
+                id: index,
+                name: value.userName,
+                ci: value.userCi,
+                email: value.userEmail,
+                eCard: value.userECard,
+                career: value.userCareer,
+              }))}
+              columns={columnsOut.map((column) => ({
+                field: column.field,
+                headerName: column.headerName,
+                width: 200,
+              }))}
+              pageSizeOptions={[5, 10, 25]}
+            />
+          </>
+        )}
+        {outData && outData.length === 0 && (
+          <Typography>No hay usuarios dentro del espacio</Typography>
         )}
       </Box>
     </Box>

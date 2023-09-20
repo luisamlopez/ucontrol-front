@@ -48,9 +48,7 @@ const SpacePage = (): JSX.Element => {
     const fetch = async () => {
       try {
         await getAllDevicesBySpace(spaceID!, (devices) => {
-          setDevices(
-            devices?.filter((device) => device.type !== "controlAcceso")!
-          );
+          setDevices(devices!);
           setLoading(false);
           setDataLoaded(true);
         });

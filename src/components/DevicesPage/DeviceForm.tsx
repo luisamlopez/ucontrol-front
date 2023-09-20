@@ -57,9 +57,13 @@ interface FormValues {
   type: string;
   cons?: {
     listenerDevice?: string;
+    secondTopic?: string;
     cond?: Options;
     condValue?: Options;
+    condValueTemp?: Options;
+    // instruction?: Options;
   };
+  instruction?: Options;
   listenerDevice?: string;
 }
 
@@ -73,11 +77,21 @@ const initialValues = {
   type: "",
   cons: {
     listenerDevice: "",
+    secondTopic: "",
     cond: {
       label: "",
       value: "",
     },
+
     condValue: {
+      label: "",
+      value: "",
+    },
+    condValueTemp: {
+      label: "",
+      value: "",
+    },
+    instruction: {
       label: "",
       value: "",
     },
@@ -120,8 +134,14 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   const [deviceType, setDeviceType] = useState<String>();
   const [conditionsOptions, setConditionsOptions] = useState<Options[]>([]);
   const [condValueOptions, setCondValueOptions] = useState<Options[]>([]);
+  const [condValueHum, setCondValueHum] = useState<Options[]>([]);
   const [isNumeric, setIsNumeric] = useState<boolean>(false);
+  const [isTempHum, setIsTempHum] = useState<boolean>(false);
   const [listenerDevice, setListenerDevice] = useState<Device | undefined>();
+  const [instructionsOptions, setInstruction] = useState<Options[]>([
+    { label: "Encendido", value: "1" },
+    { label: "Apagado", value: "0" },
+  ]);
 
   useEffect(() => {
     switch (deviceType) {
@@ -154,6 +174,9 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     }
   }, [deviceType]);
 
+  useEffect(() => {
+    console.log(allDevices);
+  }, [allDevices]);
   /**
    * @description Get the information of a space given its id
    * @param id
@@ -215,13 +238,25 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     try {
       if (conditions) {
         const cons = {
-          listenerDevice: values.listenerDevice ? values.listenerDevice : "",
+          listenerDevice: values.listenerDevice
+            ? listenerDevice?.type === "tempHum"
+              ? listenerDevice?.topic + " / Temperatura"
+              : values.listenerDevice
+            : "",
+          secondTopic:
+            values.listenerDevice && listenerDevice?.type === "tempHum"
+              ? listenerDevice?.topic + " / Humedad"
+              : values.listenerDevice,
           condition: values.cons!.cond?.value!,
           conditionValue:
-            values.cons!.cond?.value!.includes("yes") ||
-            values.cons!.cond?.value!.includes("no")
+            values.cons!.cond?.value!.includes("1") ||
+            values.cons!.cond?.value!.includes("0")
               ? ""
+              : isTempHum
+              ? values.cons!.condValueTemp?.value!
               : values.cons!.condValue?.value!,
+          secondConditionValue: isTempHum ? values.cons!.condValue?.value! : "",
+          instruction: values.instruction?.value!,
         };
 
         const deviceData: Device = {
@@ -302,14 +337,29 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
       } else {
         if (conditions) {
           const cons = {
-            listenerDevice: values.listenerDevice!,
+            listenerDevice: values.listenerDevice
+              ? listenerDevice?.type === "tempHum"
+                ? listenerDevice?.topic + " / Temperatura"
+                : values.listenerDevice
+              : "",
+            secondTopic:
+              values.listenerDevice && listenerDevice?.type === "tempHum"
+                ? listenerDevice?.topic + " / Humedad"
+                : values.listenerDevice,
             condition: values.cons!.cond?.value!,
             conditionValue:
-              values.cons!.cond?.value!.includes("yes") ||
-              values.cons!.cond?.value!.includes("no")
+              values.cons!.cond?.value!.includes("1") ||
+              values.cons!.cond?.value!.includes("0")
                 ? ""
+                : isTempHum
+                ? values.cons!.condValueTemp?.value!
                 : values.cons!.condValue?.value!,
+            secondConditionValue: isTempHum
+              ? values.cons!.condValue?.value!
+              : "",
+            instruction: values.instruction?.value!,
           };
+
           const deviceData: Device = {
             _id: props.deviceID!,
             name: values.name,
@@ -362,7 +412,11 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
               deviceData.conditions?.condition !==
                 deviceToEdit?.conditions?.condition ||
               deviceData.conditions?.conditionValue !==
-                deviceToEdit?.conditions?.conditionValue
+                deviceToEdit?.conditions?.conditionValue ||
+              deviceData.conditions?.secondConditionValue !==
+                deviceToEdit?.conditions?.secondConditionValue ||
+              deviceData.conditions?.instruction !==
+                deviceToEdit?.conditions?.instruction
             ) {
               fields.push("Cambio de condición/regla");
             }
@@ -566,7 +620,15 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
     const fetch = async () => {
       try {
         await getAllDevicesByUser(user!._id, (devices) => {
-          setAllDevices(devices);
+          console.log(devices);
+          setAllDevices(
+            devices.filter(
+              (obj) =>
+                obj.type !== "luz" &&
+                obj.type !== "aire" &&
+                obj.type !== "controlAcceso"
+            )
+          );
         });
       } catch (error) {}
     };
@@ -579,6 +641,7 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
   function onChangeSetConditionsOptions(type: string) {
     if (type === "tempHum" || type === "hum") {
       setIsNumeric(true);
+      setIsTempHum(type === "tempHum" ? true : false);
       setConditionsOptions([
         { label: ">", value: ">" },
         { label: "<", value: "<" },
@@ -586,17 +649,29 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
         { label: ">=", value: ">=" },
         { label: "<=", value: "<=" },
       ]);
-      setCondValueOptions([
+      setCondValueHum([
         { label: "20", value: "20" },
         { label: "30", value: "30" },
         { label: "40", value: "40" },
         { label: "50", value: "50" },
       ]);
+      setCondValueOptions([
+        { label: "20", value: "20" },
+        { label: "30", value: "30" },
+        { label: "40", value: "40" },
+        { label: "50", value: "50" },
+        { label: "60", value: "60" },
+        { label: "70", value: "70" },
+        { label: "80", value: "80" },
+        { label: "90", value: "90" },
+        { label: "100", value: "100" },
+      ]);
     } else {
       setIsNumeric(false);
+      setIsTempHum(false);
       setConditionsOptions([
-        { label: "Detecta presencia", value: "yes" },
-        { label: "No detecta presencia", value: "no" },
+        { label: "Detecta presencia", value: "1" },
+        { label: "No detecta presencia", value: "0" },
       ]);
     }
   }
@@ -870,27 +945,41 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                       </FieldArray>
                     </>
                   )}
-                  {props.deviceID &&
-                    deviceToEdit?.conditions &&
-                    listenerDevice && (
+                  {props.deviceID && deviceToEdit?.conditions && (
+                    <Box
+                      sx={{
+                        border: "1px solid #3f51b5",
+                        borderRadius: "5px",
+                        p: 2,
+                      }}
+                    >
                       <Typography>
-                        Este dispositivo tiene una condición asociada, escucha a{" "}
-                        {listenerDevice?.name} y cambia de estado cuando detecta{" "}
-                        {deviceToEdit?.conditions?.condition === "yes" ||
-                        deviceToEdit?.conditions?.condition === "no"
+                        Este dispositivo tiene una condición asociada al tópico
+                        "{deviceToEdit.conditions.listenerDevice}" y{" "}
+                        {deviceToEdit.conditions.instruction === "1"
+                          ? "se enciende"
+                          : "se apaga"}{" "}
+                        cuando detecta{" "}
+                        {deviceToEdit?.conditions?.condition === "1" ||
+                        deviceToEdit?.conditions?.condition === "0"
                           ? "o no presencia"
                           : deviceToEdit?.conditions?.condition}{" "}
                         {deviceToEdit?.conditions?.conditionValue
                           ? deviceToEdit?.conditions?.conditionValue
                           : ""}
-                        {listenerDevice.type === "tempHum"
+                        {deviceToEdit.conditions.listenerDevice?.includes(
+                          "Temperatura"
+                        )
                           ? "°C"
-                          : listenerDevice.type === "hum"
+                          : deviceToEdit.conditions.listenerDevice?.includes(
+                              "Humedad"
+                            )
                           ? "%"
                           : ""}
-                        .
+                        {/* {listenerDevice?.name}  */}.
                       </Typography>
-                    )}
+                    </Box>
+                  )}
                   {(deviceType === "luz" || deviceType === "aire") && (
                     <Field
                       component={RadioGroup}
@@ -964,24 +1053,48 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                           },
                         }}
                       >
-                        <Typography gutterBottom>
+                        {/* <Typography gutterBottom>
                           Cambiar el estado de {values.name} cuando:
-                        </Typography>
+                        </Typography> */}
 
+                        <Field
+                          component={Autocomplete}
+                          name="instruction"
+                          // Filter the devices to only show the ones that are not type luz or aire
+                          options={instructionsOptions}
+                          getOptionLabel={(option: Options) =>
+                            option.label || ""
+                          }
+                          onChange={(event: any, newValue: Options | null) => {
+                            setFieldValue("instruction", newValue);
+                          }}
+                          fullWidth
+                          renderInput={(
+                            params: AutocompleteRenderInputParams
+                          ) => (
+                            <TextFieldMUI
+                              {...params}
+                              label="Acción a realizar"
+                              variant="outlined"
+                              fullWidth
+                              autoComplete="on"
+                              required
+                              sx={{
+                                my: 2,
+                              }}
+                            />
+                          )}
+                        />
                         <Field
                           component={Autocomplete}
                           name="listenerDevice"
                           // Filter the devices to only show the ones that are not type luz or aire
-                          options={allDevices.filter(
-                            (obj) =>
-                              obj.type !== "luz" &&
-                              obj.type !== "aire" &&
-                              obj.type !== "controlAcceso"
-                          )}
+                          options={allDevices}
                           getOptionLabel={(option: Device) => option.name || ""}
                           onChange={(event: any, newValue: Device | null) => {
                             onChangeSetConditionsOptions(newValue?.type!);
-                            setFieldValue("listenerDevice", newValue?._id);
+                            setFieldValue("listenerDevice", newValue?.topic);
+                            setListenerDevice(newValue as Device);
                           }}
                           fullWidth
                           renderInput={(
@@ -1042,7 +1155,34 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                             ) => (
                               <TextFieldMUI
                                 {...params}
-                                label="Valor"
+                                label={isTempHum ? "Valor de humedad" : "Valor"}
+                                variant="outlined"
+                                fullWidth
+                                autoComplete="on"
+                                required
+                                sx={{
+                                  my: 2,
+                                }}
+                              />
+                            )}
+                          />
+                        )}
+                        {isNumeric && isTempHum && (
+                          <Field
+                            component={Autocomplete}
+                            name="cons.condValueTemp"
+                            options={condValueHum}
+                            getOptionLabel={(option: any) => option.label || ""}
+                            fullWidth
+                            onChange={(event: any, newValue: Options) => {
+                              setFieldValue("cons.condValueTemp", newValue);
+                            }}
+                            renderInput={(
+                              params: AutocompleteRenderInputParams
+                            ) => (
+                              <TextFieldMUI
+                                {...params}
+                                label={"Valor de temperatura"}
                                 variant="outlined"
                                 fullWidth
                                 autoComplete="on"
