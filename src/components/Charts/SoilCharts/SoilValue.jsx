@@ -107,7 +107,7 @@ export const SoilValue = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 60000);
+    }, 880000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 

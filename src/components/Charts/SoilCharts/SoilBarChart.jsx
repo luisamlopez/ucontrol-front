@@ -61,7 +61,7 @@ export const SoilBarChart = ({
     setOpenModal(true);
   };
   let queryH = `from(bucket: "ucontrol")
-  |> range(start: -5m, stop: 1h)
+  |> range(start: -1h, stop: 1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
@@ -125,7 +125,7 @@ export const SoilBarChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 60000);
+    }, 880000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 

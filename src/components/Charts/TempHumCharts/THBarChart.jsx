@@ -66,13 +66,13 @@ export const THBarChart = ({
   };
 
   let queryT = `from(bucket: "ucontrol") 
-|>  range(start: -5m, stop: 1h) 
+|>  range(start: -1h, stop: 1h) 
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Temperatura")
   |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
 
   let queryH = `from(bucket: "ucontrol")
-|>  range(start: -5m, stop: 1h)
+|>  range(start: -1h, stop: 1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Humedad")
   |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
@@ -203,7 +203,7 @@ export const THBarChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 60000);
+    }, 880000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 
