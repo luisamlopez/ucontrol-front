@@ -1,8 +1,7 @@
-import { Box, Switch, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
 import ChartCarousel from "../Charts/ChartCarousel";
-import { useState } from "react";
 
 interface Props {
   devices: Device[];
