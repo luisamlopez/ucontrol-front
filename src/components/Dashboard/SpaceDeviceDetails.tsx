@@ -69,6 +69,44 @@ function Details(props: { device: Device }): JSX.Element {
         }
       />
       <DevicesDetailsText title="Tópico" value={props.device.topic!} />
+      {props.device.conditions && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+          }}
+        >
+          <Typography
+            fontWeight={"bold"}
+            textAlign={"left"}
+            color={"primary.main"}
+          >
+            Condiciones del dispositivo
+          </Typography>
+          <Typography>
+            Este dispositivo tiene una condición asociada al tópico "
+            {props.device.conditions.listenerDevice}" y{" "}
+            {props.device.conditions.instruction === "1"
+              ? "se enciende"
+              : "se apaga"}{" "}
+            cuando detecta{" "}
+            {props.device?.conditions?.condition === "1" ||
+            props.device?.conditions?.condition === "0"
+              ? "o no presencia"
+              : props.device?.conditions?.condition}{" "}
+            {props.device?.conditions?.conditionValue
+              ? props.device?.conditions?.conditionValue
+              : ""}
+            {props.device.conditions.listenerDevice?.includes("Temperatura")
+              ? "°C"
+              : props.device.conditions.listenerDevice?.includes("Humedad")
+              ? "%"
+              : ""}
+            .
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 }
