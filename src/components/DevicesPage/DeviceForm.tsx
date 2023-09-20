@@ -946,23 +946,39 @@ const DeviceForm = (props: DeviceFormProps): JSX.Element => {
                     </>
                   )}
                   {props.deviceID && deviceToEdit?.conditions && (
-                    <Typography>
-                      Este dispositivo tiene una condición asociada
-                      {/* {listenerDevice?.name} y cambia de estado cuando detecta{" "}
-                      {deviceToEdit?.conditions?.condition === "1" ||
-                      deviceToEdit?.conditions?.condition === "0"
-                        ? "o no presencia"
-                        : deviceToEdit?.conditions?.condition}{" "}
-                      {deviceToEdit?.conditions?.conditionValue
-                        ? deviceToEdit?.conditions?.conditionValue
-                        : ""}
-                      {listenerDevice.type === "tempHum"
-                        ? "°C"
-                        : listenerDevice.type === "hum"
-                        ? "%"
-                        : ""} */}
-                      .
-                    </Typography>
+                    <Box
+                      sx={{
+                        border: "1px solid #3f51b5",
+                        borderRadius: "5px",
+                        p: 2,
+                      }}
+                    >
+                      <Typography>
+                        Este dispositivo tiene una condición asociada al tópico
+                        "{deviceToEdit.conditions.listenerDevice}" y{" "}
+                        {deviceToEdit.conditions.instruction === "1"
+                          ? "se enciende"
+                          : "se apaga"}{" "}
+                        cuando detecta{" "}
+                        {deviceToEdit?.conditions?.condition === "1" ||
+                        deviceToEdit?.conditions?.condition === "0"
+                          ? "o no presencia"
+                          : deviceToEdit?.conditions?.condition}{" "}
+                        {deviceToEdit?.conditions?.conditionValue
+                          ? deviceToEdit?.conditions?.conditionValue
+                          : ""}
+                        {deviceToEdit.conditions.listenerDevice?.includes(
+                          "Temperatura"
+                        )
+                          ? "°C"
+                          : deviceToEdit.conditions.listenerDevice?.includes(
+                              "Humedad"
+                            )
+                          ? "%"
+                          : ""}
+                        {/* {listenerDevice?.name}  */}.
+                      </Typography>
+                    </Box>
                   )}
                   {(deviceType === "luz" || deviceType === "aire") && (
                     <Field
