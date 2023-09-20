@@ -70,7 +70,7 @@ export const getParentSpaces = async (
     //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const spaces = await response.json();
@@ -92,7 +92,7 @@ export const getSpaces = async (
     //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const spaces = await response.json();
@@ -140,7 +140,7 @@ export const getSpaceById = async (
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -176,7 +176,7 @@ export const getACSpaces = async (
     //   console.log(response);
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const spaces = await response.json();
@@ -217,7 +217,7 @@ export const getAccessControlSpace = async (
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     } else {
       const data = await response.json();
       //   console.log(data.data);

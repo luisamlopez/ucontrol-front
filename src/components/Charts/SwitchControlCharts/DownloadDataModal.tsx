@@ -153,7 +153,7 @@ const DownloadDataModal = ({
             columns={columns.map((column) => ({
               field: column.field,
               headerName: column.headerName,
-              width: 100,
+              width: 200,
             }))}
             slots={{
               toolbar: () => (

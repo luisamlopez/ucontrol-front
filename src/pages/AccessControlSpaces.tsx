@@ -2,7 +2,7 @@ import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Space, getACSpaces, getSpaces } from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
-import AccessControlCard from "../components/AccessControlPage/ACCard";
+import ACCard from "../components/AccessControlPage/ACCard";
 import { useUser } from "../contexts/authContext";
 
 const AccessControlSpaces = (): JSX.Element => {
@@ -18,7 +18,6 @@ const AccessControlSpaces = (): JSX.Element => {
           allSpaces = allSpaces.filter(
             (space) => space.devices && space.devices.length > 0
           );
-
           setSpaces(allSpaces);
         });
         setDataLoaded(true);
@@ -100,7 +99,7 @@ const AccessControlSpaces = (): JSX.Element => {
                 }}
               >
                 {spaces.map((space) => (
-                  <AccessControlCard key={space._id} {...space} />
+                  <ACCard key={space._id} {...space} />
                 ))}
               </Box>
             )}

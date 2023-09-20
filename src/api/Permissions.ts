@@ -33,7 +33,7 @@ export const createPermission = async (
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     if (response.ok)
@@ -56,7 +56,7 @@ export const getUserPermissions = async (
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -76,7 +76,7 @@ export const deletePermission = async (permissionId: string) => {
     });
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     if (response.ok) {

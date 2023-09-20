@@ -15,11 +15,10 @@ import {
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Device, getDeviceById } from "../../api/Device";
 import { User, getUserById } from "../../api/User";
 import { useSnackbar } from "notistack";
 
-const AccessControlCard = (space: Space): JSX.Element => {
+const ACCard = (space: Space): JSX.Element => {
   const [devices, setDevices] = useState<ACSpace>();
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
@@ -27,30 +26,26 @@ const AccessControlCard = (space: Space): JSX.Element => {
   // Verifica y convierte la propiedad 'createdOn' a tipo Date
 
   useEffect(() => {
-    if (space.devices && space.devices.length > 0) {
-      try {
-        for (let i = 0; i < space.devices.length; i++) {
-          getAccessControlSpace(space.devices[i], (dev) => {
-            setDevices(dev);
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [space.devices]);
-
-  useEffect(() => {
     const fetch = async () => {
-      try {
-        await getUserById(space.createdBy, (user) => {
-          setUser(user);
-        });
-        space.createdBy = user?.name!;
-      } catch (error) {}
+      if (space.devices && space.devices.length > 0) {
+        try {
+          for (let i = 0; i < space.devices.length; i++) {
+            await getAccessControlSpace(space.devices[i], (dev) => {
+              setDevices(dev);
+            });
+          }
+          await getUserById(space.createdBy, (user) => {
+            setUser(user);
+          });
+          space.createdBy = user?.name!;
+        } catch (error) {
+          console.log(error);
+        }
+      }
     };
+
     fetch();
-  }, [space, space.createdBy, user?.name]);
+  }, [space, space.devices, user?.name]);
 
   const handleActivate = async () => {
     try {
@@ -237,7 +232,7 @@ const AccessControlCard = (space: Space): JSX.Element => {
         >
           <Button
             onClick={() => {
-              navigate(`/controlAccess/${devices?._id}`);
+              navigate(`/controlAccess/${devices?.deviceId!}`);
             }}
           >
             <Typography fontSize={18} color={"primary.main"} fontWeight="bold">
@@ -250,4 +245,4 @@ const AccessControlCard = (space: Space): JSX.Element => {
   );
 };
 
-export default AccessControlCard;
+export default ACCard;

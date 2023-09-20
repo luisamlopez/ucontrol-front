@@ -25,7 +25,7 @@ export const getAccessControlSpaceUserHistory = async (
     const data = await response.json();
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     } else {
       callback(data.data);
     }
@@ -49,7 +49,7 @@ export const getAccessControlSpaceUsers = async (
     const data = await response.json();
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     } else {
       callback(data.data);
     }

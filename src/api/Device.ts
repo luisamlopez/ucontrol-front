@@ -121,10 +121,10 @@ export const getAllDevicesBySpace = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ spaceId }), // Send spaceId in the request body
     });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message);
-    }
+    // if (!response.ok) {
+    //   const error = await response.json();
+    //   console.log(error.message);
+    // }
 
     const data = await response.json();
 
@@ -149,10 +149,10 @@ export const getDeviceById = async (
 
       callback(data.data);
     }
-    if (!response.ok) {
-      const error = await response.json();
-      console.log(deviceId);
-    }
+    // if (!response.ok) {
+    //   const error = await response.json();
+    //   console.log(error);
+    // }
   } catch (error) {}
 };
 
@@ -168,7 +168,7 @@ export const getAllDevicesByUser = async (
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
 
     const data = await response.json();
@@ -244,7 +244,7 @@ export const getSpaceFromDeviceId = async (
     }
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message);
+      console.log(error.message);
     }
   } catch (error) {}
 };

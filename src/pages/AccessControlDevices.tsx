@@ -5,9 +5,10 @@ import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
 import CADeviceCard from "../components/AccessControlPage/ACDevice";
 import ACCMobileDevice from "../components/AccessControlPage/ACCMobileDevice";
+import { ACSpace, getAccessControlSpace } from "../api/Space";
 
 const AccessControlDevices = (): JSX.Element => {
-  const [allDevices, setDevices] = useState<Device[]>([]);
+  const [device, setDevice] = useState<ACSpace>();
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const spaceId = useParams<{ spaceId: string }>().spaceId;
@@ -16,14 +17,14 @@ const AccessControlDevices = (): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getAllDevicesBySpace(spaceId!, (devices) => {
-          setDevices(
-            devices?.filter((device) => device.type === "controlAcceso")!
-          );
-          setLoading(false);
-          setDataLoaded(true);
+        await getAccessControlSpace(spaceId!, (dev) => {
+          setDevice(dev);
         });
-      } catch (error) {}
+        setLoading(false);
+        setDataLoaded(true);
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetch();
   }, [spaceId]);
@@ -79,20 +80,16 @@ const AccessControlDevices = (): JSX.Element => {
                   width: "100%",
                 }}
               >
-                {allDevices.map((device, i) => (
-                  <Box m={0} key={i}>
-                    {windowWidth < 600 && (
-                      <ACCMobileDevice key={i} device={device} />
-                    )}
+                {device && (
+                  <Box m={0}>
+                    {windowWidth < 600 && <ACCMobileDevice space={device} />}
                     {windowWidth >= 600 && windowWidth < 960 && (
-                      <ACCMobileDevice key={i} device={device} />
+                      <ACCMobileDevice space={device} />
                     )}
 
-                    {windowWidth >= 960 && (
-                      <CADeviceCard key={i} device={device} />
-                    )}
+                    {windowWidth >= 960 && <CADeviceCard space={device} />}
                   </Box>
-                ))}
+                )}
               </Box>
             )}
           </Box>

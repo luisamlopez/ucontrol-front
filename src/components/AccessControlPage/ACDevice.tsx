@@ -1,13 +1,4 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  IconButton,
-  Table,
-  TableBody,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Device } from "../../api/Device";
 import DevicesDetailsText from "../DeviceDetailsText";
 import { useEffect, useState } from "react";
@@ -20,12 +11,12 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { KeyboardArrowLeftRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
   getAccessControlSpaceUserHistory,
   getAccessControlSpaceUsers,
 } from "../../api/AccessControlUser";
+import { ACSpace } from "../../api/Space";
 
 //Columns for the DataGrid are the user atributes
 const columns: any[] = [
@@ -47,12 +38,11 @@ const columnsOut: any[] = [
   { field: "career", headerName: "Carrera", width: 20 },
 ];
 
-const CADeviceCard = (props: { device: Device }): JSX.Element => {
+const CADeviceCard = (space: { space: ACSpace }): JSX.Element => {
   const [user, setUser] = useState<User>();
-  const navigate = useNavigate();
 
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date(props.device.createdOn!)
+    new Date(space.space.createdOn!)
   );
   const [endDate, setEndDate] = useState<Date | null>(
     new Date(Date.now() + 1000 * 60 * 60 * 24)
@@ -64,13 +54,13 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getAccessControlSpaceUserHistory(props.device._id!, (d) => {
+        await getAccessControlSpaceUserHistory(space.space.deviceId!, (d) => {
           setData(d);
         });
       } catch (error) {}
 
       try {
-        await getAccessControlSpaceUsers(props.device._id!, (d) => {
+        await getAccessControlSpaceUsers(space.space.deviceId!, (d) => {
           setOutData(d);
         });
       } catch (error) {}
@@ -81,7 +71,7 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
       fetch();
     }, 30000);
     return () => clearInterval(interval);
-  }, [props.device]);
+  }, [space.space.deviceId]);
 
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
@@ -108,13 +98,13 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getUserById(props.device.createdBy!, (user) => {
+        await getUserById(space.space.createdBy!, (user) => {
           setUser(user);
         });
       } catch (error) {}
     };
     fetch();
-  }, [props.device]);
+  }, [space.space]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -189,15 +179,15 @@ const CADeviceCard = (props: { device: Device }): JSX.Element => {
             wordWrap: "break-word",
           }}
         >
-          Control de acceso controlado por {props.device?.name}
+          Control de acceso controlado por "{space.space?.name}"
         </Typography>
       </Box>
 
-      <DevicesDetailsText title="Nombre" value={props.device.name} />
+      <DevicesDetailsText title="Nombre" value={space.space.name} />
       <DevicesDetailsText title="Tipo" value={"Control de Acceso"} />
       <DevicesDetailsText
         title="Fecha de creación"
-        value={new Date(props.device.createdOn!).toLocaleString("es-VE", {
+        value={new Date(space.space.createdOn!).toLocaleString("es-VE", {
           hour12: false,
           dateStyle: "short",
           timeStyle: "short",

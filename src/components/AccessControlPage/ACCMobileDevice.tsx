@@ -20,6 +20,7 @@ import {
   getAccessControlSpaceUserHistory,
   getAccessControlSpaceUsers,
 } from "../../api/AccessControlUser";
+import { ACSpace, getAccessControlSpace } from "../../api/Space";
 
 const columns: any[] = [
   { field: "timestampIn", headerName: "Entrada", width: 20 },
@@ -32,10 +33,9 @@ const columns: any[] = [
   { field: "career", headerName: "Carrera", width: 20 },
 ];
 
-const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
+const ACCMobileDevice = (space: { space: ACSpace }): JSX.Element => {
   const [user, setUser] = useState<User>();
   const navigate = useNavigate();
-
   const [data, setData] = useState<any[]>([]);
   const [outData, setOutData] = useState<any[]>([]);
   const [dataPerRow, setDataPerRow] = useState<any[]>([]);
@@ -52,13 +52,24 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        await getAccessControlSpaceUserHistory(device.device._id!, (d) => {
+        await getUserById(space?.space.createdBy!, (user) => {
+          setUser(user);
+        });
+      } catch (error) {}
+    };
+    fetch();
+  }, [space]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        await getAccessControlSpaceUserHistory(space.space.deviceId!, (d) => {
           setData(d);
         });
       } catch (error) {}
 
       try {
-        await getAccessControlSpaceUsers(device.device._id!, (d) => {
+        await getAccessControlSpaceUsers(space.space.deviceId!, (d) => {
           setOutData(d);
         });
       } catch (error) {}
@@ -69,18 +80,7 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
       fetch();
     }, 30000);
     return () => clearInterval(interval);
-  }, [device.device]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        await getUserById(device.device.createdBy!, (user) => {
-          setUser(user);
-        });
-      } catch (error) {}
-    };
-    fetch();
-  }, [device.device]);
+  }, [space.space.deviceId]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -124,17 +124,6 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
     }, 30000);
     return () => clearInterval(interval);
   }, [data]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        await getUserById(device.device.createdBy!, (user) => {
-          setUser(user);
-        });
-      } catch (error) {}
-    };
-    fetch();
-  }, [device.device]);
 
   return (
     <>
@@ -189,14 +178,14 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
               wordWrap: "break-word",
             }}
           >
-            Control de acceso controlado por {device.device?.name}
+            Control de acceso controlado por "{space.space?.name}"
           </Typography>
         </Box>
-        <DevicesDetailsText title="Nombre" value={device.device.name} />
+        <DevicesDetailsText title="Nombre" value={space.space.name} />
         <DevicesDetailsText title="Tipo" value={"Control de Acceso"} />
         <DevicesDetailsText
           title="Fecha de creación"
-          value={new Date(device.device.createdOn!).toLocaleString("es-VE", {
+          value={new Date(space.space.createdOn!).toLocaleString("es-VE", {
             hour12: false,
             dateStyle: "short",
             timeStyle: "short",
@@ -284,7 +273,7 @@ const ACCMobileDevice = (device: { device: Device }): JSX.Element => {
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}
-        startDate={new Date(device.device.createdOn!)}
+        startDate={new Date(space.space.createdOn!)}
         endDate={new Date(Date.now() + 1000 * 60 * 60 * 24)}
         data={dataPerRow}
         columns={columns}
