@@ -3,7 +3,6 @@ import {
   Container,
   Button,
   Typography,
-  CircularProgress,
   Stack,
   FormControlLabel,
   FormLabel,
@@ -16,11 +15,9 @@ import { RadioGroup } from "formik-mui";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import PasswordField from "../components/Fields/PasswordField";
-import { LoadingButton } from "@mui/lab";
 import AddPermissionDialog from "../components/Permissions/AddPermissionDialog";
 import PermissionsTable from "../components/Permissions/PermissionsTable";
-import { Permission, PermissionInfo } from "../api/Permissions";
+import { PermissionInfo } from "../api/Permissions";
 import { getUserPermissions } from "../api/Permissions";
 import PermissionsMobile from "../components/Permissions/PermissionsMobile";
 import PasswordChange from "../components/SettingsComponents/ChangePassword/PasswordChange";

@@ -183,8 +183,7 @@ const CADeviceCard = (space: { space: ACSpace }): JSX.Element => {
         </Typography>
       </Box>
 
-      <DevicesDetailsText title="Nombre" value={space.space.name} />
-      <DevicesDetailsText title="Tipo" value={"Control de Acceso"} />
+      <DevicesDetailsText title="Tópico" value={space.space.topic!} />
       <DevicesDetailsText
         title="Fecha de creación"
         value={new Date(space.space.createdOn!).toLocaleString("es-VE", {
