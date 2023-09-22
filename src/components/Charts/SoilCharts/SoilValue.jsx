@@ -159,6 +159,7 @@ export const SoilValue = ({ deviceName, topic, deviceStartDate, values }) => {
             height: "20rem",
             display: "flex",
             justifyContent: "center",
+            textAlign: "center",
             alignItems: "center",
             flexDirection: {
               lg: "row",
@@ -169,7 +170,7 @@ export const SoilValue = ({ deviceName, topic, deviceStartDate, values }) => {
           }}
         >
           <Box>
-            <Typography fontWeight={600} fontSize={24}>
+            <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
               Humedad: {dataHum.value}%
             </Typography>
             <Typography fontWeight={400} fontSize={16} textAlign={"center"}>
