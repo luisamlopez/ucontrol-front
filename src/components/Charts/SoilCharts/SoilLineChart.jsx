@@ -138,7 +138,7 @@ export const SoilLineChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 880000);
+    }, 600000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 

@@ -20,7 +20,10 @@ const GeneralValue = ({
   values,
   deviceType,
 }) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
   const [openModal, setOpenModal] = useState(false);
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -31,7 +34,7 @@ const GeneralValue = ({
   };
 
   let query = `from(bucket: "ucontrol")
-  |> range(start: -1m)
+  |> range(start: -30m)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
@@ -80,7 +83,11 @@ const GeneralValue = ({
             if (
               finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
             ) {
-              setData(finalData[0].data[finalData[0].data.length - 1].y);
+              console.log(finalData[0].data[finalData[0].data.length - 1].y);
+              setData({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -95,7 +102,7 @@ const GeneralValue = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 880000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [query]);
 
@@ -161,11 +168,22 @@ const GeneralValue = ({
           }}
         >
           <Box>
-            {(data === 1 || data === 0) && (
-              <Typography fontWeight={600} fontSize={18}>
-                {data === 1 ? "Presencia detectada" : "Presencia no detectada"}
-              </Typography>
-            )}
+            {/* {(data === 1 || data === 0) && ( */}
+            <Typography fontWeight={600} fontSize={18}>
+              {data.value === 1
+                ? "Presencia detectada"
+                : "Presencia no detectada"}
+            </Typography>
+
+            <Typography fontWeight={400} fontSize={16}>
+              Fecha y hora:{" "}
+              {new Date(data.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
+            </Typography>
+            {/* )} */}
           </Box>
           <Box>
             {!data && data.length === 0 && (
