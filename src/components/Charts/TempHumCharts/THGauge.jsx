@@ -42,15 +42,15 @@ const columns = [
   },
 ];
 
-export const THGauge = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
-  const [dataTemp, setDataTemp] = useState();
-  const [dataHum, setDataHum] = useState();
+export const THGauge = ({ deviceName, topic, deviceStartDate, values }) => {
+  const [dataTemp, setDataTemp] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
+  const [dataHum, setDataHum] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -123,7 +123,10 @@ export const THGauge = ({
             if (
               finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
             ) {
-              setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+              setDataTemp({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -173,7 +176,10 @@ export const THGauge = ({
             if (
               finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
             ) {
-              setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+              setDataHum({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -187,7 +193,7 @@ export const THGauge = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 
@@ -230,7 +236,7 @@ export const THGauge = ({
       {
         label: "Temperatura",
         //get data from the array of objects where the field is temperature.
-        data: [dataTemp, 45 - dataTemp],
+        data: [dataTemp.value, 45 - dataTemp.value],
         circumference: 180,
         rotation: 270,
         borderWidth: 0,
@@ -251,7 +257,7 @@ export const THGauge = ({
       },
       {
         label: "Humedad",
-        data: [dataHum, 100 - dataHum],
+        data: [dataHum.value, 100 - dataHum.value],
         circumference: 180,
         rotation: 270,
         borderWidth: 0,
@@ -326,27 +332,30 @@ export const THGauge = ({
           <Box
             sx={{
               display: "flex",
-              flexDirection: {
-                lg: "column",
-                md: "column-reverse",
-                xs: "column-reverse",
-                sm: "column-reverse",
-              },
-              p: 1,
+              flexDirection: "column",
+              p: 0,
               placeSelf: "center",
-              m: -10,
+              mt: -12,
             }}
           >
             <Box>
-              <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
-                Temperatura: {dataTemp} °C &nbsp;
+              <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
+                Temperatura: {dataTemp.value}°C &nbsp;
               </Typography>
             </Box>
             <Box>
-              <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
-                Humedad: {dataHum} %
+              <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
+                Humedad: {dataHum.value}%
               </Typography>
             </Box>
+            <Typography fontWeight={400} fontSize={16} textAlign={"center"}>
+              Fecha y hora:{" "}
+              {new Date(dataHum.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
+            </Typography>
           </Box>
         </Paper>
       </Box>

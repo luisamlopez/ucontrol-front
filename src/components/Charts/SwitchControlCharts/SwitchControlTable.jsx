@@ -22,7 +22,7 @@ const token = tokenInflux;
 const org = orgInflux;
 const url = urlInflux;
 
-const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
+const Table = ({ topic, deviceName, values, deviceStartDate }) => {
   const columns = [
     { field: "timestamp", headerName: "Fecha", width: 200 },
     { field: "state", headerName: "Estado", width: 200 },
@@ -131,146 +131,139 @@ const Table = ({ topic, deviceName, deviceType, values, deviceStartDate }) => {
   return (
     <>
       <>
-        {(deviceType === "luz" || deviceType === "aire") && (
-          <>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography
-                fontWeight={600}
-                fontSize={16}
-                textAlign={"center"}
-                m={2}
-              >
-                Controlar estado de {deviceName}
-              </Typography>
-              <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
-                OFF
-              </Typography>
-              <Switch
-                checked={checked}
-                onChange={handleChange}
-                content="Control del estado del dispositivo"
-              />
-              <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
-                ON
-              </Typography>
-              {/* <Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography fontWeight={600} fontSize={16} textAlign={"center"} m={2}>
+            Controlar estado de {deviceName}
+          </Typography>
+          <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
+            OFF
+          </Typography>
+          <Switch
+            checked={checked}
+            onChange={handleChange}
+            content="Control del estado del dispositivo"
+          />
+          <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
+            ON
+          </Typography>
+          {/* <Typography>
                 {data[0] && data[0].data[data[0].data.length - 1].y === 1
                   ? "encendido"
                   : "apagado"}
               </Typography> */}
-            </Box>
-          </>
-        )}
-        <>
-          <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
-            Tabla de estados de {deviceName}
-          </Typography>
-          <Box
+        </Box>
+      </>
+
+      <>
+        <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
+          Tabla de estados de {deviceName}
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: {
+              lg: "column",
+              md: "column-reverse",
+              xs: "column-reverse",
+              sm: "column-reverse",
+            },
+            p: 1,
+          }}
+        >
+          <Button
+            variant="contained"
             sx={{
-              display: "flex",
-              flexDirection: {
-                lg: "column",
-                md: "column-reverse",
-                xs: "column-reverse",
-                sm: "column-reverse",
+              mb: 2,
+              zIndex: 1,
+              placeSelf: "flex-end",
+              width: {
+                lg: "20%",
+                md: "20%",
+                xs: "100%",
+                sm: "100%",
               },
-              p: 1,
+              mr: {
+                lg: "5",
+                md: "5",
+                xs: "0",
+                sm: "0",
+              },
             }}
+            onClick={handleOpenModal}
           >
-            <Button
-              variant="contained"
+            Descargar
+          </Button>
+          {data && data[0] && data[0].data && data[0].data.length > 0 && (
+            <Box
               sx={{
-                mb: 2,
-                zIndex: 1,
-                placeSelf: "flex-end",
-                width: {
-                  lg: "20%",
-                  md: "20%",
-                  xs: "100%",
-                  sm: "100%",
-                },
-                mr: {
-                  lg: "5",
-                  md: "5",
-                  xs: "0",
-                  sm: "0",
-                },
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                mx: 2,
+                p: 2,
+                height: "20rem",
+                width: "100%",
+                //Delete horizontal scroll
+                overflowX: "hidden",
+                placeSelf: "center",
               }}
-              onClick={handleOpenModal}
             >
-              Descargar
-            </Button>
-            {data && data[0] && data[0].data && data[0].data.length > 0 && (
-              <Box
+              <TableContainer
+                component={Paper}
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  mx: 2,
-                  p: 2,
-                  height: "20rem",
-                  width: "100%",
-                  //Delete horizontal scroll
-                  overflowX: "hidden",
                   placeSelf: "center",
                 }}
               >
-                <TableContainer
-                  component={Paper}
-                  sx={{
-                    placeSelf: "center",
-                  }}
-                >
-                  <TableMUI size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell align="center">Fecha</TableCell>
-                        <TableCell align="center">Estado</TableCell>
+                <TableMUI size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">Fecha</TableCell>
+                      <TableCell align="center">Estado</TableCell>
+                    </TableRow>
+                  </TableHead>
+
+                  <TableBody>
+                    {data[0].data.reverse().map((value, i) => (
+                      <TableRow
+                        key={i}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="center" component="th" scope="row">
+                          {new Date(value.x).toLocaleString("es-VE", {
+                            hour12: false,
+                            dateStyle: "short",
+                            timeStyle: "long",
+                          })}
+                        </TableCell>
+                        <TableCell align="center">
+                          {value.y === 1 ? "Encendido" : "Apagado"}
+                        </TableCell>
                       </TableRow>
-                    </TableHead>
+                    ))}
+                  </TableBody>
+                </TableMUI>
+              </TableContainer>
+            </Box>
+          )}
 
-                    <TableBody>
-                      {data[0].data.reverse().map((value, i) => (
-                        <TableRow
-                          key={i}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableCell align="center" component="th" scope="row">
-                            {new Date(value.x).toLocaleString("es-VE", {
-                              hour12: false,
-                              dateStyle: "short",
-                              timeStyle: "long",
-                            })}
-                          </TableCell>
-                          <TableCell align="center">
-                            {value.y === 1 ? "Encendido" : "Apagado"}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </TableMUI>
-                </TableContainer>
-              </Box>
-            )}
-
-            {data && data[0] && data[0].data && data[0].data.length === 0 && (
-              <Typography fontWeight={600} fontSize={16} textAlign={"center"}>
-                No hay datos disponibles
-              </Typography>
-            )}
-          </Box>
-        </>
+          {data && data[0] && data[0].data && data[0].data.length === 0 && (
+            <Typography fontWeight={600} fontSize={16} textAlign={"center"}>
+              No hay datos disponibles
+            </Typography>
+          )}
+        </Box>
       </>
+
       <DownloadDataModal
         show={openModal}
         handleClose={handleCloseModal}

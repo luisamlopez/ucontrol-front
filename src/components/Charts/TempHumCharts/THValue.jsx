@@ -24,15 +24,19 @@ const columns = [
   },
 ];
 
-export const THValue = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
-  const [dataTemp, setDataTemp] = useState([]);
-  const [dataHum, setDataHum] = useState([]);
+export const THValue = ({ deviceName, topic, deviceStartDate, values }) => {
+  const [dataTemp, setDataTemp] = useState([
+    {
+      value: 0,
+      timestamp: new Date(Date.now()),
+    },
+  ]);
+  const [dataHum, setDataHum] = useState([
+    {
+      value: 0,
+      timestamp: new Date(Date.now()),
+    },
+  ]);
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -104,7 +108,10 @@ export const THValue = ({
             if (
               finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
             ) {
-              setDataTemp(finalData[0].data[finalData[0].data.length - 1].y);
+              setDataTemp({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -154,7 +161,10 @@ export const THValue = ({
             if (
               finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
             ) {
-              setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+              setDataHum({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -168,7 +178,7 @@ export const THValue = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 
@@ -221,24 +231,27 @@ export const THValue = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            flexDirection: {
-              lg: "row",
-              md: "row",
-              xs: "column",
-              sm: "column",
-            },
+            flexDirection: "column",
           }}
         >
           <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Temperatura: {dataTemp} °C &nbsp;
+            <Typography fontWeight={600} fontSize={18}>
+              Temperatura: {dataTemp.value}°C &nbsp;
             </Typography>
           </Box>
           <Box>
-            <Typography fontWeight={600} fontSize={24}>
-              Humedad: {dataHum} %
+            <Typography fontWeight={600} fontSize={18}>
+              Humedad: {dataHum.value}%
             </Typography>
           </Box>
+          <Typography fontWeight={400} fontSize={16} textAlign={"center"}>
+            Fecha y hora:{" "}
+            {new Date(dataHum.timestamp).toLocaleString("es-VE", {
+              hour12: false,
+              dateStyle: "short",
+              timeStyle: "short",
+            })}
+          </Typography>
         </Paper>
       </Box>
       <DownloadDataModal

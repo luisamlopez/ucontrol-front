@@ -20,14 +20,11 @@ const columns = [
   },
 ];
 
-export const SoilValue = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
-  const [dataHum, setDataHum] = useState([]);
+export const SoilValue = ({ deviceName, topic, deviceStartDate, values }) => {
+  const [dataHum, setDataHum] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -39,7 +36,7 @@ export const SoilValue = ({
   };
 
   let queryH = `from(bucket: "ucontrol")
-  |> range(start: -5m)
+  |> range(start:-1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
@@ -93,7 +90,10 @@ export const SoilValue = ({
               finalData[0] &&
               finalData[0].data[finalData[0].data.length - 1]
             ) {
-              setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+              setDataHum({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -107,7 +107,7 @@ export const SoilValue = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 
@@ -170,7 +170,15 @@ export const SoilValue = ({
         >
           <Box>
             <Typography fontWeight={600} fontSize={24}>
-              Humedad: {dataHum} %
+              Humedad: {dataHum.value}%
+            </Typography>
+            <Typography fontWeight={400} fontSize={16} textAlign={"center"}>
+              Fecha y hora:{" "}
+              {new Date(dataHum.timestamp).toLocaleString("es-VE", {
+                hour12: false,
+                dateStyle: "short",
+                timeStyle: "short",
+              })}
             </Typography>
           </Box>
         </Paper>

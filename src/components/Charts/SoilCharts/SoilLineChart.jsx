@@ -48,7 +48,6 @@ export const SoilLineChart = ({
   topic,
   deviceStartDate,
   values,
-  deviceType,
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [dataHum, setDataHum] = useState([]);
@@ -62,7 +61,7 @@ export const SoilLineChart = ({
   };
 
   let queryH = `from(bucket: "ucontrol")
-  |> range(start: -5m)
+  |> range(start:-1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
@@ -138,7 +137,7 @@ export const SoilLineChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 

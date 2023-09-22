@@ -13,13 +13,7 @@ const columns = [
   { field: "state", headerName: "Estado", width: 200 },
 ];
 
-const GeneralValue = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
+const GeneralValue = ({ deviceName, topic, deviceStartDate, values }) => {
   const [data, setData] = useState({
     value: 0,
     timestamp: new Date(Date.now()),
@@ -102,7 +96,7 @@ const GeneralValue = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 30000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [query]);
 

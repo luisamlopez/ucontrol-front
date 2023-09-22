@@ -46,13 +46,7 @@ const columns = [
   },
 ];
 
-export const THBarChart = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
+export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
   const [dataTemp, setDataTemp] = useState([]);
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -203,7 +197,7 @@ export const THBarChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 

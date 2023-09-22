@@ -38,14 +38,11 @@ const columns = [
   },
 ];
 
-export const SoilGauge = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
-  const [dataHum, setDataHum] = useState();
+export const SoilGauge = ({ deviceName, topic, deviceStartDate, values }) => {
+  const [dataHum, setDataHum] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -57,7 +54,7 @@ export const SoilGauge = ({
   };
 
   let queryH = `from(bucket: "ucontrol")
-  |> range(start: -5m)
+  |> range(start:-1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")
   |> yield(name: "mean")`;
@@ -113,7 +110,10 @@ export const SoilGauge = ({
               finalData[0].data &&
               finalData[0].data.length > 0
             ) {
-              setDataHum(finalData[0].data[finalData[0].data.length - 1].y);
+              setDataHum({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
             }
           },
           error(error) {
@@ -127,7 +127,7 @@ export const SoilGauge = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 
@@ -165,7 +165,7 @@ export const SoilGauge = ({
     datasets: [
       {
         label: "Humedad",
-        data: [dataHum, 100 - dataHum],
+        data: [dataHum.value, 100 - dataHum.value],
         circumference: 180,
         rotation: 270,
         borderWidth: 0,
@@ -248,12 +248,20 @@ export const SoilGauge = ({
               },
               p: 1,
               placeSelf: "center",
-              m: -10,
+              m: -12,
             }}
           >
             <Box>
-              <Typography fontWeight={600} fontSize={24} textAlign={"center"}>
-                Humedad: {dataHum} %
+              <Typography fontWeight={600} fontSize={18} textAlign={"center"}>
+                Humedad: {dataHum.value}%
+              </Typography>
+              <Typography fontWeight={400} fontSize={16} textAlign={"center"}>
+                Fecha y hora:{" "}
+                {new Date(dataHum.timestamp).toLocaleString("es-VE", {
+                  hour12: false,
+                  dateStyle: "short",
+                  timeStyle: "short",
+                })}
               </Typography>
             </Box>
           </Box>

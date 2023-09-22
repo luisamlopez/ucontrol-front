@@ -23,7 +23,7 @@ const url = urlInflux;
 const GeneralTable = ({
   topic,
   deviceName,
-  deviceType,
+
   values,
   deviceStartDate,
 }) => {
@@ -105,7 +105,7 @@ const GeneralTable = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [query]);
 

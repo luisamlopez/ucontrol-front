@@ -48,13 +48,7 @@ const columns = [
   },
 ];
 
-export const THLineChart = ({
-  deviceName,
-  topic,
-  deviceStartDate,
-  values,
-  deviceType,
-}) => {
+export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
   const [dataTemp, setDataTemp] = useState([]);
   const [dataHum, setDataHum] = useState([]);
   const [openModal, setOpenModal] = useState(false);
@@ -205,7 +199,7 @@ export const THLineChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
 

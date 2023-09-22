@@ -47,7 +47,6 @@ export const SoilBarChart = ({
   topic,
   deviceStartDate,
   values,
-  deviceType,
 }) => {
   const [openModal, setOpenModal] = useState(false);
 
@@ -125,7 +124,7 @@ export const SoilBarChart = ({
       try {
         influxQuery();
       } catch (error) {}
-    }, 600000);
+    }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
 
