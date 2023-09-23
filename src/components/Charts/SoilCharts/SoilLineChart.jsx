@@ -63,8 +63,7 @@ export const SoilLineChart = ({
   let queryH = `from(bucket: "ucontrol")
   |> range(start:-1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["_field"] == "value")
-  |> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   const dataSet = {
     labels: dataHum[0]?.data.map((value) => new Date(value.x).toLocaleString()),

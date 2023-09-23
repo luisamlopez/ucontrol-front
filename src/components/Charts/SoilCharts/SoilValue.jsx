@@ -38,8 +38,7 @@ export const SoilValue = ({ deviceName, topic, deviceStartDate, values }) => {
   let queryH = `from(bucket: "ucontrol")
   |> range(start:-1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
-  |> filter(fn: (r) => r["_field"] == "value")
-  |> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   useEffect(() => {
     let resH = [];

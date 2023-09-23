@@ -64,14 +64,12 @@ export const THLineChart = ({ deviceName, topic, deviceStartDate, values }) => {
   let queryT = `from(bucket: "ucontrol") 
 |>  range(start: -1h, stop: 1h) 
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Temperatura")
-  |> filter(fn: (r) => r["_field"] == "value")
-  |> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   let queryH = `from(bucket: "ucontrol")
 |>  range(start: -1h, stop: 1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Humedad")
-  |> filter(fn: (r) => r["_field"] == "value")
-  |> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
   const dataSet = {
     labels: dataTemp[0]?.data.map((value) =>

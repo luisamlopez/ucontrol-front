@@ -1,12 +1,19 @@
 import { Box, Container, Typography, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Space, getACSpaces, getSpaces } from "../api/Space";
+import {
+  ACSpace,
+  Space,
+  getACSpaces,
+  getAccessControlSpace,
+  getSpaces,
+} from "../api/Space";
 import { Sidebar } from "../components/Sidebar";
 import ACCard from "../components/AccessControlPage/ACCard";
 import { useUser } from "../contexts/authContext";
 
 const AccessControlSpaces = (): JSX.Element => {
-  const [spaces, setSpaces] = useState<Space[]>([]);
+  const [spaces, setSpaces] = useState<ACSpace[]>([]);
+  const [aCCard, setACCard] = useState<ACSpace[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const { user } = useUser();
@@ -20,12 +27,37 @@ const AccessControlSpaces = (): JSX.Element => {
           );
           setSpaces(allSpaces);
         });
-        setDataLoaded(true);
-        setLoading(false);
+
+        // setLoading(false);
+        // setDataLoaded(true);
       } catch (error) {}
     };
     fetch();
   }, [user?._id]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      let dev: ACSpace[] = [];
+      for (let i = 0; i < spaces.length; i++) {
+        if (spaces[i].devices) {
+          for (let j = 0; j < spaces[i].devices!.length; j++) {
+            try {
+              await getAccessControlSpace(spaces[i].devices![j], (space) => {
+                if (space) {
+                  dev.push(space);
+                }
+              });
+              // console.log(spaces[i].devices![j]);
+            } catch (error) {}
+          }
+        }
+      }
+      setACCard(dev);
+      setLoading(false);
+      setDataLoaded(true);
+    };
+    fetch();
+  }, [spaces]);
 
   return (
     <>
@@ -98,7 +130,7 @@ const AccessControlSpaces = (): JSX.Element => {
                   width: "100%",
                 }}
               >
-                {spaces.map((space) => (
+                {aCCard.map((space) => (
                   <ACCard key={space._id} {...space} />
                 ))}
               </Box>

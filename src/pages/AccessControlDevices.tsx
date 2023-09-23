@@ -5,7 +5,7 @@ import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
 import CADeviceCard from "../components/AccessControlPage/ACDevice";
 import ACCMobileDevice from "../components/AccessControlPage/ACCMobileDevice";
-import { ACSpace, getAccessControlSpace } from "../api/Space";
+import { ACSpace, getACSpaces, getAccessControlSpace } from "../api/Space";
 
 const AccessControlDevices = (): JSX.Element => {
   const [device, setDevice] = useState<ACSpace>();
@@ -16,15 +16,17 @@ const AccessControlDevices = (): JSX.Element => {
 
   useEffect(() => {
     const fetch = async () => {
+      let devs: ACSpace[] = [];
+
       try {
-        await getAccessControlSpace(spaceId!, (dev) => {
-          setDevice(dev);
-        });
-        setLoading(false);
-        setDataLoaded(true);
-      } catch (error) {
-        console.log(error);
-      }
+        if (spaceId) {
+          await getAccessControlSpace(spaceId, (space) => {
+            setDevice(space);
+          });
+        }
+      } catch (error) {}
+      setLoading(false);
+      setDataLoaded(true);
     };
     fetch();
   }, [spaceId]);
@@ -70,27 +72,38 @@ const AccessControlDevices = (): JSX.Element => {
                 <CircularProgress />
               </Box>
             ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  gap: "10px",
-                  width: "100%",
-                }}
-              >
+              <>
                 {device && (
-                  <Box m={0}>
-                    {windowWidth < 600 && <ACCMobileDevice space={device} />}
-                    {windowWidth >= 600 && windowWidth < 960 && (
-                      <ACCMobileDevice space={device} />
-                    )}
+                  <>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                        gap: "10px",
+                        width: "100%",
+                      }}
+                    >
+                      {device && (
+                        <Box m={0}>
+                          {windowWidth < 600 && (
+                            <ACCMobileDevice space={device} />
+                          )}
+                          {windowWidth >= 600 && windowWidth < 960 && (
+                            <ACCMobileDevice space={device} />
+                          )}
 
-                    {windowWidth >= 960 && <CADeviceCard space={device} />}
-                  </Box>
+                          {windowWidth >= 960 && (
+                            <CADeviceCard space={device} />
+                          )}
+                        </Box>
+                      )}
+                    </Box>
+                    ;
+                  </>
                 )}
-              </Box>
+              </>
             )}
           </Box>
         </Container>

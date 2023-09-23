@@ -40,14 +40,12 @@ const ChartCarousel = ({ device }) => {
       let queryT = `from(bucket: "ucontrol") 
 |>  range(start: ${device.createdOn}, stop:  ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Temperatura")
-  |> filter(fn: (r) => r["_field"] == "value")
-  |> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
       let queryH = `from(bucket: "ucontrol")
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
   |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Humedad")
-  |> filter(fn: (r) => r["_field"] == "value")
-  |> yield(name: "mean")`;
+  |> filter(fn: (r) => r["_field"] == "value")`;
 
       let resT = [];
       let resH = [];

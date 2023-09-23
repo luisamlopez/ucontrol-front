@@ -18,38 +18,28 @@ import { useEffect, useState } from "react";
 import { User, getUserById } from "../../api/User";
 import { useSnackbar } from "notistack";
 
-const ACCard = (space: Space): JSX.Element => {
-  const [devices, setDevices] = useState<ACSpace>();
-  const [user, setUser] = useState<User>();
+const ACCard = (space: ACSpace): JSX.Element => {
+  const [device, setDevice] = useState<ACSpace>();
+  const [user, setUser] = useState<string>();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   // Verifica y convierte la propiedad 'createdOn' a tipo Date
 
   useEffect(() => {
     const fetch = async () => {
-      if (space.devices && space.devices.length > 0) {
-        try {
-          for (let i = 0; i < space.devices.length; i++) {
-            await getAccessControlSpace(space.devices[i], (dev) => {
-              setDevices(dev);
-            });
-          }
-          await getUserById(space.createdBy, (user) => {
-            setUser(user);
-          });
-          space.createdBy = user?.name!;
-        } catch (error) {
-          console.log(error);
-        }
-      }
+      try {
+        await getUserById(space.createdBy, (user) => {
+          setUser(user.name);
+        });
+      } catch (error) {}
     };
 
     fetch();
-  }, [space, space.devices, user?.name]);
+  }, [space.createdBy]);
 
   const handleActivate = async () => {
     try {
-      const response = await updateStatusSpace(devices?.deviceId!, true);
+      const response = await updateStatusSpace(space?.deviceId!, true);
       if (response) {
         enqueueSnackbar("Espacio activado", { variant: "success" });
         window.location.reload();
@@ -64,7 +54,7 @@ const ACCard = (space: Space): JSX.Element => {
 
   const handleDeactivate = async () => {
     try {
-      const response = await updateStatusSpace(devices?.deviceId!, false);
+      const response = await updateStatusSpace(space?.deviceId!, false);
       if (response) {
         enqueueSnackbar("Espacio desactivado", { variant: "success" });
         window.location.reload();
@@ -189,14 +179,10 @@ const ACCard = (space: Space): JSX.Element => {
           >
             <DevicesDetailsText
               title="Estado"
-              value={devices?.status ? "Activo" : "Inactivo"}
+              value={space?.status ? "Activo" : "Inactivo"}
             />
 
-            {/* <Typography fontWeight={"bold"} color={"primary.main"}>
-              Estado: {devices.status ? "Activo" : "Inactivo"}
-            </Typography> */}
-
-            {devices?.description && (
+            {space?.description && (
               <Box
                 sx={{
                   minHeight: "auto",
@@ -209,20 +195,20 @@ const ACCard = (space: Space): JSX.Element => {
               >
                 <DevicesDetailsText
                   title="Descripción"
-                  value={devices.description!}
+                  value={space?.description}
                 />
               </Box>
             )}
 
             <DevicesDetailsText
               title="Creado el"
-              value={new Date(devices?.createdOn!).toLocaleString("VET", {
+              value={new Date(space?.createdOn!).toLocaleString("VET", {
                 hour12: false,
                 dateStyle: "short",
                 timeStyle: "short",
               })}
             />
-            <DevicesDetailsText title="Creado por" value={user?.name!} />
+            {user && <DevicesDetailsText title="Creado por" value={user} />}
           </Box>
         </CardContent>
         <CardActions
@@ -232,7 +218,7 @@ const ACCard = (space: Space): JSX.Element => {
         >
           <Button
             onClick={() => {
-              navigate(`/controlAccess/${devices?.deviceId!}`);
+              navigate(`/controlAccess/${space?.deviceId!}`);
             }}
           >
             <Typography fontSize={18} color={"primary.main"} fontWeight="bold">

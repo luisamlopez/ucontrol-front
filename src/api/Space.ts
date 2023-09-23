@@ -22,12 +22,13 @@ export interface Space {
 export interface ACSpace {
   _id?: string;
   deviceId?: string;
-  topic?: string;
+  topic: string;
   name: string;
   description?: string;
-  status?: boolean;
+  status: boolean;
   createdBy: string;
   createdOn?: Date;
+  devices: string[];
 }
 
 export const createSpace = async (spaceData: Space, userId: string) => {
@@ -166,7 +167,7 @@ export const deleteSpace = async (spaceId: string) => {
 
 export const getACSpaces = async (
   userId: string,
-  callback: (spaces: Space[]) => void
+  callback: (spaces: ACSpace[]) => void
 ) => {
   try {
     const response = await fetch(`${url}getSpacesWithAccessControl/${userId}`, {
@@ -181,10 +182,10 @@ export const getACSpaces = async (
 
     const spaces = await response.json();
     console.log(spaces.data);
-    callback(spaces.data);
-  } catch (error) {
-    console.log(error);
-  }
+    if (spaces.success) {
+      callback(spaces.data);
+    }
+  } catch (error) {}
 };
 
 export const updateStatusSpace = async (spaceId: string, status: boolean) => {
@@ -208,23 +209,16 @@ export const updateStatusSpace = async (spaceId: string, status: boolean) => {
 
 export const getAccessControlSpace = async (
   spaceId: string,
-  callback: (space: Space) => void
+  callback: (space: ACSpace) => void
 ) => {
   try {
     const response = await fetch(`${url}getAccessControlSpace/${spaceId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
-    if (!response.ok) {
-      const error = await response.json();
-      console.log(error.message);
-    } else {
+    if (response.ok) {
       const data = await response.json();
-      //   console.log(data.data);
-
       callback(data.data);
     }
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
