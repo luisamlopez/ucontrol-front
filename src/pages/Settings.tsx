@@ -153,43 +153,45 @@ const SettingsPage = (): JSX.Element => {
               )}
             </Formik>
           </Box>
-          <Box>
-            <Typography
-              sx={{
-                mb: 2,
-                fontSize: "18px",
-                fontStyle: "normal",
-                fontWeight: 500,
-              }}
-            >
-              Lista de permisos autorizados
-            </Typography>
+          {user?.admin && (
+            <Box>
+              <Typography
+                sx={{
+                  mb: 2,
+                  fontSize: "18px",
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                }}
+              >
+                Lista de permisos autorizados
+              </Typography>
 
-            {/* Button to open the permission dialog */}
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setIsOpen(true);
-              }}
-            >
-              Crear permiso
-            </Button>
+              {/* Button to open the permission dialog */}
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
+                Crear permiso
+              </Button>
 
-            {windowWidth > 960 && <PermissionsTable data={data} />}
-            {windowWidth <= 960 && (
-              <>
-                {data.map((d) => (
-                  <PermissionsMobile data={d} key={d.id} />
-                ))}
-              </>
-            )}
-            <AddPermissionDialog
-              closeDialog={() => {
-                setIsOpen(false);
-              }}
-              isOpen={isOpen}
-            ></AddPermissionDialog>
-          </Box>
+              {windowWidth > 960 && <PermissionsTable data={data} />}
+              {windowWidth <= 960 && (
+                <>
+                  {data.map((d) => (
+                    <PermissionsMobile data={d} key={d.id} />
+                  ))}
+                </>
+              )}
+              <AddPermissionDialog
+                closeDialog={() => {
+                  setIsOpen(false);
+                }}
+                isOpen={isOpen}
+              ></AddPermissionDialog>
+            </Box>
+          )}
         </Box>
       </Container>
     </Box>

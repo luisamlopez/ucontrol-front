@@ -1,6 +1,5 @@
 import { Box, Container, CircularProgress } from "@mui/material";
 import { useState, useEffect } from "react";
-import { Device, getAllDevicesBySpace } from "../api/Device";
 import { Sidebar } from "../components/Sidebar";
 import { useParams } from "react-router-dom";
 import CADeviceCard from "../components/AccessControlPage/ACDevice";
@@ -16,8 +15,6 @@ const AccessControlDevices = (): JSX.Element => {
 
   useEffect(() => {
     const fetch = async () => {
-      let devs: ACSpace[] = [];
-
       try {
         if (spaceId) {
           await getAccessControlSpace(spaceId, (space) => {
