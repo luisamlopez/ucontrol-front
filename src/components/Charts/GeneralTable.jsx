@@ -109,9 +109,9 @@ const GeneralTable = ({
     return () => clearInterval(interval);
   }, [query]);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data]);
 
   return (
     <>

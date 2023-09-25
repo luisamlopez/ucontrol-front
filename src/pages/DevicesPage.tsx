@@ -25,7 +25,6 @@ const DevicesPage = (): JSX.Element => {
   const [allDevices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
 
   const { user } = useUser();
 
@@ -97,19 +96,7 @@ const DevicesPage = (): JSX.Element => {
               >
                 <CircularProgress />
               </Box>
-            ) : allDevices.length === 0 ? (
-              <Typography>
-                No hay dispositivos registrados en tu cuenta, agrega uno.
-              </Typography>
-            ) : (
-              // <Box
-              //   sx={{
-              //     display: "flex",
-              //     alignItems: "center",
-              //     justifyContent: "center",
-              //     flexDirection: "column",
-              //   }}
-              // >
+            ) : allDevices.length > 0 ? (
               <CardsContainer>
                 {allDevices.map(
                   (device) => (
@@ -121,7 +108,10 @@ const DevicesPage = (): JSX.Element => {
                   // ) : null
                 )}
               </CardsContainer>
-              //  </Box>
+            ) : (
+              <Typography>
+                No hay dispositivos registrados en tu cuenta, agrega uno.
+              </Typography>
             )}
           </Box>
         </Container>

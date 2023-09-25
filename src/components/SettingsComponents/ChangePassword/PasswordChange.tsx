@@ -106,7 +106,6 @@ const PasswordChange = (): JSX.Element => {
               name="oldPassword"
               label="Contraseña actual"
               variant="outlined"
-              sx={{ mb: 2 }}
             />
             <Field
               component={PasswordField}

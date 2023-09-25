@@ -60,7 +60,7 @@ export const SoilBarChart = ({
     setOpenModal(true);
   };
   let queryH = `from(bucket: "ucontrol")
-  |> range(start: -1h, stop: 1h)
+  |> range(start: -1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")`;
 

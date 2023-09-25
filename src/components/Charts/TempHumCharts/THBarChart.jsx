@@ -60,12 +60,12 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
   };
 
   let queryT = `from(bucket: "ucontrol") 
-|>  range(start: -1h, stop: 1h) 
+|> range(start: -1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Temperatura")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
   let queryH = `from(bucket: "ucontrol")
-|>  range(start: -1h, stop: 1h)
+|> range(start: -1h)
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Humedad")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
@@ -198,11 +198,6 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
     }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);
-
-  //useEffect(() => {
-  // console.log(dataTemp);
-  //console.log(dataHum);
-  //}, [dataTemp, dataHum]);
 
   return (
     <>

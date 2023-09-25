@@ -110,7 +110,7 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
               exists = false;
             }
 
-            setData(finalData);
+            setData(finalData.reverse());
           },
           error(error) {
             console.log("temp query failed- ", error);

@@ -37,15 +37,15 @@ const ChartCarousel = ({ device }) => {
    */
   useEffect(() => {
     if (device.type === "tempHum") {
-      let queryT = `from(bucket: "ucontrol") 
-|>  range(start: ${device.createdOn}, stop:  ${Date.now()})
-  |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Temperatura")
-  |> filter(fn: (r) => r["_field"] == "value")`;
+      let queryT = `from(bucket: "ucontrol")
+  |>  range(start: ${device.createdOn})
+    |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Temperatura")
+    |> filter(fn: (r) => r["_field"] == "value")`;
 
       let queryH = `from(bucket: "ucontrol")
-|>  range(start: ${device.createdOn}, stop: ${Date.now()})
-  |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Humedad")
-  |> filter(fn: (r) => r["_field"] == "value")`;
+  |>  range(start: ${device.createdOn})
+    |> filter(fn: (r) => r["_measurement"] == "${device.topic} / Humedad")
+    |> filter(fn: (r) => r["_field"] == "value")`;
 
       let resT = [];
       let resH = [];
@@ -139,6 +139,7 @@ const ChartCarousel = ({ device }) => {
             }
             if (finalData.length > 0) {
               setDataHum(finalData);
+              console.log("final data hum", finalData);
             }
           },
           error(error) {
@@ -160,8 +161,8 @@ const ChartCarousel = ({ device }) => {
       if (
         device.type === "tempHum" &&
         dataTemp &&
-        dataHum &&
         dataTemp[0].data.length > 0 &&
+        dataHum &&
         dataHum[0].data.length > 0
       ) {
         let values = [];
@@ -172,7 +173,11 @@ const ChartCarousel = ({ device }) => {
           point["timestamp"] = dataTemp[0].data[i]["x"];
           values.push(point);
         }
+        console.log("values after for");
         setTHValues(values);
+        //console.log(values);
+      } else {
+        console.log("no values");
       }
     } catch {}
   }, [dataHum, dataTemp, device.type]);
@@ -187,7 +192,7 @@ const ChartCarousel = ({ device }) => {
 |>  range(start: ${device.createdOn}, stop: ${Date.now()})
 |> filter(fn: (r) => r["_measurement"] == "${device.topic}")
 |> filter(fn: (r) => r["_field"] == "value")
-|> yield(name: "mean")`;
+`;
 
       let resH = [];
       const influxQuery = async () => {

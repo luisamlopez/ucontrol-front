@@ -44,7 +44,6 @@ const DownloadDataModal = ({
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
   };
-
   const handleEndDateChange = (date: Date | null) => {
     setEndDate(date);
   };
