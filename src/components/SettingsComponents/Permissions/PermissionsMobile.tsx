@@ -11,7 +11,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { PermissionInfo, deletePermission } from "../../api/Permissions";
+import { PermissionInfo, deletePermission } from "../../../api/Permissions";
 import {
   DeleteRounded,
   EditRounded,
@@ -19,7 +19,7 @@ import {
 } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
-import { Device } from "../../api/Device";
+import { Device } from "../../../api/Device";
 
 interface PermissionsMobileProps {
   data: PermissionInfo;

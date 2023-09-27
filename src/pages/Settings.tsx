@@ -15,11 +15,11 @@ import { RadioGroup } from "formik-mui";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import AddPermissionDialog from "../components/Permissions/AddPermissionDialog";
-import PermissionsTable from "../components/Permissions/PermissionsTable";
+import AddPermissionDialog from "../components/SettingsComponents/Permissions/AddPermissionDialog";
+import PermissionsTable from "../components/SettingsComponents/Permissions/PermissionsTable";
 import { PermissionInfo } from "../api/Permissions";
 import { getUserPermissions } from "../api/Permissions";
-import PermissionsMobile from "../components/Permissions/PermissionsMobile";
+import PermissionsMobile from "../components/SettingsComponents/Permissions/PermissionsMobile";
 import PasswordChange from "../components/SettingsComponents/ChangePassword/PasswordChange";
 
 interface NotificationsFormValues {

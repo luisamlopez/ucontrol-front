@@ -7,7 +7,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { PermissionInfo, deletePermission } from "../../api/Permissions";
+import { PermissionInfo, deletePermission } from "../../../api/Permissions";
 import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import { useSnackbar } from "notistack";
 

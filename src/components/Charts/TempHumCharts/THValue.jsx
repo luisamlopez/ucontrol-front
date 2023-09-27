@@ -25,18 +25,14 @@ const columns = [
 ];
 
 export const THValue = ({ deviceName, topic, deviceStartDate, values }) => {
-  const [dataTemp, setDataTemp] = useState([
-    {
-      value: 0,
-      timestamp: new Date(Date.now()),
-    },
-  ]);
-  const [dataHum, setDataHum] = useState([
-    {
-      value: 0,
-      timestamp: new Date(Date.now()),
-    },
-  ]);
+  const [dataTemp, setDataTemp] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
+  const [dataHum, setDataHum] = useState({
+    value: 0,
+    timestamp: new Date(Date.now()),
+  });
   const [openModal, setOpenModal] = useState(false);
 
   const handleCloseModal = () => {
