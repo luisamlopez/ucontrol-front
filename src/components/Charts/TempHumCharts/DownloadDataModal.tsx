@@ -11,9 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+
 import {
   DataGrid,
   GridToolbarContainer,
+  GridToolbar,
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -151,22 +153,16 @@ const DownloadDataModal = ({
                 dateStyle: "short",
                 timeStyle: "long",
               }),
-              temperature: Math.round(value.valueT * 100) / 100,
-              humidity: Math.round(value.valueH * 100) / 100,
+              temperature: value.valueT,
+              humidity: value.valueH,
             }))}
             columns={columns.map((column) => ({
               field: column.field,
               headerName: column.headerName,
-              width: 120,
+              width: 150,
             }))}
             slots={{
-              toolbar: () => (
-                <CustomToolbar
-                  startDate={startDate!}
-                  endDate={endDate!}
-                  deviceName={deviceName}
-                />
-              ),
+              toolbar: CustomToolbar,
             }}
           />
         )}
@@ -180,36 +176,10 @@ const DownloadDataModal = ({
 };
 export default DownloadDataModal;
 
-function CustomToolbar({
-  startDate,
-  endDate,
-  deviceName,
-}: {
-  startDate: Date;
-  endDate: Date;
-  deviceName: string;
-}) {
+function CustomToolbar() {
   return (
     <GridToolbarContainer>
-      <GridToolbarExport
-        printOptions={{ disableToolbarButton: true }}
-        csvOptions={{
-          fileName: `Datos de ${deviceName} desde ${startDate.toLocaleString(
-            "es-VE",
-            {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "long",
-            }
-          )} hasta ${endDate.toLocaleString("es-VE", {
-            hour12: false,
-            dateStyle: "short",
-            timeStyle: "long",
-          })}`,
-          delimiter: ";",
-          utf8WithBom: true,
-        }}
-      />
+      <GridToolbarExport printOptions={{ disableToolbarButton: true }} />
     </GridToolbarContainer>
   );
 }

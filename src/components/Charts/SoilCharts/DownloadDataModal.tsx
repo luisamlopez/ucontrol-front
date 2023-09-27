@@ -152,7 +152,7 @@ const DownloadDataModal = ({
                 dateStyle: "short",
                 timeStyle: "long",
               }),
-              humidity: Math.round(value.valueH * 100) / 100,
+              humidity: value.valueH,
             }))}
             columns={columns.map((column) => ({
               field: column.field,
@@ -160,13 +160,7 @@ const DownloadDataModal = ({
               width: 200,
             }))}
             slots={{
-              toolbar: () => (
-                <CustomToolbar
-                  startDate={startDate!}
-                  endDate={endDate!}
-                  deviceName={deviceName}
-                />
-              ),
+              toolbar: CustomToolbar,
             }}
           />
         )}
@@ -179,36 +173,10 @@ const DownloadDataModal = ({
 };
 export default DownloadDataModal;
 
-function CustomToolbar({
-  startDate,
-  endDate,
-  deviceName,
-}: {
-  startDate: Date;
-  endDate: Date;
-  deviceName: string;
-}) {
+function CustomToolbar() {
   return (
     <GridToolbarContainer>
-      <GridToolbarExport
-        printOptions={{ disableToolbarButton: true }}
-        csvOptions={{
-          fileName: `Datos de ${deviceName} desde ${startDate.toLocaleString(
-            "es-VE",
-            {
-              hour12: false,
-              dateStyle: "short",
-              timeStyle: "long",
-            }
-          )} hasta ${endDate.toLocaleString("es-VE", {
-            hour12: false,
-            dateStyle: "short",
-            timeStyle: "long",
-          })}`,
-          delimiter: ";",
-          utf8WithBom: true,
-        }}
-      />
+      <GridToolbarExport printOptions={{ disableToolbarButton: true }} />
     </GridToolbarContainer>
   );
 }

@@ -60,12 +60,12 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
   };
 
   let queryT = `from(bucket: "ucontrol") 
-|> range(start: -8h)
+|> range(start: -2h)
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Temperatura")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
   let queryH = `from(bucket: "ucontrol")
-|> range(start: -8h)
+|> range(start: -2h)
   |> filter(fn: (r) => r["_measurement"] == "${topic} / Humedad")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
