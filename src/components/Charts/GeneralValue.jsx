@@ -164,7 +164,7 @@ const GeneralValue = ({ deviceName, topic, deviceStartDate, values }) => {
           <Box>
             {/* {(data === 1 || data === 0) && ( */}
             <Typography fontWeight={600} fontSize={18}>
-              {data.value === 1
+              {data.value === "1"
                 ? "Presencia detectada"
                 : "Presencia no detectada"}
             </Typography>

@@ -201,7 +201,7 @@ const GeneralTable = ({
                           })}
                         </TableCell>
                         <TableCell align="center">
-                          {value.y === 1
+                          {value.y === "1"
                             ? "Presencia detectada"
                             : "No hay presencia detectada"}
                         </TableCell>
