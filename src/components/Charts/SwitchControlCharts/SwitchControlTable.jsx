@@ -51,7 +51,7 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
 
         setChecked(!event.target.checked);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleCloseModal = () => {
@@ -116,15 +116,15 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
             console.log("temp query failed- ", error);
           },
         });
-      } catch (error) {}
+      } catch (error) { }
     };
 
     influxQuery();
     const interval = setInterval(() => {
       try {
         influxQuery();
-      } catch (error) {}
-    }, 20000);
+      } catch (error) { }
+    }, 60000);
     return () => clearInterval(interval);
   }, [query, data]);
 
