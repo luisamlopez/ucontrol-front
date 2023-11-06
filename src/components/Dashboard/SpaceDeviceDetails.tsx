@@ -159,7 +159,7 @@ const SpaceDeviceDetails = ({ devices }: Props): JSX.Element => {
       }}
     >
       {devices.map((device, index) => (
-        <Box key={index} m={0} p={0}>
+        <Box key={index} m={0} p={0} width={"100%"}>
           {device.type === "controlAcceso" && (
             <Typography
               fontWeight={"bold"}
