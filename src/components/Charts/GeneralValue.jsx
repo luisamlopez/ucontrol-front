@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { InfluxDB } from "@influxdata/influxdb-client";
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { orgInflux, tokenInflux, urlInflux } from "../../api/url";
+import { orgInflux, timePresence, tokenInflux, urlInflux } from "../../api/url";
 import DownloadDataModal from "./DownloadDataModal";
 
 const token = tokenInflux;
@@ -28,7 +28,7 @@ const GeneralValue = ({ deviceName, topic, deviceStartDate, values }) => {
   };
 
   let query = `from(bucket: "ucontrol")
-  |> range(start: -30m)
+  |> range(start: -12h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
@@ -74,29 +74,27 @@ const GeneralValue = ({ deviceName, topic, deviceStartDate, values }) => {
               //need to set this back to false
               exists = false;
             }
-            if (
-              finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
-            ) {
-              console.log(finalData[0].data[finalData[0].data.length - 1].y);
-              setData({
-                value: finalData[0].data[finalData[0].data.length - 1].y,
-                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
-              });
-            }
+
+            console.log(finalData[0].data[finalData[0].data.length - 1].y);
+            setData({
+              value: finalData[0].data[finalData[0].data.length - 1].y,
+              timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+            });
+
           },
           error(error) {
             console.log("temp query failed- ", error);
           },
         });
-      } catch (error) {}
+      } catch (error) { }
     };
 
     influxQuery();
     const interval = setInterval(() => {
       try {
         influxQuery();
-      } catch (error) {}
-    }, 980000);
+      } catch (error) { }
+    }, 20000);
     return () => clearInterval(interval);
   }, [query]);
 
@@ -164,7 +162,7 @@ const GeneralValue = ({ deviceName, topic, deviceStartDate, values }) => {
           <Box>
             {/* {(data === 1 || data === 0) && ( */}
             <Typography fontWeight={600} fontSize={18}>
-              {data.value === "1"
+              {data.value === 1
                 ? "Presencia detectada"
                 : "Presencia no detectada"}
             </Typography>

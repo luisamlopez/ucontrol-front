@@ -78,7 +78,7 @@ const ACCMobileDevice = (space: { space: ACSpace }): JSX.Element => {
 
     const interval = setInterval(() => {
       fetch();
-    }, 980000);
+    }, 20000);
     return () => clearInterval(interval);
   }, [space.space.deviceId]);
 

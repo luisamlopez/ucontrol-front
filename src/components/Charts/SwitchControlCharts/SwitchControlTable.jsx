@@ -33,7 +33,7 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
   const [loading, setLoading] = useState(false);
 
   const [checked, setChecked] = useState(
-    data[0] && data[0].data[data[0].data.length - 1].y === 1
+    (data[0] && data[0].data[data[0].data.length - 1].y === 1 ? true : false)
   );
 
   const handleChange = async (event) => {
@@ -111,6 +111,7 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
             }
 
             setData(finalData.reverse());
+            setLoading(true);
           },
           error(error) {
             console.log("temp query failed- ", error);
@@ -124,7 +125,7 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
       try {
         influxQuery();
       } catch (error) { }
-    }, 6000);
+    }, 5500);
     return () => clearInterval(interval);
   }, [query, data]);
 
@@ -146,18 +147,13 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
             OFF
           </Typography>
           <Switch
-            checked={checked}
+            checked={(data[0] && data[0].data[data[0].data.length - 1].y === 1 ? true : false)}
             onChange={handleChange}
             content="Control del estado del dispositivo"
           />
           <Typography fontWeight={600} fontSize={14} textAlign={"center"}>
             ON
           </Typography>
-          {/* <Typography>
-                {data[0] && data[0].data[data[0].data.length - 1].y === 1
-                  ? "encendido"
-                  : "apagado"}
-              </Typography> */}
         </Box>
       </>
 

@@ -14,7 +14,7 @@ import {
 import { useState, useEffect } from "react";
 import DownloadDataModal from "./DownloadDataModal";
 import { InfluxDB } from "@influxdata/influxdb-client";
-import { orgInflux, tokenInflux, urlInflux } from "../../api/url";
+import { orgInflux, timePresence, tokenInflux, urlInflux } from "../../api/url";
 
 const token = tokenInflux;
 const org = orgInflux;
@@ -44,7 +44,7 @@ const GeneralTable = ({
   };
 
   let query = `from(bucket: "ucontrol")
-  |> range(start: -24h)
+  |> range(start: -12h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
@@ -97,15 +97,15 @@ const GeneralTable = ({
             console.log("temp query failed- ", error);
           },
         });
-      } catch (error) {}
+      } catch (error) { }
     };
 
     influxQuery();
     const interval = setInterval(() => {
       try {
         influxQuery();
-      } catch (error) {}
-    }, 980000);
+      } catch (error) { }
+    }, 20000);
     return () => clearInterval(interval);
   }, [query]);
 
@@ -201,7 +201,7 @@ const GeneralTable = ({
                           })}
                         </TableCell>
                         <TableCell align="center">
-                          {value.y === "1"
+                          {value.y === 1
                             ? "Presencia detectada"
                             : "No hay presencia detectada"}
                         </TableCell>

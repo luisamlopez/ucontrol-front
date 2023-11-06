@@ -12,3 +12,5 @@ export const urlInflux = "http://192.168.0.106:8086";
 export const tokenInflux =
   "t4FzibP_x66K5FxZd4qCc-enJqy1g8sramExJ9TeNdHMzpgIVxQjxNUNYN0fwTPqsiNwo_OBrEEIu-uO3pm1TQ==";
 export const orgInflux = "iot-system";
+
+export const timePresence = 10000;
