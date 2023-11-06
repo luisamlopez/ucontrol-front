@@ -124,7 +124,7 @@ const Table = ({ topic, deviceName, values, deviceStartDate }) => {
       try {
         influxQuery();
       } catch (error) { }
-    }, 60000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [query, data]);
 
