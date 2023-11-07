@@ -74,12 +74,18 @@ const GeneralValue = ({ deviceName, topic, deviceStartDate, values }) => {
               //need to set this back to false
               exists = false;
             }
+            if (
+              finalData[0]?.data[finalData[0].data.length - 1]?.y !== undefined
+            ) {
+              // console.log(finalData[0].data[finalData[0].data.length - 1].y);
+              setData({
+                value: finalData[0].data[finalData[0].data.length - 1].y,
+                timestamp: finalData[0].data[finalData[0].data.length - 1].x,
+              });
+            }
 
-            console.log(finalData[0].data[finalData[0].data.length - 1].y);
-            setData({
-              value: finalData[0].data[finalData[0].data.length - 1].y,
-              timestamp: finalData[0].data[finalData[0].data.length - 1].x,
-            });
+
+
 
           },
           error(error) {

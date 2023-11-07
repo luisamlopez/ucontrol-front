@@ -2,7 +2,7 @@
 export const url = process.env.REACT_APP_URL;
 // export const url = "http://25.65.250.117:9000/api/";
 
-export const urlInflux = "http://192.168.0.106:8086";
+export const urlInflux = "http://192.168.0.100:8086";
 // export const urlInflux = "http://25.65.250.117:8086/";
 
 // export const urlInflux = "http://172.30.114.71:8086/";

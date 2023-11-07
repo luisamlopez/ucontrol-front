@@ -1,15 +1,10 @@
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import logo from "../assets/Logo.svg";
@@ -24,7 +19,7 @@ import {
   VpnKeyRounded,
 } from "@mui/icons-material";
 import { Typography } from "@mui/material";
-import { Link, useNavigate, useLocation, NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useUser } from "../contexts/authContext";
 
@@ -51,7 +46,6 @@ interface Option {
 export const Sidebar = (props: Props) => {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
   const [activeOption, setActiveOption] = useState("");
   const { logout } = useUser();
