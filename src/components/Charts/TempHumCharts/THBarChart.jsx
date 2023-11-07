@@ -141,7 +141,7 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
             console.log("temp query failed- ", error);
           },
         });
-      } catch (error) {}
+      } catch (error) { }
       try {
         await queryApi.queryRows(queryH, {
           next(row, tableMeta) {
@@ -188,13 +188,13 @@ export const THBarChart = ({ deviceName, topic, deviceStartDate, values }) => {
             console.log("hum query failed- ", error);
           },
         });
-      } catch (error) {}
+      } catch (error) { }
     };
     influxQuery();
     const interval = setInterval(() => {
       try {
         influxQuery();
-      } catch (error) {}
+      } catch (error) { }
     }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, dataTemp, queryH, queryT]);

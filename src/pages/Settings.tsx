@@ -21,6 +21,7 @@ import { PermissionInfo } from "../api/Permissions";
 import { getUserPermissions } from "../api/Permissions";
 import PermissionsMobile from "../components/SettingsComponents/Permissions/PermissionsMobile";
 import PasswordChange from "../components/SettingsComponents/ChangePassword/PasswordChange";
+import CreateUserDialog from "../components/SettingsComponents/CreateUserDialog";
 
 interface NotificationsFormValues {
   notifications: boolean;
@@ -32,6 +33,7 @@ const SettingsPage = (): JSX.Element => {
   const { enqueueSnackbar } = useSnackbar();
   const [data, setData] = useState<PermissionInfo[]>([]);
   const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
+  const [isInvitationOpen, setInvitationOpen] = useState(false);
 
   const notificationsInitialValues = {
     notifications: true,
@@ -184,12 +186,31 @@ const SettingsPage = (): JSX.Element => {
                   ))}
                 </>
               )}
+
+              <Button
+                variant="contained"
+                sx={{
+                  mt: 5,
+                }}
+                onClick={() => {
+                  setInvitationOpen(true);
+                }}
+              >
+                Invitar usuario
+              </Button>
+
               <AddPermissionDialog
                 closeDialog={() => {
                   setIsOpen(false);
                 }}
                 isOpen={isOpen}
               ></AddPermissionDialog>
+              <CreateUserDialog
+                closeDialog={() => {
+                  setInvitationOpen(false);
+                }}
+                isOpen={isInvitationOpen}
+              />
             </Box>
           )}
         </Box>

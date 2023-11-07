@@ -142,3 +142,25 @@ export const getUserById = async (
     console.log(error);
   }
 };
+
+export const createUser = async (name: string, email: string) => {
+  try {
+    const response = await fetch(`${url}createUser`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.log(error.message);
+    } else if (response.ok) {
+      return true;
+    }
+  } catch (error) {
+    return false;
+  }
+};

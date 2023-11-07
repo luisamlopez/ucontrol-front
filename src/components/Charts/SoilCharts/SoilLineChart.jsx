@@ -129,13 +129,13 @@ export const SoilLineChart = ({
             console.log("hum query failed- ", error);
           },
         });
-      } catch (error) {}
+      } catch (error) { }
     };
     influxQuery();
     const interval = setInterval(() => {
       try {
         influxQuery();
-      } catch (error) {}
+      } catch (error) { }
     }, 980000);
     return () => clearInterval(interval);
   }, [dataHum, queryH]);
