@@ -36,7 +36,7 @@ export const SoilValue = ({ deviceName, topic, deviceStartDate, values }) => {
   };
 
   let queryH = `from(bucket: "ucontrol")
-  |> range(start: -2h)
+  |> range(start: -96h)
   |> filter(fn: (r) => r["_measurement"] == "${topic}")
   |> filter(fn: (r) => r["_field"] == "value")`;
 
