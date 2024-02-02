@@ -1,46 +1,46 @@
-# Getting Started with Create React App
+# Project description 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Thesis to qualify for the degree in Informatics Engineering based on the development of an inmotic system for monitoring a university campus, with a case study at the UCAB Guayana facilities. The system has different IoT devices (hardware), an MQTT broker (Mosquitto), a reactive configurable user application, and an API that connects the broker, a NoSQL database (MongoDB), and a time series database (InfluxDB ).
 
-## Available Scripts
+You can find the backend repo here: [ucontrol-back](https://github.com/moniquitatxt/ucontrol-back)
 
-In the project directory, you can run:
+## Tools/Skills
 
-### `npm start`
+- React.js 
+- MongoDB 
+- Node.js 
+- Internet of Things (IoT) 
+- MUI 
+- InfluxDB 
+- Chart.js 
+- TypeScript 
+- JavaScript
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Screenshots
+*Dashboard*
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+![Dashboard](https://media.licdn.com/dms/image/D4D2DAQE9TF90W4rjAA/profile-treasury-image-shrink_800_800/0/1702317231399?e=1707494400&v=beta&t=KxUGFaOwvrzIu_6CBIxyZxlAigkXY5hv5N8zAnsSsbg)
 
-### `npm test`
+*Data visualization for different IoT sensors*
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![Data visualization for different IoT sensors](https://media.licdn.com/dms/image/D4D2DAQFdFSMBEL2Aow/profile-treasury-image-shrink_800_800/0/1702317255413?e=1707494400&v=beta&t=pQzmG973VQbEdZvmdFxZwsBuiAo7hZ5xbfUpOjrcNxA)
 
-### `npm run build`
+*Data visualization for different IoT sensors* 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![Data visualization for different IoT sensors](https://media.licdn.com/dms/image/D4D2DAQHxhCVKC3Od_g/profile-treasury-image-shrink_800_800/0/1702317294631?e=1707494400&v=beta&t=9eIgt9RNp5oHlrrNbYmMglWcOczaZRN0uIEXFXjpaNo)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+*Data download option*
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+![Data download option](https://media.licdn.com/dms/image/D4D2DAQH-YZyCfm26aQ/profile-treasury-image-shrink_800_800/0/1702317307136?e=1707494400&v=beta&t=6G-GaCPNpjAYQiZMtG8SZNBTIwWOrLI3xEiiCp6fs28)
 
-### `npm run eject`
+*Access control module* 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+![Access control module](https://media.licdn.com/dms/image/D4D2DAQFxzdTbvBdhWQ/profile-treasury-image-shrink_800_800/0/1702317328044?e=1707494400&v=beta&t=bs26G_0UtJA0LNKMgqJDzyAkKYuU1GpWx23z74D8hfE)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+*IoT Device CRUD*
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+![IoT Device CRUD](https://media.licdn.com/dms/image/D4D2DAQGaxsJ2jpIiIQ/profile-treasury-image-shrink_800_800/0/1702317355365?e=1707494400&v=beta&t=iQp3nGicANR55SryYU3uFNLQvsXaeRT0MdD-HoyG_kw)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
