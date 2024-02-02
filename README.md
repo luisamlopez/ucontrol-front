@@ -17,6 +17,37 @@ You can find the backend repo here: [ucontrol-back](https://github.com/moniquita
 - JavaScript
 
 ## Screenshots
+
+### Web version
+
+*Login*
+
+![Login](https://i.imgur.com/Ofmi5ge.png)
+
+*Registration process*
+
+
+*Register email*
+
+![Register email](https://i.imgur.com/4Ke9sFk.png)
+
+*Register by code sent to email*
+
+![Register by code sent to email](https://i.imgur.com/zeWPknP.png)
+
+*Create password*
+
+![Create password](https://i.imgur.com/SRC2urV.png)
+
+*History*
+
+![History](https://i.imgur.com/QO0z5bi.png)
+
+*Access Control Space*
+
+![Access Control Space](https://i.imgur.com/llXMWNW.png)
+
+
 *Dashboard*
 
 ![Dashboard](https://media.licdn.com/dms/image/D4D2DAQE9TF90W4rjAA/profile-treasury-image-shrink_800_800/0/1702317231399?e=1707494400&v=beta&t=KxUGFaOwvrzIu_6CBIxyZxlAigkXY5hv5N8zAnsSsbg)
@@ -37,6 +68,39 @@ You can find the backend repo here: [ucontrol-back](https://github.com/moniquita
 
 ![Access control module](https://media.licdn.com/dms/image/D4D2DAQFxzdTbvBdhWQ/profile-treasury-image-shrink_800_800/0/1702317328044?e=1707494400&v=beta&t=bs26G_0UtJA0LNKMgqJDzyAkKYuU1GpWx23z74D8hfE)
 
+
 *IoT Device CRUD*
 
 ![IoT Device CRUD](https://media.licdn.com/dms/image/D4D2DAQGaxsJ2jpIiIQ/profile-treasury-image-shrink_800_800/0/1702317355365?e=1707494400&v=beta&t=iQp3nGicANR55SryYU3uFNLQvsXaeRT0MdD-HoyG_kw)
+
+
+### Mobile version
+
+
+*Login screen.*
+![Login](https://i.imgur.com/wpUZf4P.png)
+
+
+*Admin Devices module.*
+
+![Admin Devices](https://i.imgur.com/981vMCO.png)
+
+
+*IoT Device Modal.*
+
+![Modal for IoT Device](https://i.imgur.com/cncDy8p.png)
+
+
+*Access Control Space screen.*
+
+![Access Control Space](https://i.imgur.com/1YEMyXP.png)
+
+
+*Data Visualization screen.*
+
+![Data Visualization](https://i.imgur.com/9YSLcfH.png)
+
+
+*Dashboard Card related to Space.*
+
+![Dashboard Card for Space](https://i.imgur.com/eF49Yrd.png)
